@@ -22,14 +22,19 @@ import ru.nik.alfafamily.repository.UserRepository;
 @Service
 public class UserServiceImpl implements UserService {
 
-	@Autowired
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
+
+	private final RoleRepository roleRepository;
+
+	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	@Autowired
-	private RoleRepository roleRepository;
-
-	@Autowired
-	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
+		BCryptPasswordEncoder bCryptPasswordEncoder) {
+		this.userRepository = userRepository;
+		this.roleRepository = roleRepository;
+		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+	}
 
 	@Override
 	public User save(UserRegistrationDto registration) {

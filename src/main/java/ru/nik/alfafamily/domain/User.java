@@ -3,7 +3,9 @@ package ru.nik.alfafamily.domain;
 import java.util.Collection;
 import java.util.Date;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -13,7 +15,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 
 @Data
-@ToString
 @NoArgsConstructor
 @Document(collection = "users")
 public class User {
