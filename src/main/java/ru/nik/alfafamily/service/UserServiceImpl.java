@@ -14,6 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.nik.alfafamily.domain.Role;
 import ru.nik.alfafamily.domain.User;
+import ru.nik.alfafamily.dto.UserDto;
+import ru.nik.alfafamily.dto.UserRegistrationDto;
 import ru.nik.alfafamily.repository.RoleRepository;
 import ru.nik.alfafamily.repository.UserRepository;
 
