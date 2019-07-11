@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,19 +23,15 @@ import ru.nik.alfafamily.repository.UserRepository;
 @Service
 public class UserServiceImpl implements UserService {
 
-	private final UserRepository userRepository;
-
-	private final RoleRepository roleRepository;
-
-	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	@Autowired
+	private UserRepository userRepository;
 
 	@Autowired
-	public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
-		BCryptPasswordEncoder bCryptPasswordEncoder) {
-		this.userRepository = userRepository;
-		this.roleRepository = roleRepository;
-		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-	}
+	private RoleRepository roleRepository;
+
+	@Lazy
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	@Override
 	public User save(UserRegistrationDto registration) {
