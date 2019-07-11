@@ -20,13 +20,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	private final UserService userService;
 
-//	private final AuthenticationSuccessHandlerImpl successHandler;
+	private final AuthenticationSuccessHandlerImpl successHandler;
 
 	@Autowired
-	public SecurityConfiguration(UserService userService
+	public SecurityConfiguration(UserService userService, AuthenticationSuccessHandlerImpl successHandler
 		) {
 		this.userService = userService;
-//		this.successHandler = successHandler;
+		this.successHandler = successHandler;
 	}
 
 	@Override
