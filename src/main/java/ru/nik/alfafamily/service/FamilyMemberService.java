@@ -5,19 +5,19 @@ import ru.nik.alfafamily.domain.FamilyMember;
 
 public interface FamilyMemberService {
 
-	List<FamilyMember> findAll(String email);
+	List<FamilyMember> findAll(String userId);
 
-	FamilyMember create(String email, String name);
+	FamilyMember create(String userId, String name);
 
-	FamilyMember update(String email, String familyMemberId, String name);
+	FamilyMember update(String userId, String familyMemberId, String name);
 
-	Boolean delete(String email, String familyMemberId);
+	Boolean delete(String userId, String familyMemberId);
 
-	FamilyMember findById(String email, String familyMemberId);
+	FamilyMember findById(String userId, String familyMemberId);
 
-	FamilyMember updateCategories(String email, String familyMemberId, List<String> categories);
+	FamilyMember updateCategories(String userId, String familyMemberId, List<String> categories);
 
-	FamilyMember updateProperties(String email, String familyMemberId, String color);
+	FamilyMember updateProperties(String userId, String familyMemberId, String color);
 
 	Boolean isFamilyMemberExists(String familyMemberId);
 

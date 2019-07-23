@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import ru.nik.alfafamily.domain.Category;
 
 public interface CategoryRepository extends MongoRepository<Category, String> {
+
 	Category findByMember_IdAndName(String familyMemberId, String name);
 
 	List<Category> findAllByMember_Id(String familyMemberId);

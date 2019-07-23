@@ -7,11 +7,11 @@ import ru.nik.alfafamily.domain.FamilyMember;
 
 public interface FamilyMemberRepository extends MongoRepository<FamilyMember, String> {
 
-	List<FamilyMember> findAllByUser_Email(String email);
+	List<FamilyMember> findAllByUser_Id(String userId);
 
-	FamilyMember findByUser_EmailAndId(String email, String id);
+	FamilyMember findByUser_IdAndId(String userId, String id);
 
-	Long deleteByUser_EmailAndId(String email, String id);
+	Long deleteByUser_IdAndId(String userId, String id);
 
 	boolean existsById(String id);
 }

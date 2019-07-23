@@ -82,9 +82,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Boolean isUserExists(String email) {
-		if (!userRepository.existsByEmail(email)) {
-			throw new UserDoesNotExistsException("User with email <" + email + "> doesn't exist.");
+	public Boolean isUserExists(String userId) {
+		if (!userRepository.existsById(userId)) {
+			throw new UserDoesNotExistsException("User with email <" + userId + "> doesn't exist.");
 		}
 		return true;
 	}

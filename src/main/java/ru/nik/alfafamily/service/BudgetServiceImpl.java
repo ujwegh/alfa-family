@@ -22,15 +22,11 @@ import ru.nik.alfafamily.util.Utilities;
 @Slf4j
 public class BudgetServiceImpl implements BudgetService {
 
-
 	private final FinancialOperationRepository repository;
-
 
 	private final FamilyMemberService familyMemberService;
 
 	private final UserService userService;
-
-
 
 	@Autowired
 	public BudgetServiceImpl(FinancialOperationRepository repository,
@@ -41,9 +37,12 @@ public class BudgetServiceImpl implements BudgetService {
 	}
 
 	@Override
-	public List<FinancialOperation> createOrUpdate(String email, String familyMemberId, MultipartFile file) {
-		if (!familyMemberService.isFamilyMemberExists(familyMemberId))
-			throw new FamilyMemberDoesNotExistsException("Family member with id " + familyMemberId + " doesn't exists.");
+	public List<FinancialOperation> createOrUpdate(String userId, String familyMemberId,
+		MultipartFile file) {
+		if (!familyMemberService.isFamilyMemberExists(familyMemberId)) {
+			throw new FamilyMemberDoesNotExistsException(
+				"Family member with id " + familyMemberId + " doesn't exists.");
+		}
 
 		log.info("Parsing file: {} ..", file.getOriginalFilename());
 		try {
@@ -59,10 +58,11 @@ public class BudgetServiceImpl implements BudgetService {
 
 				categoryMap.values().forEach(category -> categoryList.add(category.getName()));
 
-				FamilyMember member = familyMemberService.updateCategories(email, familyMemberId, categoryList);
+				FamilyMember member = familyMemberService
+					.updateCategories(userId, familyMemberId, categoryList);
 
 				operations.forEach(operation -> member.getCategories().forEach(m -> {
-					if (operation.getCategory().getName().equals(m.getName())){
+					if (operation.getCategory().getName().equals(m.getName())) {
 						operation.setCategory(m);
 					}
 				}));
@@ -78,16 +78,16 @@ public class BudgetServiceImpl implements BudgetService {
 	}
 
 	@Override
-	public List<FinancialOperation> findAllForUser(String email) {
-		if (userService.isUserExists(email)){
-			return repository.findAllByCategory_Member_User_Email(email);
+	public List<FinancialOperation> findAllForUser(String userId) {
+		if (userService.isUserExists(userId)) {
+			return repository.findAllByCategory_Member_User_Id(userId);
 		}
 		return Collections.emptyList();
 	}
 
 	@Override
-	public Boolean cleanAllForFamilyMember(String email, String familyMemberId) {
-		if (userService.isUserExists(email)){
+	public Boolean cleanAllForFamilyMember(String userId, String familyMemberId) {
+		if (userService.isUserExists(userId)) {
 			return repository.deleteAllByCategory_Member_Id(familyMemberId) != 0;
 		}
 		return false;

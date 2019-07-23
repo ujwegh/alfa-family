@@ -27,7 +27,7 @@ public class BudgetController {
 	public List<FinancialOperationDto> updateFinOperationHistory(@RequestParam("budget") MultipartFile file) {
 		List<FinancialOperation> operations = service.createOrUpdate("A", "a", file);
 		if (operations == null)
-			throw new ParseCsvException();
+			throw new ParseCsvException("Parsing csv has been failed");
 
 		return operations.stream()
 			.map(FinancialOperationMapper.INSTANCE::toFinancialOperationDto)

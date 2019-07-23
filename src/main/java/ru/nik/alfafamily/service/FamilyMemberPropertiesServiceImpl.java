@@ -21,8 +21,8 @@ public class FamilyMemberPropertiesServiceImpl implements FamilyMemberProperties
 	}
 
 	@Override
-	public FamilyMemberProperties createOrUpdate(String email, String familyMemberId, String color) {
-		FamilyMember member = familyMemberService.findById(email, familyMemberId);
+	public FamilyMemberProperties createOrUpdate(String userId, String familyMemberId, String color) {
+		FamilyMember member = familyMemberService.findById(userId, familyMemberId);
 		FamilyMemberProperties properties = new FamilyMemberProperties(member, color);
 		return repository.save(properties);
 	}

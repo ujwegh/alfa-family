@@ -6,7 +6,7 @@ import ru.nik.alfafamily.domain.FinancialOperation;
 
 public interface FinancialOperationRepository extends MongoRepository<FinancialOperation, String> {
 
-	List<FinancialOperation> findAllByCategory_Member_User_Email(String email);
+	List<FinancialOperation> findAllByCategory_Member_User_Id(String userId);
 
 	int deleteAllByCategory_Member_Id(String id);
 }

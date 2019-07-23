@@ -23,8 +23,8 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public Category create(String email, String familyMemberId, String name) {
-		FamilyMember member = familyMemberService.findById(email, familyMemberId);
+	public Category create(String userId, String familyMemberId, String name) {
+		FamilyMember member = familyMemberService.findById(userId, familyMemberId);
 		return repository.save(new Category(name, member));
 	}
 
@@ -34,7 +34,7 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public Category updateByName(String familyMemberId, String oldName, String newName) {
+	public Category update(String familyMemberId, String oldName, String newName) {
 		if (repository.existsByMember_IdAndName(familyMemberId, newName)){
 			throw new CategoryAlreadyExistsException();
 		}
@@ -44,7 +44,7 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public Boolean deleteByName(String familyMemberId, String name) {
+	public Boolean delete(String familyMemberId, String name) {
 		return repository.deleteByMember_IdAndName(familyMemberId, name) != 0;
 	}
 
@@ -54,12 +54,12 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public List<Category> findAllByNameIn(String familyMemberId, List<String> names) {
+	public List<Category> findAll(String familyMemberId, List<String> names) {
 		return repository.findAllByMember_IdAndNameIn(familyMemberId, names);
 	}
 
 	@Override
-	public Category getByName(String familyMemberId, String name) {
+	public Category get(String familyMemberId, String name) {
 		return repository.findByMember_IdAndName(familyMemberId, name);
 	}
 }

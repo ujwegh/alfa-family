@@ -6,10 +6,10 @@ import ru.nik.alfafamily.domain.FinancialOperation;
 
 public interface BudgetService {
 
-	List<FinancialOperation> createOrUpdate(String email, String familyMemberId, MultipartFile file);
+	List<FinancialOperation> createOrUpdate(String userId, String familyMemberId, MultipartFile file);
 
-	List<FinancialOperation> findAllForUser(String email);
+	List<FinancialOperation> findAllForUser(String userId);
 
-	Boolean cleanAllForFamilyMember(String email, String familyMemberId);
+	Boolean cleanAllForFamilyMember(String userId, String familyMemberId);
 
 }
