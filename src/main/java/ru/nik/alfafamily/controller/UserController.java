@@ -51,7 +51,7 @@ public class UserController {
 
 	@GetMapping("/")
 	public String root() {
-		return "redirect:/books";
+		return "redirect:/welcome";
 	}
 
 	@GetMapping("/login")

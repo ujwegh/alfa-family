@@ -6,4 +6,6 @@ import ru.nik.alfafamily.domain.User;
 public interface UserRepository extends MongoRepository<User, Integer> {
 
 	User findByEmail(String email);
+
+	boolean existsByEmail(String email);
 }

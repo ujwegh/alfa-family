@@ -39,7 +39,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				"/css/**",
 				"/img/**",
 				"/webjars/**").permitAll()
-			.anyRequest().authenticated()
+			.anyRequest().fullyAuthenticated()
+
 			.and()
 				.formLogin()
 				.loginPage("/login")
@@ -50,7 +51,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.clearAuthentication(true)
 				.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 				.logoutSuccessUrl("/login?logout")
-			.permitAll();
+			.permitAll()
+			.and().httpBasic()
+			.and().csrf().disable();
 
 	}
 

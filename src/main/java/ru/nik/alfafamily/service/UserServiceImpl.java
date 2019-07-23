@@ -17,6 +17,7 @@ import ru.nik.alfafamily.domain.Role;
 import ru.nik.alfafamily.domain.User;
 import ru.nik.alfafamily.dto.UserDto;
 import ru.nik.alfafamily.dto.UserRegistrationDto;
+import ru.nik.alfafamily.exceptions.UserDoesNotExistsException;
 import ru.nik.alfafamily.repository.RoleRepository;
 import ru.nik.alfafamily.repository.UserRepository;
 
@@ -60,10 +61,11 @@ public class UserServiceImpl implements UserService {
 		List<Role> existedRoles = roleRepository.findAllByNameIn(roles);
 
 		for (String roleName : roles) {
-			existedRoles.forEach(role -> roleList.add(roleName.equals(role.getName()) ? role : new Role(roleName)));
+			existedRoles.forEach(
+				role -> roleList.add(roleName.equals(role.getName()) ? role : new Role(roleName)));
 		}
 
-		User user = userRepository.findByEmail(userDto.getEmail());
+		User user = findByEmail(userDto.getEmail());
 		user.setFirstName(userDto.getFirstName());
 		user.setLastName(userDto.getLastName());
 		user.setEmail(userDto.getEmail());
@@ -75,14 +77,22 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User findByEmail(String email){
+	public User findByEmail(String email) {
 		return userRepository.findByEmail(email);
+	}
+
+	@Override
+	public Boolean isUserExists(String email) {
+		if (!userRepository.existsByEmail(email)) {
+			throw new UserDoesNotExistsException("User with email <" + email + "> doesn't exist.");
+		}
+		return true;
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		User user = userRepository.findByEmail(email);
-		if (user == null){
+		if (user == null) {
 			throw new UsernameNotFoundException("Invalid username or password.");
 		}
 		return new org.springframework.security.core.userdetails.User(user.getEmail(),
@@ -90,7 +100,7 @@ public class UserServiceImpl implements UserService {
 			mapRolesToAuthorities(user.getRoles()));
 	}
 
-	private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles){
+	private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
 		return roles.stream()
 			.map(role -> new SimpleGrantedAuthority(role.getName()))
 			.collect(Collectors.toList());

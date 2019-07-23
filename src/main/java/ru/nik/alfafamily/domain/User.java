@@ -34,6 +34,9 @@ public class User {
 	@DBRef
 	private Collection<Role> roles;
 
+	@DBRef
+	private Collection<FamilyMember> members;
+
 	private boolean enabled = true;
 
 	private Date lastLogin;

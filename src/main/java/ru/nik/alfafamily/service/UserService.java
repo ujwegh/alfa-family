@@ -12,4 +12,6 @@ public interface UserService extends UserDetailsService {
 	User update(UserDto userDto);
 
 	User findByEmail(String email);
+
+	Boolean isUserExists(String email);
 }
