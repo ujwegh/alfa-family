@@ -20,7 +20,7 @@ import ru.nik.alfafamily.util.Utilities;
 
 @Service
 @Slf4j
-public class BudgetServiceImpl implements BudgetService {
+public class FinancialOperationServiceImpl implements FinancialOperationService {
 
 	private final FinancialOperationRepository repository;
 
@@ -29,7 +29,7 @@ public class BudgetServiceImpl implements BudgetService {
 	private final UserService userService;
 
 	@Autowired
-	public BudgetServiceImpl(FinancialOperationRepository repository,
+	public FinancialOperationServiceImpl(FinancialOperationRepository repository,
 		FamilyMemberService familyMemberService, UserService userService) {
 		this.repository = repository;
 		this.familyMemberService = familyMemberService;
@@ -80,15 +80,21 @@ public class BudgetServiceImpl implements BudgetService {
 	@Override
 	public List<FinancialOperation> findAllForUser(String userId) {
 		if (userService.isUserExists(userId)) {
-			return repository.findAllByCategory_Member_User_Id(userId);
+			List<FamilyMember> members = familyMemberService.findAll(userId);
+			List<Category> allCategories = new ArrayList<>();
+			members.forEach(m -> allCategories.addAll( m.getCategories()));
+			return repository.findAllByCategoryIn(allCategories);
 		}
 		return Collections.emptyList();
 	}
 
 	@Override
-	public Boolean cleanAllForFamilyMember(String userId, String familyMemberId) {
+	public Boolean deleteAllForFamilyMember(String userId, String familyMemberId) {
 		if (userService.isUserExists(userId)) {
-			return repository.deleteAllByCategory_Member_Id(familyMemberId) != 0;
+			List<FamilyMember> members = familyMemberService.findAll(userId);
+			List<Category> allCategories = new ArrayList<>();
+			members.forEach(m -> allCategories.addAll(m.getCategories()));
+			return repository.deleteAllByCategoryIn(allCategories) != 0;
 		}
 		return false;
 	}

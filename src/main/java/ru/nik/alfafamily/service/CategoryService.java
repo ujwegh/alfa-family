@@ -11,7 +11,7 @@ public interface CategoryService {
 
 	Category update(String familyMemberId, String oldName, String newName);
 
-	Boolean delete(String familyMemberId,String name);
+	Boolean delete(String familyMemberId, String name);
 
 	List<Category> findAll(String familyMemberId);
 

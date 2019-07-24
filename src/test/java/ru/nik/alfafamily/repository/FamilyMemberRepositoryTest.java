@@ -19,7 +19,6 @@ import ru.nik.alfafamily.domain.User;
 @DataMongoTest
 class FamilyMemberRepositoryTest {
 
-
 	@Autowired
 	private FamilyMemberRepository repository;
 

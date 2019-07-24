@@ -35,7 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	public Category update(String familyMemberId, String oldName, String newName) {
-		if (repository.existsByMember_IdAndName(familyMemberId, newName)){
+		if (repository.existsByMember_IdAndName(familyMemberId, newName)) {
 			throw new CategoryAlreadyExistsException();
 		}
 		Category category = repository.findByMember_IdAndName(familyMemberId, oldName);

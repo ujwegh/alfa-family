@@ -13,5 +13,7 @@ public interface UserService extends UserDetailsService {
 
 	User findByEmail(String email);
 
+	User findById(String userId);
+
 	Boolean isUserExists(String userId);
 }

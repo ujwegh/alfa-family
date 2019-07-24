@@ -42,7 +42,7 @@ public class FamilyMemberServiceImpl implements FamilyMemberService {
 	@Override
 	public FamilyMember create(String userId, String name) {
 		if (userService.isUserExists(userId)){
-			User user = userService.findByEmail(userId);
+			User user = userService.findById(userId);
 			FamilyMember familyMember = new FamilyMember();
 			familyMember.setUser(user);
 			familyMember.setName(name);
@@ -113,7 +113,9 @@ public class FamilyMemberServiceImpl implements FamilyMemberService {
 	@Override
 	public FamilyMember updateProperties(String userId, String familyMemberId, String color) {
 		FamilyMember member = findById(userId, familyMemberId);
-		propertiesService.createOrUpdate(userId, familyMemberId, color);
+		Map<String, String> map = new HashMap<>();
+		map.put("color", color);
+		propertiesService.createOrUpdate(userId, familyMemberId, map);
 		return member;
 	}
 

@@ -1,5 +1,7 @@
 package ru.nik.alfafamily.service;
 
+import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.nik.alfafamily.domain.FamilyMember;
@@ -21,10 +23,14 @@ public class FamilyMemberPropertiesServiceImpl implements FamilyMemberProperties
 	}
 
 	@Override
-	public FamilyMemberProperties createOrUpdate(String userId, String familyMemberId, String color) {
+	public FamilyMemberProperties createOrUpdate(String userId, String familyMemberId, Map<String, String> properties) {
 		FamilyMember member = familyMemberService.findById(userId, familyMemberId);
-		FamilyMemberProperties properties = new FamilyMemberProperties(member, color);
-		return repository.save(properties);
+		List<FamilyMemberProperties> propertiesList = repository.findAllByFamilyMember_Id(member.getId());
+		FamilyMemberProperties property = propertiesList.size() != 0 ? propertiesList.get(0)
+			: new FamilyMemberProperties(member, null);
+
+		property.setColor(properties.get("color"));
+		return repository.save(property);
 	}
 
 	@Override

@@ -11,15 +11,15 @@ import ru.nik.alfafamily.domain.FinancialOperation;
 import ru.nik.alfafamily.dto.FinancialOperationDto;
 import ru.nik.alfafamily.dto.FinancialOperationMapper;
 import ru.nik.alfafamily.exceptions.ParseCsvException;
-import ru.nik.alfafamily.service.BudgetService;
+import ru.nik.alfafamily.service.FinancialOperationService;
 
 @RestController
 public class BudgetController {
 
-	private final BudgetService service;
+	private final FinancialOperationService service;
 
 	@Autowired
-	public BudgetController(BudgetService service) {
+	public BudgetController(FinancialOperationService service) {
 		this.service = service;
 	}
 
