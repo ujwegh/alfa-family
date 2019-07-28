@@ -65,12 +65,10 @@ public class FamilyMemberServiceImpl implements FamilyMemberService {
 
 	@Override
 	public FamilyMember findById(String userId, String familyMemberId) {
-		FamilyMember member = repository.findByUser_IdAndId(userId, familyMemberId);
-		if (member == null) {
+		if (!isFamilyMemberExists(familyMemberId))
 			throw new FamilyMemberDoesNotExistsException(
 				"Family member with id " + familyMemberId + " doesn't exists.");
-		}
-		return member;
+		return repository.findByUser_IdAndId(userId, familyMemberId);
 	}
 
 	/**

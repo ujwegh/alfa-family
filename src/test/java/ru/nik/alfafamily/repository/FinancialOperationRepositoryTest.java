@@ -73,7 +73,7 @@ class FinancialOperationRepositoryTest {
 	void findAllByCategoryIn() {
 		Category category = categoryRepository.findAll().get(0);
 		List<FinancialOperation> operations = repository
-			.findAllByCategoryIn(Collections.singletonList(category));
+			.findAllByCategoryInOrderByDateDesc(Collections.singletonList(category));
 		assertEquals(1, operations.size());
 	}
 

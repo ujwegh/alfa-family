@@ -15,6 +15,7 @@ import lombok.experimental.UtilityClass;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.web.multipart.MultipartFile;
+import ru.nik.alfafamily.domain.Budget;
 import ru.nik.alfafamily.domain.Category;
 import ru.nik.alfafamily.domain.FinancialOperation;
 
@@ -59,5 +60,20 @@ public class Utilities {
 			fos.close();
 		}
 		return convFile;
+	}
+
+	public Budget countBudget(List<FinancialOperation> operations) {
+		Budget budget = new Budget();
+		Double income = 0.0;
+		Double outcome = 0.0;
+
+		for (FinancialOperation operation : operations) {
+			if (operation.getType() != null && operation.getType().equals("доход")) {
+				income += operation.getSum();
+			} else if (operation.getType() != null && operation.getType().equals("расход")) {
+				outcome += operation.getSum();
+			}
+		}
+		return budget;
 	}
 }

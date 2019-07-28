@@ -38,6 +38,8 @@ public class FinancialOperation {
 
 	private String comment;
 
+	private boolean planned;
+
 
 	public FinancialOperation(String id, Date date, String type,
 		Category category, Double sum, String currency, Long accountNumber,

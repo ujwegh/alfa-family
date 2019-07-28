@@ -13,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class FinancialOperationDto {
 
-	private UUID uuid;
+	private String id;
 
 	private Date date;
 
@@ -30,5 +30,7 @@ public class FinancialOperationDto {
 	private String description;
 
 	private String comment;
+
+	private Boolean planned;
 
 }

@@ -2,8 +2,11 @@ package ru.nik.alfafamily.service;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.nik.alfafamily.domain.Category;
 import ru.nik.alfafamily.domain.FamilyMember;
 import ru.nik.alfafamily.domain.FinancialOperation;
+import ru.nik.alfafamily.dto.FinancialOperationDto;
+import ru.nik.alfafamily.dto.FinancialOperationMapper;
 import ru.nik.alfafamily.exceptions.FamilyMemberDoesNotExistsException;
+import ru.nik.alfafamily.exceptions.FinancialOperationException;
 import ru.nik.alfafamily.repository.FinancialOperationRepository;
 import ru.nik.alfafamily.util.Utilities;
 
@@ -68,7 +74,7 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
 				}));
 				return repository.saveAll(operations);
 			}
-			// TODO разобраться с  ексепшнами
+			// TODO разобраться с ексепшнами
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
@@ -79,23 +85,112 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
 
 	@Override
 	public List<FinancialOperation> findAllForUser(String userId) {
-		if (userService.isUserExists(userId)) {
-			List<FamilyMember> members = familyMemberService.findAll(userId);
-			List<Category> allCategories = new ArrayList<>();
-			members.forEach(m -> allCategories.addAll( m.getCategories()));
-			return repository.findAllByCategoryIn(allCategories);
-		}
-		return Collections.emptyList();
+		return userService.isUserExists(userId) ? repository
+			.findAllByCategoryInOrderByDateDesc(getUserCategories(userId))
+			: Collections.emptyList();
 	}
 
 	@Override
 	public Boolean deleteAllForFamilyMember(String userId, String familyMemberId) {
-		if (userService.isUserExists(userId)) {
-			List<FamilyMember> members = familyMemberService.findAll(userId);
-			List<Category> allCategories = new ArrayList<>();
-			members.forEach(m -> allCategories.addAll(m.getCategories()));
-			return repository.deleteAllByCategoryIn(allCategories) != 0;
+		if (!userService.isUserExists(userId)) {
+			return repository.deleteAllByCategoryIn(getFamilyMemberCategories(userId, familyMemberId)) != 0;
 		}
 		return false;
+	}
+
+	@Override
+	public List<FinancialOperation> findAllForUserBetweenDates(String userId, Date start,
+		Date end) {
+		return userService.isUserExists(userId) ? repository
+			.findAllByCategoryInAndDateBetweenOrderByDateDesc(getUserCategories(userId), start, end)
+			: Collections.emptyList();
+	}
+
+	@Override
+	public List<FinancialOperation> findAllForFamilyMemberBetweenDates(String userId,
+		String familyMemberId,
+		Date start, Date end) {
+		if (userService.isUserExists(userId)) {
+			return repository.findAllByCategoryInAndDateBetweenOrderByDateDesc(
+				getFamilyMemberCategories(userId, familyMemberId), start, end);
+		}
+		return Collections.emptyList();
+	}
+
+	/**
+	 * Create financial operation "by hands".
+	 * Creation is possible only today or later.
+	 *
+	 * @param dto
+	 * @return FinancialOperation entity
+	 */
+	@Override
+	public FinancialOperation create(FinancialOperationDto dto) {
+
+		FinancialOperation operation = FinancialOperationMapper.INSTANCE.fromFinancialOperationDto(dto);
+
+		Date currentDate = removeTime(new Date());
+
+		if (operation.getDate().after(new Date(currentDate.getTime() - 1000))) {
+			return repository.save(operation);
+		} else throw new FinancialOperationException("Wrong date of financial operation creation.");
+	}
+
+	@Override
+	public FinancialOperation update(FinancialOperationDto dto) {
+		FinancialOperation operation = FinancialOperationMapper.INSTANCE.fromFinancialOperationDto(dto);
+
+		Date currentDate = removeTime(new Date());
+		FinancialOperation oldOperation = findById(dto.getId());
+
+		if (oldOperation.isPlanned() && !operation.getDate()
+			.after(new Date(currentDate.getTime() - 1000))) {
+			throw new FinancialOperationException("Wrong date of financial operation creation.");
+		}
+		return repository.save(operation);
+	}
+
+	@Override
+	public Boolean delete(String operationId) {
+		repository.deleteById(operationId);
+		return repository.existsById(operationId);
+	}
+
+	@Override
+	public FinancialOperation findById(String operationId) {
+		return repository.findById(operationId).orElse(null);
+	}
+
+
+	private List<Category> getUserCategories(String userId) {
+		List<Category> allCategories = new ArrayList<>();
+		List<FamilyMember> members = familyMemberService.findAll(userId);
+		members.forEach(m -> allCategories.addAll(m.getCategories()));
+		return allCategories;
+	}
+
+	private List<Category> getFamilyMemberCategories(String userId, String familyMemberId) {
+		FamilyMember neededMember = null;
+		List<FamilyMember> members = familyMemberService.findAll(userId);
+		for (FamilyMember member : members) {
+			if (member.getId().equals(familyMemberId)) {
+				neededMember = member;
+			}
+		}
+		if (neededMember != null) {
+			return neededMember.getCategories();
+		}
+		return null;
+	}
+
+	private Date removeTime(Date date) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		try {
+			date = sdf.parse(sdf.format(date));
+			return date;
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return date;
 	}
 }
