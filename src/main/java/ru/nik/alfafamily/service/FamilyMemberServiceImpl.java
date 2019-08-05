@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import ru.nik.alfafamily.domain.Category;
 import ru.nik.alfafamily.domain.FamilyMember;
@@ -25,8 +26,8 @@ public class FamilyMemberServiceImpl implements FamilyMemberService {
 
 	@Autowired
 	public FamilyMemberServiceImpl(FamilyMemberRepository repository, UserService service,
-		CategoryService categoryService,
-		FamilyMemberPropertiesService propertiesService) {
+		@Lazy CategoryService categoryService,
+		@Lazy FamilyMemberPropertiesService propertiesService) {
 		this.repository = repository;
 		this.userService = service;
 		this.categoryService = categoryService;
@@ -41,7 +42,7 @@ public class FamilyMemberServiceImpl implements FamilyMemberService {
 
 	@Override
 	public FamilyMember create(String userId, String name) {
-		if (userService.isUserExists(userId)){
+		if (userService.isUserExistsById(userId)){
 			User user = userService.findById(userId);
 			FamilyMember familyMember = new FamilyMember();
 			familyMember.setUser(user);
@@ -52,36 +53,37 @@ public class FamilyMemberServiceImpl implements FamilyMemberService {
 	}
 
 	@Override
-	public FamilyMember update(String userId, String familyMemberId, String name) {
-		FamilyMember familyMember = findById(userId, familyMemberId);
+	public FamilyMember update(String familyMemberId, String name) {
+		FamilyMember familyMember = findById(familyMemberId);
 		familyMember.setName(name);
 		return null;
 	}
 
 	@Override
-	public Boolean delete(String userId, String familyMemberId) {
-		return repository.deleteByUser_IdAndId(userId, familyMemberId) != 0;
+	public Boolean delete(String familyMemberId) {
+		repository.deleteById(familyMemberId);
+
+		return true;
 	}
 
 	@Override
-	public FamilyMember findById(String userId, String familyMemberId) {
+	public FamilyMember findById(String familyMemberId) {
 		if (!isFamilyMemberExists(familyMemberId))
 			throw new FamilyMemberDoesNotExistsException(
-				"Family member with id " + familyMemberId + " doesn't exists.");
-		return repository.findByUser_IdAndId(userId, familyMemberId);
+				"Family familyMember with id " + familyMemberId + " doesn't exists.");
+		return repository.findById(familyMemberId).orElse(null);
 	}
 
 	/**
 	 * Update members categories by adding new ones and reusing existed ones
 	 *
-	 * @param userId - authenticated user id
-	 * @param familyMemberId - id of the family member
+	 * @param familyMemberId - id of the family familyMember
 	 * @param categories - category list
-	 * @return member with updated categories
+	 * @return familyMember with updated categories
 	 */
 	@Override
-	public FamilyMember updateCategories(String userId, String familyMemberId, List<String> categories) {
-		FamilyMember member = findById(userId, familyMemberId);
+	public FamilyMember updateCategories(String familyMemberId, List<String> categories) {
+		FamilyMember member = findById(familyMemberId);
 		List<Category> existedCategories = categoryService.findAll(familyMemberId, categories);
 
 		Map<String, Category> categoryMap = new HashMap<>();
@@ -109,11 +111,11 @@ public class FamilyMemberServiceImpl implements FamilyMemberService {
 	}
 
 	@Override
-	public FamilyMember updateProperties(String userId, String familyMemberId, String color) {
-		FamilyMember member = findById(userId, familyMemberId);
+	public FamilyMember updateProperties(String familyMemberId, String color) {
+		FamilyMember member = findById(familyMemberId);
 		Map<String, String> map = new HashMap<>();
 		map.put("color", color);
-		propertiesService.createOrUpdate(userId, familyMemberId, map);
+		propertiesService.createOrUpdate(familyMemberId, map);
 		return member;
 	}
 

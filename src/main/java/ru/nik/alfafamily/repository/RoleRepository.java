@@ -8,5 +8,5 @@ public interface RoleRepository extends MongoRepository<Role, String> {
 
 	Role findByName(String name);
 
-	List<Role> findAllByNameIn(String... names);
+	List<Role> findAllByNameIn(List<String> names);
 }

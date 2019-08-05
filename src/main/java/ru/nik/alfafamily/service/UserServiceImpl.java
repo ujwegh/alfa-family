@@ -3,7 +3,9 @@ package ru.nik.alfafamily.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -15,6 +17,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.nik.alfafamily.domain.Role;
 import ru.nik.alfafamily.domain.User;
+import ru.nik.alfafamily.dto.Mapper;
+import ru.nik.alfafamily.dto.RoleDto;
 import ru.nik.alfafamily.dto.UserDto;
 import ru.nik.alfafamily.dto.UserRegistrationDto;
 import ru.nik.alfafamily.exceptions.UserDoesNotExistsException;
@@ -38,7 +42,6 @@ public class UserServiceImpl implements UserService {
 	public User save(UserRegistrationDto registration) {
 
 		Role role = roleRepository.findByName("ROLE_USER");
-
 		if (role == null) {
 			role = new Role("ROLE_USER");
 			roleRepository.save(role);
@@ -55,24 +58,23 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User update(UserDto userDto) {
-		List<Role> roleList = new ArrayList<>();
-		String[] roles = userDto.getRoles().split(", ");
+		User user = userRepository.findById(userDto.getId());
+		User newUser = Mapper.fromUserDto(userDto);
+		newUser.setMembers(user.getMembers());
 
-		List<Role> existedRoles = roleRepository.findAllByNameIn(roles);
+		List<Role> allRoles = (List<Role>) user.getRoles();
 
-		for (String roleName : roles) {
-			existedRoles.forEach(
-				role -> roleList.add(roleName.equals(role.getName()) ? role : new Role(roleName)));
-		}
+		List<Role> toSaveRoles = allRoles.stream().filter(role -> role.getId() == null).collect(Collectors.toList());
+		List<Role> savedRoles = roleRepository.saveAll(toSaveRoles);
+		allRoles.forEach(role -> {
+			for (Role savedRole : savedRoles) {
+				if (role.getName().equals(savedRole.getName())) {
+					role = savedRole;
+				}
+			}
+		});
 
-		User user = findByEmail(userDto.getEmail());
-		user.setFirstName(userDto.getFirstName());
-		user.setLastName(userDto.getLastName());
-		user.setEmail(userDto.getEmail());
-		user.setEnabled(userDto.isEnabled());
-		user.setPassword(userDto.getPassword());
-		user.setRoles(roleList);
-
+		user.setRoles(allRoles);
 		return userRepository.save(user);
 	}
 
@@ -87,11 +89,29 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Boolean isUserExists(String userId) {
+	public Boolean isUserExistsById(String userId) {
 		if (!userRepository.existsById(userId)) {
-			throw new UserDoesNotExistsException("User with email <" + userId + "> doesn't exist.");
+			throw new UserDoesNotExistsException("User with ID <" + userId + "> doesn't exist.");
 		}
 		return true;
+	}
+
+	@Override
+	public Boolean isUserExistsByEmail(String email) {
+		if (!userRepository.existsByEmail(email)) {
+			throw new UserDoesNotExistsException("User with email <" + email + "> doesn't exist.");
+		}
+		return true;
+	}
+
+	@Override
+	public List<User> findAll() {
+		return userRepository.findAll();
+	}
+
+	@Override
+	public List<User> findAllByIdIn(List<String> ids) {
+		return userRepository.findAllByIdIn(ids);
 	}
 
 	@Override

@@ -21,10 +21,19 @@ public class Category {
 	private String name;
 
 	@DBRef
-	private FamilyMember member;
+	private FamilyMember familyMember;
 
 	public Category(String name, FamilyMember member) {
 		this.name = name;
-		this.member = member;
+		this.familyMember = member;
+	}
+
+	@Override
+	public String toString() {
+		return "Category{" +
+			"id='" + id + '\'' +
+			", name='" + name + '\'' +
+			", familyMember=" + familyMember.getId() +
+			'}';
 	}
 }

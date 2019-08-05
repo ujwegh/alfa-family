@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collections;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,10 +39,15 @@ class FamilyMemberRepositoryTest {
 		user.setRoles(Collections.singleton(role));
 		template.save(user);
 
-		FamilyMember member1 = new FamilyMember("test-1-member", user);
-		FamilyMember member2 = new FamilyMember("test-2-member", user);
+		FamilyMember member1 = new FamilyMember("test-1-familyMember", user);
+		FamilyMember member2 = new FamilyMember("test-2-familyMember", user);
 		template.save(member1);
 		template.save(member2);
+	}
+
+	@AfterEach
+	public void cleanup() {
+		template.getDb().drop();
 	}
 
 
@@ -59,7 +65,7 @@ class FamilyMemberRepositoryTest {
 		User user = userRepository.findByEmail("admin@mail.com");
 		List<FamilyMember> members = repository.findAll();
 
-		FamilyMember member = repository.findByUser_IdAndId(user.getId(), members.get(0).getId());
+		FamilyMember member = repository.findById(members.get(0).getId()).orElse(null);
 		assertNotNull(member);
 		assertEquals(members.get(0), member);
 	}
@@ -69,10 +75,8 @@ class FamilyMemberRepositoryTest {
 		User user = userRepository.findByEmail("admin@mail.com");
 		List<FamilyMember> members = repository.findAll();
 
-		Long i = repository.deleteByUser_IdAndId(user.getId(), members.get(0).getId());
-		assertNotNull(i);
-		assertEquals(1, i.longValue());
-		FamilyMember member = repository.findByUser_IdAndId(user.getId(), members.get(0).getId());
+		repository.deleteById(members.get(0).getId());
+		FamilyMember member = repository.findById(members.get(0).getId()).orElse(null);
 		assertNull(member);
 		members = repository.findAll();
 		assertEquals(1, members.size());

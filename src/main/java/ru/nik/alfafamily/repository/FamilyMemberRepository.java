@@ -9,8 +9,6 @@ public interface FamilyMemberRepository extends MongoRepository<FamilyMember, St
 
 	List<FamilyMember> findAllByUser_Id(String userId);
 
-	FamilyMember findByUser_IdAndId(String userId, String id);
-
 	Long deleteByUser_IdAndId(String userId, String id);
 
 	boolean existsById(String id);

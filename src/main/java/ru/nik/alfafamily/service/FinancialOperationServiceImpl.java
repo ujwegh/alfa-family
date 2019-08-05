@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,7 +17,7 @@ import ru.nik.alfafamily.domain.Category;
 import ru.nik.alfafamily.domain.FamilyMember;
 import ru.nik.alfafamily.domain.FinancialOperation;
 import ru.nik.alfafamily.dto.FinancialOperationDto;
-import ru.nik.alfafamily.dto.FinancialOperationMapper;
+import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.exceptions.FamilyMemberDoesNotExistsException;
 import ru.nik.alfafamily.exceptions.FinancialOperationException;
 import ru.nik.alfafamily.repository.FinancialOperationRepository;
@@ -47,7 +46,7 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
 		MultipartFile file) {
 		if (!familyMemberService.isFamilyMemberExists(familyMemberId)) {
 			throw new FamilyMemberDoesNotExistsException(
-				"Family member with id " + familyMemberId + " doesn't exists.");
+				"Family familyMember with id " + familyMemberId + " doesn't exists.");
 		}
 
 		log.info("Parsing file: {} ..", file.getOriginalFilename());
@@ -65,7 +64,7 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
 				categoryMap.values().forEach(category -> categoryList.add(category.getName()));
 
 				FamilyMember member = familyMemberService
-					.updateCategories(userId, familyMemberId, categoryList);
+					.updateCategories(familyMemberId, categoryList);
 
 				operations.forEach(operation -> member.getCategories().forEach(m -> {
 					if (operation.getCategory().getName().equals(m.getName())) {
@@ -85,14 +84,14 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
 
 	@Override
 	public List<FinancialOperation> findAllForUser(String userId) {
-		return userService.isUserExists(userId) ? repository
+		return userService.isUserExistsById(userId) ? repository
 			.findAllByCategoryInOrderByDateDesc(getUserCategories(userId))
 			: Collections.emptyList();
 	}
 
 	@Override
 	public Boolean deleteAllForFamilyMember(String userId, String familyMemberId) {
-		if (!userService.isUserExists(userId)) {
+		if (!userService.isUserExistsById(userId)) {
 			return repository.deleteAllByCategoryIn(getFamilyMemberCategories(userId, familyMemberId)) != 0;
 		}
 		return false;
@@ -101,7 +100,7 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
 	@Override
 	public List<FinancialOperation> findAllForUserBetweenDates(String userId, Date start,
 		Date end) {
-		return userService.isUserExists(userId) ? repository
+		return userService.isUserExistsById(userId) ? repository
 			.findAllByCategoryInAndDateBetweenOrderByDateDesc(getUserCategories(userId), start, end)
 			: Collections.emptyList();
 	}
@@ -110,7 +109,7 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
 	public List<FinancialOperation> findAllForFamilyMemberBetweenDates(String userId,
 		String familyMemberId,
 		Date start, Date end) {
-		if (userService.isUserExists(userId)) {
+		if (userService.isUserExistsById(userId)) {
 			return repository.findAllByCategoryInAndDateBetweenOrderByDateDesc(
 				getFamilyMemberCategories(userId, familyMemberId), start, end);
 		}
@@ -127,7 +126,7 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
 	@Override
 	public FinancialOperation create(FinancialOperationDto dto) {
 
-		FinancialOperation operation = FinancialOperationMapper.INSTANCE.fromFinancialOperationDto(dto);
+		FinancialOperation operation = Mapper.fromFinancialOperationDto(dto);
 
 		Date currentDate = removeTime(new Date());
 
@@ -138,7 +137,7 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
 
 	@Override
 	public FinancialOperation update(FinancialOperationDto dto) {
-		FinancialOperation operation = FinancialOperationMapper.INSTANCE.fromFinancialOperationDto(dto);
+		FinancialOperation operation = Mapper.fromFinancialOperationDto(dto);
 
 		Date currentDate = removeTime(new Date());
 		FinancialOperation oldOperation = findById(dto.getId());

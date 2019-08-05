@@ -24,7 +24,7 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	public Category create(String userId, String familyMemberId, String name) {
-		FamilyMember member = familyMemberService.findById(userId, familyMemberId);
+		FamilyMember member = familyMemberService.findById(familyMemberId);
 		return repository.save(new Category(name, member));
 	}
 
@@ -35,31 +35,36 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	public Category update(String familyMemberId, String oldName, String newName) {
-		if (repository.existsByMember_IdAndName(familyMemberId, newName)) {
+		if (repository.existsByFamilyMember_IdAndName(familyMemberId, newName)) {
 			throw new CategoryAlreadyExistsException();
 		}
-		Category category = repository.findByMember_IdAndName(familyMemberId, oldName);
+		Category category = repository.findByFamilyMember_IdAndName(familyMemberId, oldName);
 		category.setName(newName);
 		return repository.save(category);
 	}
 
 	@Override
 	public Boolean delete(String familyMemberId, String name) {
-		return repository.deleteByMember_IdAndName(familyMemberId, name) != 0;
+		return repository.deleteByFamilyMember_IdAndName(familyMemberId, name) != 0;
 	}
 
 	@Override
 	public List<Category> findAll(String familyMemberId) {
-		return repository.findAllByMember_Id(familyMemberId);
+		return repository.findAllByFamilyMember_Id(familyMemberId);
 	}
 
 	@Override
 	public List<Category> findAll(String familyMemberId, List<String> names) {
-		return repository.findAllByMember_IdAndNameIn(familyMemberId, names);
+		return repository.findAllByFamilyMember_IdAndNameIn(familyMemberId, names);
 	}
 
 	@Override
-	public Category get(String familyMemberId, String name) {
-		return repository.findByMember_IdAndName(familyMemberId, name);
+	public Category findByName(String familyMemberId, String name) {
+		return repository.findByFamilyMember_IdAndName(familyMemberId, name);
+	}
+
+	@Override
+	public Category findById(String categoryId) {
+		return repository.findById(categoryId).orElse(null);
 	}
 }

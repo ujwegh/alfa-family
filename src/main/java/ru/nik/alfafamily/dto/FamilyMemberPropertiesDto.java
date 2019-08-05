@@ -11,12 +11,12 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryDto {
+public class FamilyMemberPropertiesDto {
 
 	private String id;
 
-	private String name;
-
 	private String familyMemberId;
+
+	private String color;
 
 }

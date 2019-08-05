@@ -40,10 +40,10 @@ public class BudgetServiceImpl implements BudgetService {
 
 	@Override
 	public Budget countForAllTimeForFamilyMember(String userId, String memberId) {
-		FamilyMember member = memberService.findById(userId, memberId);
+		FamilyMember member = memberService.findById(memberId);
 		List<FinancialOperation> operations = service.findAllForUser(userId);
 		List<FinancialOperation> memberOperations = operations.stream()
-			.filter(o -> o.getCategory().getMember().getId().equals(memberId))
+			.filter(o -> o.getCategory().getFamilyMember().getId().equals(memberId))
 			.collect(Collectors.toList());
 		FamilyMemberBudget budget = new FamilyMemberBudget(Utilities.countBudget(memberOperations));
 		budget.setMember(member);
@@ -62,7 +62,7 @@ public class BudgetServiceImpl implements BudgetService {
 	@Override
 	public Budget countForFamilyMemberBetweenDates(String userId, String memberId, Date start,
 		Date end) {
-		FamilyMember member = memberService.findById(userId, memberId);
+		FamilyMember member = memberService.findById(memberId);
 		List<FinancialOperation> operations = service.findAllForFamilyMemberBetweenDates(userId, memberId, start, end);
 		FamilyMemberBudget budget = new FamilyMemberBudget(Utilities.countBudget(operations));
 		budget.setMember(member);

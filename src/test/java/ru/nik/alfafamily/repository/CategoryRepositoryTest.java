@@ -7,19 +7,13 @@ import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.nik.alfafamily.domain.Category;
 import ru.nik.alfafamily.domain.FamilyMember;
-import ru.nik.alfafamily.domain.FamilyMemberProperties;
 import ru.nik.alfafamily.domain.Role;
 import ru.nik.alfafamily.domain.User;
 
@@ -46,7 +40,7 @@ class CategoryRepositoryTest {
 		user.setRoles(Collections.singleton(role));
 		template.save(user);
 
-		FamilyMember member1 = new FamilyMember("test-1-member", user);
+		FamilyMember member1 = new FamilyMember("test-1-familyMember", user);
 		template.save(member1);
 
 		Category category1 = new Category("бензин", member1);
@@ -74,10 +68,10 @@ class CategoryRepositoryTest {
 	@Test
 	void findByMember_IdAndName() {
 		FamilyMember member = memberRepository.findAll().get(0);
-		Category category = categoryRepository.findByMember_IdAndName(member.getId(), "бензин");
+		Category category = categoryRepository.findByFamilyMember_IdAndName(member.getId(), "бензин");
 		assertNotNull(category);
 		assertEquals("бензин", category.getName());
-		assertEquals(member.getId(), category.getMember().getId());
+		assertEquals(member.getId(), category.getFamilyMember().getId());
 	}
 
 	@Test
@@ -86,7 +80,7 @@ class CategoryRepositoryTest {
 
 		Category category1 = new Category("бензин", member);
 		Category category2 = new Category("продукты", member);
-		List<Category> categories = categoryRepository.findAllByMember_Id(member.getId());
+		List<Category> categories = categoryRepository.findAllByFamilyMember_Id(member.getId());
 		assertEquals(2, categories.size());
 		assertEquals(category1.getName(), categories.get(0).getName());
 		assertEquals(category2.getName(), categories.get(1).getName());
@@ -96,7 +90,7 @@ class CategoryRepositoryTest {
 	void findAllByMember_IdAndNameIn() {
 		FamilyMember member = memberRepository.findAll().get(0);
 		Category category1 = new Category("бензин", member);
-		List<Category> categories = categoryRepository.findAllByMember_IdAndNameIn(member.getId(),
+		List<Category> categories = categoryRepository.findAllByFamilyMember_IdAndNameIn(member.getId(),
 			Collections.singletonList(category1.getName()));
 
 		assertEquals(1, categories.size());
@@ -108,7 +102,7 @@ class CategoryRepositoryTest {
 		FamilyMember member = memberRepository.findAll().get(0);
 		Category category1 = new Category("бензин", member);
 		Category category2 = new Category("продукты", member);
-		Long i = categoryRepository.deleteByMember_IdAndName(member.getId(), category1.getName());
+		Long i = categoryRepository.deleteByFamilyMember_IdAndName(member.getId(), category1.getName());
 		assertEquals(1, i.longValue());
 		assertEquals(1, categoryRepository.findAll().size());
 	}
@@ -117,7 +111,7 @@ class CategoryRepositoryTest {
 	void existsByMember_IdAndName() {
 		FamilyMember member = memberRepository.findAll().get(0);
 		Category category1 = new Category("бензин", member);
-		boolean exist = categoryRepository.existsByMember_IdAndName(member.getId(), category1.getName());
+		boolean exist = categoryRepository.existsByFamilyMember_IdAndName(member.getId(), category1.getName());
 		assertTrue(exist);
 	}
 }

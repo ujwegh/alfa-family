@@ -5,8 +5,10 @@ import ru.nik.alfafamily.domain.FamilyMemberProperties;
 
 public interface FamilyMemberPropertiesService {
 
-	FamilyMemberProperties createOrUpdate(String userId, String familyMemberId, Map<String, String> properties);
+	FamilyMemberProperties createOrUpdate(String familyMemberId, Map<String, String> properties);
 
 	Boolean delete(String familyMemberId);
+
+	FamilyMemberProperties findById(String propertiesId);
 
 }

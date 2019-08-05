@@ -42,7 +42,7 @@ class FinancialOperationRepositoryTest {
 		template.save(role);
 		user.setRoles(Collections.singleton(role));
 		template.save(user);
-		FamilyMember member1 = new FamilyMember("test-1-member", user);
+		FamilyMember member1 = new FamilyMember("test-1-familyMember", user);
 		template.save(member1);
 		Category category1 = new Category("бензин", member1);
 		template.save(category1);

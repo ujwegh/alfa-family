@@ -3,7 +3,6 @@ package ru.nik.alfafamily.dto;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Date;
-import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import ru.nik.alfafamily.domain.Category;
 import ru.nik.alfafamily.domain.FamilyMember;
@@ -26,7 +25,7 @@ class FinancialOperationMapperTest {
 		assertEquals(operation.getId(), dto.getId());
 		assertEquals(operation.getAccountNumber(), dto.getAccountNumber());
 		assertEquals(operation.getCategory().getName(), dto.getCategory().getName());
-		assertEquals(operation.getCategory().getMember().getId(),
+		assertEquals(operation.getCategory().getFamilyMember().getId(),
 			dto.getCategory().getFamilyMemberId());
 		assertEquals(operation.getComment(), dto.getComment());
 		assertEquals(operation.getCurrency(), dto.getCurrency());
@@ -40,7 +39,7 @@ class FinancialOperationMapperTest {
 	@Test
 	void fromFinancialOperationDto() {
 		FinancialOperationDto dto = new FinancialOperationDto("a", new Date(), "расход",
-			new CategoryDto("расход", "a"), 777.77, "RUB", 1234567890L,
+			new CategoryDto("c","расход", "a"), 777.77, "RUB", 1234567890L,
 			"оплата продуктов", "дороговато вышло", true);
 
 		FinancialOperation operation = FinancialOperationMapper.INSTANCE

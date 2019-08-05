@@ -1,15 +1,19 @@
 package ru.nik.alfafamily.dto;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
+	private String id;
 
 	private String firstName;
 
@@ -19,7 +23,7 @@ public class UserDto {
 
 	private String password;
 
-	private String roles;
+	private List<RoleDto> roles;
 
 	private boolean enabled = true;
 

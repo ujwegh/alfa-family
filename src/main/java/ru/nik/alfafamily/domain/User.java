@@ -56,4 +56,25 @@ public class User {
 		this.password = password;
 		this.roles = roles;
 	}
+
+	public String rolesToString() {
+		StringBuilder s = new StringBuilder();
+		roles.forEach(role -> s.append(role).append(","));
+		return s.substring(s.toString().length()-2);
+	}
+
+	@Override
+	public String toString() {
+		return "User{" +
+			"id='" + id + '\'' +
+			", firstName='" + firstName + '\'' +
+			", lastName='" + lastName + '\'' +
+			", email='" + email + '\'' +
+			", password='" + password + '\'' +
+			", roles=" + roles +
+			", members=" + members +
+			", enabled=" + enabled +
+			", lastLogin=" + lastLogin +
+			'}';
+	}
 }

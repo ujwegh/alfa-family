@@ -39,7 +39,7 @@ class FamilyMemberPropertiesRepositoryTest {
 		user.setRoles(Collections.singleton(role));
 		template.save(user);
 
-		FamilyMember member1 = new FamilyMember("test-1-member", user);
+		FamilyMember member1 = new FamilyMember("test-1-familyMember", user);
 		FamilyMemberProperties properties = new FamilyMemberProperties(member1, "c04000");
 		template.save(member1);
 		member1.setProperties(properties);

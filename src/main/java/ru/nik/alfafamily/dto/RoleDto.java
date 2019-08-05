@@ -1,22 +1,17 @@
 package ru.nik.alfafamily.dto;
 
-import lombok.AllArgsConstructor;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
-@AllArgsConstructor
-public class CategoryDto {
+public class RoleDto {
 
 	private String id;
 
 	private String name;
-
-	private String familyMemberId;
 
 }

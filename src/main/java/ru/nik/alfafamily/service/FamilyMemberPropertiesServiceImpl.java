@@ -23,12 +23,13 @@ public class FamilyMemberPropertiesServiceImpl implements FamilyMemberProperties
 	}
 
 	@Override
-	public FamilyMemberProperties createOrUpdate(String userId, String familyMemberId, Map<String, String> properties) {
-		FamilyMember member = familyMemberService.findById(userId, familyMemberId);
-		List<FamilyMemberProperties> propertiesList = repository.findAllByFamilyMember_Id(member.getId());
-		FamilyMemberProperties property = propertiesList.size() != 0 ? propertiesList.get(0)
-			: new FamilyMemberProperties(member, null);
+	public FamilyMemberProperties createOrUpdate(String familyMemberId, Map<String, String> properties) {
+		FamilyMember member = familyMemberService.findById(familyMemberId);
 
+		FamilyMemberProperties property = repository.findFirstByFamilyMember_Id(member.getId());
+		if (property == null) {
+			property = new FamilyMemberProperties(member, null);
+		}
 		property.setColor(properties.get("color"));
 		return repository.save(property);
 	}
@@ -36,5 +37,10 @@ public class FamilyMemberPropertiesServiceImpl implements FamilyMemberProperties
 	@Override
 	public Boolean delete(String familyMemberId) {
 		return repository.deleteByFamilyMember_Id(familyMemberId) != 0;
+	}
+
+	@Override
+	public FamilyMemberProperties findById(String propertiesId) {
+		return repository.findById(propertiesId).orElse(null);
 	}
 }

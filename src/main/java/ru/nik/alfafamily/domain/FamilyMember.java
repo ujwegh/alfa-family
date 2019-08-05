@@ -31,4 +31,15 @@ public class FamilyMember {
 		this.name = name;
 		this.user = user;
 	}
+
+	@Override
+	public String toString() {
+		return "FamilyMember{" +
+			"id='" + id + '\'' +
+			", name='" + name + '\'' +
+			", properties=" + properties +
+			", user=" + user.getId() +
+			", categories=" + categories.stream().toString() +
+			'}';
+	}
 }

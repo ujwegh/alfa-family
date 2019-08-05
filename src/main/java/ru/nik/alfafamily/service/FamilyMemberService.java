@@ -9,15 +9,15 @@ public interface FamilyMemberService {
 
 	FamilyMember create(String userId, String name);
 
-	FamilyMember update(String userId, String familyMemberId, String name);
+	FamilyMember update(String familyMemberId, String name);
 
-	Boolean delete(String userId, String familyMemberId);
+	Boolean delete(String familyMemberId);
 
-	FamilyMember findById(String userId, String familyMemberId);
+	FamilyMember findById(String familyMemberId);
 
-	FamilyMember updateCategories(String userId, String familyMemberId, List<String> categories);
+	FamilyMember updateCategories(String familyMemberId, List<String> categories);
 
-	FamilyMember updateProperties(String userId, String familyMemberId, String color);
+	FamilyMember updateProperties(String familyMemberId, String color);
 
 	Boolean isFamilyMemberExists(String familyMemberId);
 

@@ -1,6 +1,7 @@
 package ru.nik.alfafamily.domain;
 
 import java.util.List;
+import java.util.Set;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -16,9 +17,6 @@ public class Role {
 	private String id;
 
 	private String name;
-
-	@DBRef
-	private List<User> users;
 
 	public Role(String name) {
 		this.name = name;

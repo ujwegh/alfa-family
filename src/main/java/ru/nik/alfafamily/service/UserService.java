@@ -1,5 +1,6 @@
 package ru.nik.alfafamily.service;
 
+import java.util.List;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import ru.nik.alfafamily.domain.User;
 import ru.nik.alfafamily.dto.UserDto;
@@ -15,5 +16,11 @@ public interface UserService extends UserDetailsService {
 
 	User findById(String userId);
 
-	Boolean isUserExists(String userId);
+	Boolean isUserExistsById(String userId);
+
+	Boolean isUserExistsByEmail(String email);
+
+	List<User> findAll();
+
+	List<User> findAllByIdIn(List<String> ids);
 }

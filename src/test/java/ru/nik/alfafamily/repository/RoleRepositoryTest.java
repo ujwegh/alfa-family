@@ -2,6 +2,7 @@ package ru.nik.alfafamily.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,7 +52,7 @@ class RoleRepositoryTest {
 
 	@Test
 	void findAllByNameIn() {
-		List<Role> roles = repository.findAllByNameIn("ADMIN", "TEST");
+		List<Role> roles = repository.findAllByNameIn(Arrays.asList("ADMIN", "TEST"));
 		assertNotNull(roles);
 		assertEquals(2, roles.size());
 		assertEquals("ADMIN", roles.get(0).getName());
