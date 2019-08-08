@@ -33,12 +33,15 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
 
 	private final UserService userService;
 
+	private final Mapper mapper;
+
 	@Autowired
 	public FinancialOperationServiceImpl(FinancialOperationRepository repository,
-		FamilyMemberService familyMemberService, UserService userService) {
+		FamilyMemberService familyMemberService, UserService userService, Mapper mapper) {
 		this.repository = repository;
 		this.familyMemberService = familyMemberService;
 		this.userService = userService;
+		this.mapper = mapper;
 	}
 
 	@Override
@@ -125,8 +128,7 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
 	 */
 	@Override
 	public FinancialOperation create(FinancialOperationDto dto) {
-
-		FinancialOperation operation = Mapper.fromFinancialOperationDto(dto);
+		FinancialOperation operation = mapper.fromFinancialOperationDto(dto);
 
 		Date currentDate = removeTime(new Date());
 
@@ -137,7 +139,7 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
 
 	@Override
 	public FinancialOperation update(FinancialOperationDto dto) {
-		FinancialOperation operation = Mapper.fromFinancialOperationDto(dto);
+		FinancialOperation operation = mapper.fromFinancialOperationDto(dto);
 
 		Date currentDate = removeTime(new Date());
 		FinancialOperation oldOperation = findById(dto.getId());

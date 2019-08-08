@@ -41,9 +41,12 @@ class FamilyMemberPropertiesRepositoryTest {
 
 		FamilyMember member1 = new FamilyMember("test-1-familyMember", user);
 		FamilyMemberProperties properties = new FamilyMemberProperties(member1, "c04000");
-		template.save(member1);
+		FamilyMember savedMember = template.save(member1);
 		member1.setProperties(properties);
-		template.save(properties);
+		FamilyMemberProperties savedProps = template.save(properties);
+
+		savedMember.setProperties(savedProps);
+		template.save(savedMember);
 	}
 
 
@@ -54,5 +57,15 @@ class FamilyMemberPropertiesRepositoryTest {
 		int i = repository.deleteByFamilyMember_Id(members.get(0).getId());
 		assertEquals(1, i);
 		assertEquals(Collections.emptyList(), repository.findAll());
+	}
+
+	@Test
+	void findFirstByFamilyMember_Id() {
+		FamilyMember member = memberRepository.findAll().get(0);// получаем мембера
+		FamilyMemberProperties properties2 = repository.findFirstByFamilyMember_Id(member.getId());
+		// assertNotNull(properties2);
+
+		assertEquals(member.getProperties().getId(), properties2.getId());
+		assertEquals(member.getProperties().getColor(), properties2.getColor());
 	}
 }

@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.nik.alfafamily.domain.Category;
 import ru.nik.alfafamily.domain.FamilyMember;
 import ru.nik.alfafamily.domain.FamilyMemberProperties;
@@ -19,30 +21,29 @@ import ru.nik.alfafamily.service.UserService;
 @Component
 public class Mapper {
 
-	@Autowired
-	private FamilyMemberService fms;
+	private final UserService userService;
+
+	private final RoleRepository repository;
+
+	private final FamilyMemberService familyMemberService;
 
 	@Autowired
-	private UserService us;
-
-	@Autowired
-	private RoleRepository rep;
-
-	private static UserService userService;
-
-	private static RoleRepository repository;
-
-	private static FamilyMemberService familyMemberService;
-
-	@PostConstruct
-	public void initServices() {
-		Mapper.repository = rep;
-		Mapper.userService = us;
-		Mapper.familyMemberService = fms;
+	public Mapper(@Lazy UserService userService,@Lazy RoleRepository repository,
+		@Lazy FamilyMemberService familyMemberService) {
+		this.userService = userService;
+		this.repository = repository;
+		this.familyMemberService = familyMemberService;
 	}
 
+//	@Autowired
+//	public Mapper(FamilyMemberService fms, UserService us, RoleRepository rep) {
+//		this.fms = fms;
+//		this.us = us;
+//		this.rep = rep;
+//	}
 
-	public static FamilyMemberDto toFamilyMemberDto(FamilyMember familyMember) {
+
+	public FamilyMemberDto toFamilyMemberDto(FamilyMember familyMember) {
 		FamilyMemberDto dto = new FamilyMemberDto();
 		dto.setId(familyMember.getId());
 		dto.setName(familyMember.getName());
@@ -52,7 +53,7 @@ public class Mapper {
 		return dto;
 	}
 
-	public static FamilyMember fromFamilyMemberDto(FamilyMemberDto dto) {
+	public FamilyMember fromFamilyMemberDto(FamilyMemberDto dto) {
 		FamilyMember familyMember = new FamilyMember();
 		familyMember.setId(dto.getId());
 		familyMember.setName(dto.getName());
@@ -62,7 +63,7 @@ public class Mapper {
 		return familyMember;
 	}
 
-	public static CategoryDto toCategoryDto(Category category) {
+	public CategoryDto toCategoryDto(Category category) {
 		CategoryDto dto = new CategoryDto();
 		dto.setName(category.getName());
 		dto.setId(category.getId());
@@ -70,7 +71,7 @@ public class Mapper {
 		return dto;
 	}
 
-	public static Category fromCategoryDto(CategoryDto categoryDto) {
+	public Category fromCategoryDto(CategoryDto categoryDto) {
 		Category category = new Category();
 		category.setId(categoryDto.getId());
 		category.setName(categoryDto.getName());
@@ -78,7 +79,7 @@ public class Mapper {
 		return category;
 	}
 
-	public static FamilyMemberPropertiesDto toFamilyMemberPropertiesDto(FamilyMemberProperties properties) {
+	public FamilyMemberPropertiesDto toFamilyMemberPropertiesDto(FamilyMemberProperties properties) {
 		FamilyMemberPropertiesDto dto = new FamilyMemberPropertiesDto();
 		dto.setColor(properties.getColor());
 		dto.setFamilyMemberId(properties.getFamilyMember().getId());
@@ -86,7 +87,7 @@ public class Mapper {
 		return dto;
 	}
 
-	public static FamilyMemberProperties fromFamilyMemberPropertiesDto(FamilyMemberPropertiesDto dto) {
+	public FamilyMemberProperties fromFamilyMemberPropertiesDto(FamilyMemberPropertiesDto dto) {
 		FamilyMemberProperties properties = new FamilyMemberProperties();
 		properties.setColor(dto.getColor());
 		properties.setId(dto.getId());
@@ -94,7 +95,7 @@ public class Mapper {
 		return properties;
 	}
 
-	public static FinancialOperationDto toFinancialOperationDto(FinancialOperation operation) {
+	public FinancialOperationDto toFinancialOperationDto(FinancialOperation operation) {
 		FinancialOperationDto dto = new FinancialOperationDto();
 		dto.setId(operation.getId());
 		dto.setComment(operation.getComment());
@@ -110,7 +111,7 @@ public class Mapper {
 	}
 
 
-	public static FinancialOperation fromFinancialOperationDto(FinancialOperationDto dto) {
+	public FinancialOperation fromFinancialOperationDto(FinancialOperationDto dto) {
 		FinancialOperation operation = new FinancialOperation();
 		operation.setPlanned(dto.getPlanned());
 		operation.setCategory(fromCategoryDto(dto.getCategory()));
@@ -125,19 +126,19 @@ public class Mapper {
 		return operation;
 	}
 
-	public static UserDto toUserDto(User user) {
+	public UserDto toUserDto(User user) {
 		UserDto dto = new UserDto();
 		dto.setId(user.getId());
 		dto.setEmail(user.getEmail());
 		dto.setFirstName(user.getFirstName());
 		dto.setLastName(user.getLastName());
 		dto.setPassword(user.getPassword());
-		dto.setRoles(user.getRoles().stream().map(Mapper::toRoleDto).collect(Collectors.toList()));
+		dto.setRoles(user.getRoles().stream().map(this::toRoleDto).collect(Collectors.toList()));
 		dto.setEnabled(user.isEnabled());
 		return dto;
 	}
 
-	public static User fromUserDto(UserDto dto) {
+	public User fromUserDto(UserDto dto) {
 		User user = new User();
 		user.setId(dto.getId());
 		user.setFirstName(dto.getFirstName());
@@ -145,25 +146,25 @@ public class Mapper {
 		user.setEmail(dto.getEmail());
 		user.setPassword(dto.getPassword());
 		user.setEnabled(dto.isEnabled());
-		user.setRoles(dto.getRoles().stream().map(Mapper::fromRoleDto).collect(Collectors.toList()));
+		user.setRoles(dto.getRoles().stream().map(this::fromRoleDto).collect(Collectors.toList()));
 		return user;
 	}
 
-	public static RoleDto toRoleDto(Role role) {
+	public RoleDto toRoleDto(Role role) {
 		RoleDto dto = new RoleDto();
 		dto.setId(role.getId());
 		dto.setName(role.getName());
 		return dto;
 	}
 
-	public static Role fromRoleDto(RoleDto dto) {
+	public Role fromRoleDto(RoleDto dto) {
 		Role role = new Role();
 		role.setId(dto.getId());
 		role.setName(dto.getName());
 		return role;
 	}
 
-	public static List<RoleDto> toRoleDtoList(List<String> names) {
+	public List<RoleDto> toRoleDtoList(List<String> names) {
 
 		List<Role> roles = repository.findAllByNameIn(names);
 
@@ -176,18 +177,18 @@ public class Mapper {
 			}
 		});
 
-		return roles.stream().map(Mapper::toRoleDto).collect(Collectors.toList());
+		return roles.stream().map(this::toRoleDto).collect(Collectors.toList());
 	}
 
 
 
-	private static List<CategoryDto> toCategoryDtoList(List<Category> categories) {
-		return categories.stream().map(Mapper::toCategoryDto)
+	private List<CategoryDto> toCategoryDtoList(List<Category> categories) {
+		return categories.stream().map(this::toCategoryDto)
 			.collect(Collectors.toList());
 	}
 
-	private static List<Category> toCategoryList(List<CategoryDto> categories) {
-		return categories.stream().map(Mapper::fromCategoryDto)
+	private List<Category> toCategoryList(List<CategoryDto> categories) {
+		return categories.stream().map(this::fromCategoryDto)
 			.collect(Collectors.toList());
 	}
 

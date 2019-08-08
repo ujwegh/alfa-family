@@ -20,9 +20,12 @@ public class ShellUserController {
 
 	private final UserService service;
 
+	private final Mapper mapper;
+
 	@Autowired
-	public ShellUserController(UserService service) {
+	public ShellUserController(UserService service, Mapper mapper) {
 		this.service = service;
+		this.mapper = mapper;
 	}
 
 	@ShellMethod("Register new user")
@@ -49,7 +52,7 @@ public class ShellUserController {
 		User user = service.findByEmail(email);
 		List<String> roleList = Arrays.asList(roles.split(","));
 
-		UserDto dto = new UserDto(user.getId(), firstName, lastName, email, password, Mapper.toRoleDtoList(roleList),
+		UserDto dto = new UserDto(user.getId(), firstName, lastName, email, password, mapper.toRoleDtoList(roleList),
 			Boolean.valueOf(enabled));
 		return service.update(dto).toString();
 	}

@@ -28,15 +28,22 @@ import ru.nik.alfafamily.repository.UserRepository;
 @Service
 public class UserServiceImpl implements UserService {
 
-	@Autowired
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
+
+	private final RoleRepository roleRepository;
+
+	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+	private final Mapper mapper;
 
 	@Autowired
-	private RoleRepository roleRepository;
-
-	@Lazy
-	@Autowired
-	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
+		@Lazy BCryptPasswordEncoder bCryptPasswordEncoder, Mapper mapper) {
+		this.userRepository = userRepository;
+		this.roleRepository = roleRepository;
+		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+		this.mapper = mapper;
+	}
 
 	@Override
 	public User save(UserRegistrationDto registration) {
@@ -59,12 +66,13 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User update(UserDto userDto) {
 		User user = userRepository.findById(userDto.getId());
-		User newUser = Mapper.fromUserDto(userDto);
+		User newUser = mapper.fromUserDto(userDto);
 		newUser.setMembers(user.getMembers());
 
 		List<Role> allRoles = (List<Role>) user.getRoles();
 
-		List<Role> toSaveRoles = allRoles.stream().filter(role -> role.getId() == null).collect(Collectors.toList());
+		List<Role> toSaveRoles = allRoles.stream().filter(role -> role.getId() == null)
+			.collect(Collectors.toList());
 		List<Role> savedRoles = roleRepository.saveAll(toSaveRoles);
 		allRoles.forEach(role -> {
 			for (Role savedRole : savedRoles) {

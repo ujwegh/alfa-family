@@ -10,7 +10,6 @@ import org.springframework.shell.standard.ShellOption;
 import ru.nik.alfafamily.domain.FamilyMember;
 import ru.nik.alfafamily.domain.User;
 import ru.nik.alfafamily.dto.FamilyMemberDto;
-import ru.nik.alfafamily.dto.FamilyMemberMapper;
 import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.service.FamilyMemberService;
 import ru.nik.alfafamily.service.UserService;
@@ -23,11 +22,14 @@ public class ShellFamilyMemberController {
 
 	private final UserService userService;
 
+	private final Mapper mapper;
+
 	@Autowired
 	public ShellFamilyMemberController(FamilyMemberService service,
-		UserService userService) {
+		UserService userService, Mapper mapper) {
 		this.service = service;
 		this.userService = userService;
+		this.mapper = mapper;
 	}
 
 
@@ -38,7 +40,8 @@ public class ShellFamilyMemberController {
 		List<FamilyMemberDto> memberDtos = new ArrayList<>();
 		List<FamilyMember> list = service.findAll(user.getId());
 
-		list.forEach(familyMember -> memberDtos.add(Mapper.toFamilyMemberDto(familyMember)));
+
+		list.forEach(familyMember -> memberDtos.add(mapper.toFamilyMemberDto(familyMember)));
 		return String.valueOf(memberDtos);
 	}
 
@@ -46,7 +49,7 @@ public class ShellFamilyMemberController {
 	public String createmember(@ShellOption String email,@ShellOption String name) {
 		User user = userService.findByEmail(email);
 		System.out.println(user.getId());
-		FamilyMemberDto dto = Mapper.toFamilyMemberDto(service.create(user.getId(), name));
+		FamilyMemberDto dto = mapper.toFamilyMemberDto(service.create(user.getId(), name));
 		return "New family member has been created: " + dto.toString();
 	}
 
