@@ -33,4 +33,19 @@ public class FinancialOperationDto {
 
 	private Boolean planned;
 
+	@Override
+	public String toString() {
+		return "FinancialOperationDto{" +
+			"id='" + id + '\'' +
+			", date=" + date +
+			", type='" + type + '\'' +
+			", category=" + category.getName() +
+			", sum=" + sum +
+			", currency='" + currency + '\'' +
+			", accountNumber=" + accountNumber +
+			", description='" + description + '\'' +
+			", comment='" + comment + '\'' +
+			", planned=" + planned +
+			'}';
+	}
 }
