@@ -27,4 +27,14 @@ public class Budget {
 		this.outcome = budget.getOutcome();
 		this.user = budget.getUser();
 	}
+
+	@Override
+	public String toString() {
+		return "Budget{" +
+			"id='" + id + '\'' +
+			", income=" + income +
+			", outcome=" + outcome +
+			", user=" + user.getId() +
+			'}';
+	}
 }

@@ -83,7 +83,7 @@ public class ShellFinancialOperationController {
 			start = format.parse(startDate);
 			end = format.parse(endDate);
 		} catch (ParseException e) {
-			return "Wrong startDate or endDate format.";
+			return "Wrong startDate or endDate input format.";
 		}
 
 		List<FinancialOperation> operations = service
@@ -109,7 +109,7 @@ public class ShellFinancialOperationController {
 			start = format.parse(startDate);
 			end = format.parse(endDate);
 		} catch (ParseException e) {
-			return "Wrong startDate or endDate format.";
+			return "Wrong startDate or endDate input format.";
 		}
 
 		List<FinancialOperation> operations = service
@@ -134,7 +134,7 @@ public class ShellFinancialOperationController {
 		try {
 			start = format.parse(date);
 		} catch (ParseException e) {
-			return "Wrong startDate or endDate format.";
+			return "Wrong startDate or endDate input format.";
 		}
 		FinancialOperationDto dto = new FinancialOperationDto();
 		dto.setDate(start);
