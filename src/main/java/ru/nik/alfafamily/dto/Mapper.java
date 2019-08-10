@@ -35,14 +35,6 @@ public class Mapper {
 		this.familyMemberService = familyMemberService;
 	}
 
-//	@Autowired
-//	public Mapper(FamilyMemberService fms, UserService us, RoleRepository rep) {
-//		this.fms = fms;
-//		this.us = us;
-//		this.rep = rep;
-//	}
-
-
 	public FamilyMemberDto toFamilyMemberDto(FamilyMember familyMember) {
 		FamilyMemberDto dto = new FamilyMemberDto();
 		dto.setId(familyMember.getId());
