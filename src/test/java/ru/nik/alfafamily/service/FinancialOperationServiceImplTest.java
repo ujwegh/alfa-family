@@ -114,18 +114,7 @@ class FinancialOperationServiceImplTest {
 
 	@Test
 	void updateCSV() {
-		User user = userRepository.findAll().get(0);
-		FamilyMember familyMember = memberRepository.findAll().get(0);
-		Category category = categoryRepository.findAll().get(0);
-		FinancialOperation expected = new FinancialOperation(new Date(), "расход",
-			category, 999.99, "RUB", 1234567890L,
-			"оплата пошлины", "опять");
-
-		//FinancialOperation actual = service.createOrUpdate();
-//
-//		assertNotNull(actual);
-//		assertNotNull(actual.getCategory());
-//		assertEquals(expected.getDescription(), actual.getDescription());
+//		Not implemented yet
 	}
 
 	@Test

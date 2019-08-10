@@ -30,8 +30,4 @@ public class ShellBudgetController {
 
 		return null;
 	}
-
-	public static void main(String[] args) {
-	}
-
 }
