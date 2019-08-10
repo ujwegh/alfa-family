@@ -107,9 +107,10 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
         if (userService.isUserExistsById(userId)) {
 
             List<Category> categories = getUserCategories(userId);
-            List<String> categoryIds = categories.stream().map(Category::getId).collect(Collectors.toList());
 
-            return repository.findAllByCategory_IdInAndDateBetweenOrderByDateDesc(categoryIds, start, end);
+            List<FinancialOperation> operations = repository.findAllByCategoryInOrderByDateDesc(categories);
+
+            return Utilities.getByDateBetween(operations, start, end);
         } else return Collections.emptyList();
     }
 
@@ -118,9 +119,9 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
         if (userService.isUserExistsById(userId)) {
 
             List<Category> categories = getFamilyMemberCategories(userId, familyMemberId);
-            List<String> categoryIds = categories.stream().map(Category::getId).collect(Collectors.toList());
+            List<FinancialOperation> operations = repository.findAllByCategoryInOrderByDateDesc(categories);
 
-            return repository.findAllByCategory_IdInAndDateBetweenOrderByDateDesc(categoryIds, start, end);
+            return Utilities.getByDateBetween(operations, start, end);
         }
         return Collections.emptyList();
     }

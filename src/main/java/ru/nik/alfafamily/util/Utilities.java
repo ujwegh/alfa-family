@@ -9,6 +9,8 @@ import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import lombok.experimental.UtilityClass;
@@ -75,5 +77,20 @@ public class Utilities {
 			}
 		}
 		return budget;
+	}
+
+	public List<FinancialOperation> getByDateBetween(List<FinancialOperation> operations, Date start, Date end) {
+		List<FinancialOperation> result = new ArrayList<>();
+
+		operations.forEach(operation -> {
+			Date operationDate = operation.getDate();
+
+			if ((operationDate.after(start) || operationDate.equals(start)) &
+				(operationDate.before(end) || operationDate.equals(end))) {
+				result.add(operation);
+			}
+		});
+		result.sort(Comparator.comparing(FinancialOperation::getDate));
+		return result;
 	}
 }

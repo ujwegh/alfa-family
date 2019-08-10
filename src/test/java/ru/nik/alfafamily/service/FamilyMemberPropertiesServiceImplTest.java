@@ -2,6 +2,8 @@ package ru.nik.alfafamily.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,12 +15,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.shell.jline.InteractiveShellApplicationRunner;
 import org.springframework.shell.jline.ScriptShellApplicationRunner;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.nik.alfafamily.domain.*;
 import ru.nik.alfafamily.dto.Mapper;
-import ru.nik.alfafamily.repository.FamilyMemberPropertiesRepository;
 import ru.nik.alfafamily.repository.FamilyMemberRepository;
 import ru.nik.alfafamily.repository.UserRepository;
 
@@ -56,7 +56,9 @@ class FamilyMemberPropertiesServiceImplTest {
         template.save(user);
 
         FamilyMember member1 = new FamilyMember("test-1-familyMember", user);
+        FamilyMember member2 = new FamilyMember("test-2-familyMember", user);
         template.save(member1);
+        template.save(member2);
         FamilyMemberProperties familyMemberProperties = new FamilyMemberProperties(member1, "red");
 
         template.save(familyMemberProperties);
@@ -75,9 +77,35 @@ class FamilyMemberPropertiesServiceImplTest {
     }
 
     @Test
-    void createOrUpdate() {
-        //FamilyMemberProperties createOrUpdate(String familyMemberId, Map<String, String> properties)
-// хз как, содать и абдейтить?.. че?
+    void create() {
+        FamilyMember familyMember = memberRepository.findAll().get(1);
+        FamilyMemberProperties oldProperty = familyMember.getProperties();
+        assertNull(oldProperty);
+
+        Map<String, String> map = new HashMap<>();
+        map.put("color", "green");
+
+        FamilyMemberProperties actual = service.createOrUpdate(familyMember.getId(), map);
+
+        assertNotNull(actual);
+        assertEquals("green", actual.getColor());
+    }
+
+    @Test
+    void update() {
+        FamilyMember familyMember = memberRepository.findAll().get(0);
+        FamilyMemberProperties oldProperty = familyMember.getProperties();
+        FamilyMemberProperties expected = new FamilyMemberProperties(familyMember, "green");
+
+        Map<String, String> map = new HashMap<>();
+        map.put("color", "green");
+
+        FamilyMemberProperties actual = service.createOrUpdate(familyMember.getId(), map);
+
+        assertNotNull(actual);
+        assertEquals(expected.getFamilyMember().getId(), actual.getFamilyMember().getId());
+        assertEquals(expected.getColor(), actual.getColor());
+        assertNotEquals(oldProperty.getColor(), actual.getColor());
     }
 
     @Test

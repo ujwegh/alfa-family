@@ -1,5 +1,6 @@
 package ru.nik.alfafamily.service;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -122,12 +123,26 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findAllByIdIn(ids);
 	}
 
+	@HystrixCommand(fallbackMethod = "getDefaultUser")
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		User user = userRepository.findByEmail(email);
 		if (user == null) {
 			throw new UsernameNotFoundException("Invalid username or password.");
 		}
+		return new org.springframework.security.core.userdetails.User(user.getEmail(),
+			user.getPassword(),
+			mapRolesToAuthorities(user.getRoles()));
+	}
+
+	public UserDetails getDefaultUser(String email) {
+		User user = new User();
+		user.setEmail("user");
+		user.setFirstName("user");
+		user.setLastName("");
+		user.setPassword(bCryptPasswordEncoder.encode("password"));
+		user.setRoles(Collections.singletonList(new Role("ROLE_DEFAULT")));
+
 		return new org.springframework.security.core.userdetails.User(user.getEmail(),
 			user.getPassword(),
 			mapRolesToAuthorities(user.getRoles()));

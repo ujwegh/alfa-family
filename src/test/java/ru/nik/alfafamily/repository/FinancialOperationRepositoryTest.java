@@ -76,25 +76,6 @@ class FinancialOperationRepositoryTest {
         assertEquals(1, operations.size());
     }
 
-    //ПЕРЕДЕЛАТЬ ТЕСТ
-    @Test
-    void findAllByCategoryInAndDateBetweenOrderByDateDesc() {
-
-
-        List<Category> categories = categoryRepository.findAll();
-        List<String> categoryIds = categories.stream().map(Category::getId).collect(Collectors.toList());
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2019, 8, 8);
-        Date start = calendar.getTime();
-        calendar.set(2019, 8, 10);
-        Date end = calendar.getTime();
-
-        List<FinancialOperation> operations =
-                repository.findAllByCategory_IdInAndDateBetweenOrderByDateDesc(categoryIds, start, end);
-        assertEquals(1, operations.size());
-    }
-
     @Test
     void deleteAllByCategory_Member_Id() { //+
         Category category = categoryRepository.findAll().get(0);

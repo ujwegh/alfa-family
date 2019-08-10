@@ -42,7 +42,6 @@ import ru.nik.alfafamily.repository.UserRepository;
 @EnableAutoConfiguration
 @ContextConfiguration(classes = {CategoryServiceImpl.class, FamilyMemberServiceImpl.class,
 	UserServiceImpl.class, Mapper.class})
-//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class CategoryServiceImplTest {
 
 	@Autowired
@@ -129,10 +128,8 @@ class CategoryServiceImplTest {
 		Category category = categoryRepository.findAll().get(0);
 		List<Category> categories1 = service.findAll(category.getFamilyMember().getId());
 		List<Category> categories = new ArrayList<>();
-		for (Category c: categories1
-		) {
+		for (Category c: categories1) {
 			assertEquals(category.getFamilyMember().getId(), c.getFamilyMember().getId());
-
 		}
 		assertNotNull(categories1.size());
 	}

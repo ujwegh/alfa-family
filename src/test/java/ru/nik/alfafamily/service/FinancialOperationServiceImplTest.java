@@ -39,7 +39,7 @@ import ru.nik.alfafamily.repository.UserRepository;
 @EnableAutoConfiguration
 @ContextConfiguration(classes = {FinancialOperationServiceImpl.class,
 	UserServiceImpl.class, FamilyMemberServiceImpl.class, Mapper.class})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class FinancialOperationServiceImplTest {
 
 	@Autowired
@@ -53,8 +53,10 @@ class FinancialOperationServiceImplTest {
 
 	@Autowired
 	private Mapper mapper;
+
 	@Autowired
 	private UserRepository userRepository;
+
 	@Autowired
 	private FamilyMemberRepository memberRepository;
 
@@ -89,13 +91,29 @@ class FinancialOperationServiceImplTest {
 
 
 	@Test
-	void createOrUpdate() {
+	void createCSV() {
 		User user = userRepository.findAll().get(0);
-	//	FamilyMember familyMember = memberRepository.
+		FamilyMember familyMember = memberRepository.findAll().get(0);
 		Category category = categoryRepository.findAll().get(0);
 		FinancialOperation expected = new FinancialOperation(new Date(), "расход",
 				category, 999.99, "RUB", 1234567890L,
 				"оплата пошлины", "опять");
+
+		//FinancialOperation actual = service.createOrUpdate();
+//
+//		assertNotNull(actual);
+//		assertNotNull(actual.getCategory());
+//		assertEquals(expected.getDescription(), actual.getDescription());
+	}
+
+	@Test
+	void updateCSV() {
+		User user = userRepository.findAll().get(0);
+		FamilyMember familyMember = memberRepository.findAll().get(0);
+		Category category = categoryRepository.findAll().get(0);
+		FinancialOperation expected = new FinancialOperation(new Date(), "расход",
+			category, 999.99, "RUB", 1234567890L,
+			"оплата пошлины", "опять");
 
 		//FinancialOperation actual = service.createOrUpdate();
 //

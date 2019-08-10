@@ -12,7 +12,5 @@ public interface FinancialOperationRepository extends MongoRepository<FinancialO
 
 	int deleteAllByCategoryIn(List<Category> categories);
 
-	List<FinancialOperation> findAllByCategory_IdInAndDateBetweenOrderByDateDesc(List<String> categories, Date start, Date end);
-
 	boolean existsById(String operationId);
 }
