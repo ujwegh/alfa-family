@@ -22,6 +22,7 @@ import ru.nik.alfafamily.dto.FinancialOperationDto;
 import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.exceptions.FamilyMemberDoesNotExistsException;
 import ru.nik.alfafamily.exceptions.FinancialOperationException;
+import ru.nik.alfafamily.exceptions.ParseCsvException;
 import ru.nik.alfafamily.repository.FinancialOperationRepository;
 import ru.nik.alfafamily.util.Utilities;
 
@@ -78,11 +79,8 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
                 }));
                 return repository.saveAll(operations);
             }
-            // TODO разобраться с ексепшнами
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
+        } catch (IOException | ParseException e) {
+            throw new ParseCsvException("Parse csv file was failed.");
         }
         return Collections.emptyList();
     }

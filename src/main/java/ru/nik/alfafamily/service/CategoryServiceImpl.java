@@ -2,6 +2,7 @@ package ru.nik.alfafamily.service;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import ru.nik.alfafamily.domain.Category;
 import ru.nik.alfafamily.domain.FamilyMember;
@@ -13,11 +14,12 @@ public class CategoryServiceImpl implements CategoryService {
 
 	private final CategoryRepository repository;
 
+
 	private final FamilyMemberService familyMemberService;
 
 	@Autowired
 	public CategoryServiceImpl(CategoryRepository repository,
-		FamilyMemberService familyMemberService) {
+		@Lazy FamilyMemberService familyMemberService) {
 		this.repository = repository;
 		this.familyMemberService = familyMemberService;
 	}
@@ -54,7 +56,7 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public List<Category> findAll(String familyMemberId, List<String> names) {
+	public List<Category> findAllByNamesIn(String familyMemberId, List<String> names) {
 		return repository.findAllByFamilyMember_IdAndNameIn(familyMemberId, names);
 	}
 

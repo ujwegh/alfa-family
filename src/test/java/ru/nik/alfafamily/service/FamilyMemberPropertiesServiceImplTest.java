@@ -31,7 +31,8 @@ import java.util.Collections;
 })
 @EnableMongoRepositories(basePackages = {"ru.nik.alfafamily.repository"})
 @EnableAutoConfiguration
-@ContextConfiguration(classes = {FamilyMemberPropertiesServiceImpl.class, FamilyMemberServiceImpl.class, UserServiceImpl.class, Mapper.class})
+@ContextConfiguration(classes = {FamilyMemberPropertiesServiceImpl.class, FamilyMemberServiceImpl.class,
+	UserServiceImpl.class, Mapper.class, CategoryServiceImpl.class})
 //@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class FamilyMemberPropertiesServiceImplTest {
     @Autowired

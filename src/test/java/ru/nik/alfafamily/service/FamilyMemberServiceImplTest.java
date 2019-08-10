@@ -2,6 +2,7 @@ package ru.nik.alfafamily.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,12 +27,13 @@ import java.util.List;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(properties = {
-		InteractiveShellApplicationRunner.SPRING_SHELL_INTERACTIVE_ENABLED + "=false",
-		ScriptShellApplicationRunner.SPRING_SHELL_SCRIPT_ENABLED + "=false"
+	InteractiveShellApplicationRunner.SPRING_SHELL_INTERACTIVE_ENABLED + "=false",
+	ScriptShellApplicationRunner.SPRING_SHELL_SCRIPT_ENABLED + "=false"
 })
 @EnableMongoRepositories(basePackages = {"ru.nik.alfafamily.repository"})
 @EnableAutoConfiguration
-@ContextConfiguration(classes = {CategoryServiceImpl.class, FamilyMemberServiceImpl.class, UserServiceImpl.class, Mapper.class})
+@ContextConfiguration(classes = {CategoryServiceImpl.class, FamilyMemberServiceImpl.class,
+	UserServiceImpl.class, Mapper.class, FamilyMemberPropertiesServiceImpl.class})
 //@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class FamilyMemberServiceImplTest {
 
@@ -50,7 +52,7 @@ class FamilyMemberServiceImplTest {
 	@BeforeEach
 	public void init() {
 		User user = new User("firstName", "secondName",
-				"admin@mail.com", "password");
+			"admin@mail.com", "password");
 		Role role = new Role("USER");
 		template.save(role);
 		user.setRoles(Collections.singleton(role));
@@ -58,28 +60,33 @@ class FamilyMemberServiceImplTest {
 
 		FamilyMember member1 = new FamilyMember("test-1-familyMember", user);
 		template.save(member1);
-		FamilyMemberProperties familyMemberProperties = member1.getProperties();
+		FamilyMemberProperties familyMemberProperties = new FamilyMemberProperties(member1, "green");
+		template.save(familyMemberProperties);
+		member1.setProperties(familyMemberProperties);
+		template.save(member1);
 
 		Category category1 = new Category("бензин", member1);
 		Category category2 = new Category("продукты", member1);
 		template.save(category1);
 		template.save(category2);
 	}
+
 	@AfterEach
 	public void cleanup() {
 		template.getDb().drop();
 	}
 
 	@Test
-	void findAll() {//List<FamilyMember> findAll(String userId);
-		List<FamilyMember> list = familyMemberService.findAll(userRepository.findAll().get(0).getId());
+	void findAll() {
+		List<FamilyMember> list = familyMemberService
+			.findAll(userRepository.findAll().get(0).getId());
 		assertNotNull(list);
 		assertNotNull(list.get(0).getUser());
-		assertEquals(1,list.size());
+		assertEquals(1, list.size());
 	}
 
 	@Test
-	void create() {//	FamilyMember create(String userId, String name);
+	void create() {
 		User user = userRepository.findAll().get(0);
 		FamilyMember familyMember1 = familyMemberService.create(user.getId(), "Mama");
 		assertNotNull(familyMember1);
@@ -90,9 +97,9 @@ class FamilyMemberServiceImplTest {
 	}
 
 	@Test
-	void update() {//	FamilyMember update(String familyMemberId, String name);
+	void update() {
 		FamilyMember familyMember = memberRepository.findAll().get(0);
-		FamilyMember familyMember1 = familyMemberService.update(familyMember.getId(),"Mama");
+		FamilyMember familyMember1 = familyMemberService.update(familyMember.getId(), "Mama");
 		assertNotNull(familyMember1);
 		assertNotNull(familyMember1.getId());
 		assertNotNull(familyMember1.getUser());
@@ -102,15 +109,14 @@ class FamilyMemberServiceImplTest {
 	}
 
 	@Test
-	void delete() {//	Boolean delete(String familyMemberId);
+	void delete() {
 		FamilyMember familyMember = memberRepository.findAll().get(0);
 		boolean b = familyMemberService.delete(familyMember.getId());
-		assertNotNull(b);
 		assertTrue(b);
 	}
 
 	@Test
-	void findById() {//	FamilyMember findById(String familyMemberId);
+	void findById() {
 		FamilyMember familyMember = memberRepository.findAll().get(0);
 		FamilyMember familyMember1 = familyMemberService.findById(familyMember.getId());
 		assertNotNull(familyMember1);
@@ -120,39 +126,35 @@ class FamilyMemberServiceImplTest {
 		assertEquals(familyMember.getName(), familyMember1.getName());
 		assertEquals(familyMember1.getId(), familyMember.getId());
 	}
-//////ИСПРАВИТЬ ТЕСТЫ, МОЖЕТ ДАЖЕ ИХ МЕТОДЫ - НАПИСАНА ЛАЖА:
-//    @Test
-//    void updateCategories() {//	FamilyMember updateCategories(String familyMemberId, List<String> categories);
-//        FamilyMember familyMember = memberRepository.findAll().get(0);
-//        List<String> categories = new ArrayList<>();
-//        categories.add("Налоги");
-//        categories.add("Развлечения");
-//        FamilyMember familyMember1 = familyMemberService.updateCategories(familyMember.getId(),categories);
-//        assertNotNull(familyMember1);
-//        assertNotNull(familyMember1.getId());
-//        assertNotNull(familyMember1.getUser());
-//        assertNotNull(familyMember1.getName());
-//        assertEquals(familyMember1.getCategories().size(), 2);
-//    }
-//
-//    @Test
-//    void updateProperties() {//	FamilyMember updateProperties(String familyMemberId, String color);
-//        FamilyMember familyMember = memberRepository.findAll().get(0);
-//        List<String> categories = new ArrayList<>();
-//        categories.add("Еда");
-//        categories.add("Развлечения");
-//        FamilyMember familyMember1 = familyMemberService.updateCategories(familyMember.getId(),categories);
-//        assertNotNull(familyMember1);
-//        assertNotNull(familyMember1.getId());
-//        assertNotNull(familyMember1.getUser());
-//        assertNotNull(familyMember1.getName());
-//        assertEquals(familyMember1.getCategories().size(), 2);
-//        assertEquals(familyMember1.getCategories().get(0), "Еда");
-//        assertEquals(familyMember1.getCategories().get(1), "Развлечения");
-//    }
 
 	@Test
-	void isFamilyMemberExists() {//	Boolean isFamilyMemberExists(String familyMemberId);
+	void updateCategories() {
+		FamilyMember familyMember = memberRepository.findAll().get(0);
+		List<String> categories = new ArrayList<>();
+		categories.add("Налоги");
+		categories.add("Развлечения");
+		FamilyMember familyMember1 = familyMemberService
+			.updateCategories(familyMember.getId(), categories);
+		assertNotNull(familyMember1);
+		assertNotNull(familyMember1.getId());
+		assertNotNull(familyMember1.getUser());
+		assertNotNull(familyMember1.getName());
+		assertEquals(familyMember1.getCategories().size(), 2);
+	}
+
+	@Test
+	void updateProperties() {
+		FamilyMember familyMember = memberRepository.findAll().get(0);
+		assertNotNull(familyMember);
+
+		FamilyMember familyMember1 = familyMemberService.updateProperties(familyMember.getId(), "blue");
+		assertNotNull(familyMember1);
+		assertNotNull(familyMember1.getProperties());
+		assertEquals("blue", familyMember1.getProperties().getColor());
+	}
+
+	@Test
+	void isFamilyMemberExists() {
 		FamilyMember familyMember = memberRepository.findAll().get(0);
 		boolean b = familyMemberService.isFamilyMemberExists(familyMember.getId());
 		assertNotNull(b);

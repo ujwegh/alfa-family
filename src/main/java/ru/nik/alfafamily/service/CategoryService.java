@@ -15,7 +15,7 @@ public interface CategoryService {
 
 	List<Category> findAll(String familyMemberId);
 
-	List<Category> findAll(String familyMemberId, List<String> names);
+	List<Category> findAllByNamesIn(String familyMemberId, List<String> names);
 
 	Category findByName(String familyMemberId, String name);
 

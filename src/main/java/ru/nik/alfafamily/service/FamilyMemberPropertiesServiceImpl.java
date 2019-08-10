@@ -3,6 +3,7 @@ package ru.nik.alfafamily.service;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import ru.nik.alfafamily.domain.FamilyMember;
 import ru.nik.alfafamily.domain.FamilyMemberProperties;
@@ -11,16 +12,13 @@ import ru.nik.alfafamily.repository.FamilyMemberPropertiesRepository;
 @Service
 public class FamilyMemberPropertiesServiceImpl implements FamilyMemberPropertiesService {
 
-	private final FamilyMemberPropertiesRepository repository;
-
-	private final FamilyMemberService familyMemberService;
-
 	@Autowired
-	public FamilyMemberPropertiesServiceImpl(FamilyMemberPropertiesRepository repository,
-		FamilyMemberService familyMemberService) {
-		this.repository = repository;
-		this.familyMemberService = familyMemberService;
-	}
+	private FamilyMemberPropertiesRepository repository;
+
+	@Lazy
+	@Autowired
+	private FamilyMemberService familyMemberService;
+
 
 	@Override
 	public FamilyMemberProperties createOrUpdate(String familyMemberId, Map<String, String> properties) {

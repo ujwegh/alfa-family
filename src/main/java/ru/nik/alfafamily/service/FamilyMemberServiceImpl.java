@@ -84,7 +84,7 @@ public class FamilyMemberServiceImpl implements FamilyMemberService {
 	@Override
 	public FamilyMember updateCategories(String familyMemberId, List<String> categories) {
 		FamilyMember member = findById(familyMemberId);
-		List<Category> existedCategories = categoryService.findAll(familyMemberId, categories);
+		List<Category> existedCategories = categoryService.findAllByNamesIn(familyMemberId, categories);
 
 		Map<String, Category> categoryMap = new HashMap<>();
 		categories.forEach(newCategoryName -> categoryMap.put(newCategoryName, new Category(newCategoryName, null)));
@@ -106,7 +106,7 @@ public class FamilyMemberServiceImpl implements FamilyMemberService {
 
 		categoryService.bulkCreate(newCategories);
 
-		member.setCategories((List<Category>) categoryMap.values());
+		member.setCategories(new ArrayList<>(categoryMap.values()));
 		return member;
 	}
 

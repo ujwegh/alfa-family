@@ -43,7 +43,8 @@ import ru.nik.alfafamily.util.Utilities;
 @EnableMongoRepositories(basePackages = {"ru.nik.alfafamily.repository"})
 @EnableAutoConfiguration
 @ContextConfiguration(classes = {FinancialOperationServiceImpl.class,
-	UserServiceImpl.class, FamilyMemberServiceImpl.class, Mapper.class})
+	UserServiceImpl.class, FamilyMemberServiceImpl.class, Mapper.class, CategoryServiceImpl.class,
+	FamilyMemberPropertiesServiceImpl.class})
 //@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class FinancialOperationServiceImplTest {
 
@@ -102,16 +103,13 @@ class FinancialOperationServiceImplTest {
 		File file = new ClassPathResource("Budget_2019-07-01-2019-07-31.csv").getFile();
 
 		List<FinancialOperation> operations = service
-			.createOrUpdate(user.getId(), familyMember.getId(),
-				Utilities.convertToMultipartFile(file));
+			.createOrUpdate(user.getId(), familyMember.getId(), Utilities.convertToMultipartFile(file));
+
+		operations.forEach(operation -> System.out.println(operation.toString() + "\n"));
 
 		assertNotNull(operations);
 		assertTrue(operations.size()>0);
-		//FinancialOperation actual = service.createOrUpdate();
-//
-//		assertNotNull(actual);
-//		assertNotNull(actual.getCategory());
-//		assertEquals(expected.getDescription(), actual.getDescription());
+
 	}
 
 	@Test

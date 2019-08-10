@@ -131,17 +131,17 @@ class CategoryServiceImplTest {
 		for (Category c: categories1) {
 			assertEquals(category.getFamilyMember().getId(), c.getFamilyMember().getId());
 		}
-		assertNotNull(categories1.size());
+		assertTrue(categories1.size() > 0);
 	}
 
 	@Test
-	void findAll1() {
+	void findAllByNamesIn() {
 		Category category = categoryRepository.findAll().get(0);
 		List<String> names = new ArrayList<>();
 		names.add("бензин");
 		names.add("продукты");
-		List<Category> categories = service.findAll(category.getFamilyMember().getId(),names);
-		assertNotNull(categories.size());
+		List<Category> categories = service.findAllByNamesIn(category.getFamilyMember().getId(),names);
+		assertTrue(categories.size() > 0);
 		assertEquals(2, categories.size());
 
 	}
