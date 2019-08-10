@@ -110,7 +110,6 @@ public class ShellFamilyMemberController {
 	public String deletemember(@ShellOption String familyMemberId) {
 		boolean b = service.delete(familyMemberId);
 		return b ? "Family member deleted." : "Delete family member failed.";
-
 	}
 
 }
