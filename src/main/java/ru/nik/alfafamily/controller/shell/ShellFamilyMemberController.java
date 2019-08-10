@@ -1,6 +1,7 @@
 package ru.nik.alfafamily.controller.shell;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +43,7 @@ public class ShellFamilyMemberController {
 		List<FamilyMemberDto> memberDtos = list.stream()
 			.map(mapper::toFamilyMemberDto)
 			.collect(Collectors.toList());
-		return "Family members for user: " + email+ "\n" + memberDtos.toString();
+		return "Family members for user: " + email + "\n" + memberDtos.toString();
 	}
 
 	@ShellMethod("Create family familyMember")
@@ -57,39 +58,59 @@ public class ShellFamilyMemberController {
 	@ShellMethod("Get family member by id")
 	public String member(@ShellOption String familyMemberId) {
 		FamilyMember member = service.findById(familyMemberId);
-		if (member == null) return "Family member with id: <" + familyMemberId +"> doesn't exist.";
+		if (member == null) {
+			return "Family member with id: <" + familyMemberId + "> doesn't exist.";
+		}
 		FamilyMemberDto dto = mapper.toFamilyMemberDto(member);
 		return dto.toString();
 	}
 
-//	@ShellMethod("")
-//	public String sss(@ShellOption String email, @ShellOption String name) {
-//
-//	}
-//
-//	@ShellMethod("")
-//	public String sss(@ShellOption String email, @ShellOption String name) {
-//
-//	}
-//
-//	@ShellMethod("")
-//	public String sss(@ShellOption String email, @ShellOption String name) {
-//
-//	}
-//
-//	@ShellMethod("")
-//	public String sss(@ShellOption String email, @ShellOption String name) {
-//
-//	}
-//
-//	@ShellMethod("")
-//	public String sss(@ShellOption String email, @ShellOption String name) {
-//
-//	}
-//
-//	@ShellMethod("")
-//	public String sss(@ShellOption String email, @ShellOption String name) {
-//
-//	}
+	@ShellMethod("Update family member")
+	public String updatemember(@ShellOption String familyMemberId, @ShellOption String name) {
+		FamilyMember member = service.update(familyMemberId, name);
+		if (member == null) {
+			return "Update family member was failed.";
+		}
+		FamilyMemberDto dto = mapper.toFamilyMemberDto(member);
+		return dto.toString();
+	}
+
+	@ShellMethod("Check is family member exists")
+	public String ismemberexist(@ShellOption String familyMemberId) {
+		return service.isFamilyMemberExists(familyMemberId).toString();
+	}
+
+	@ShellMethod("Update family member categories")
+	public String updatemembercategories(@ShellOption String familyMemberId,
+		@ShellOption String categories) {
+		List<String> categoryList;
+		if (categories.contains(",")) {
+			categoryList = Arrays.asList(categories.split(","));
+		} else {
+			categoryList = Collections.singletonList(categories);
+		}
+
+		FamilyMember member = service.updateCategories(familyMemberId, categoryList);
+		FamilyMemberDto dto = mapper.toFamilyMemberDto(member);
+		return dto.toString();
+	}
+
+	@ShellMethod("Update family member properties")
+	public String updatememberproperties(@ShellOption String familyMemberId,
+		@ShellOption String color) {
+		FamilyMember member = service.updateProperties(familyMemberId, color);
+		if (member == null) {
+			return "Update family member was failed.";
+		}
+		FamilyMemberDto dto = mapper.toFamilyMemberDto(member);
+		return dto.toString();
+	}
+
+	@ShellMethod("Delete family member")
+	public String deletemember(@ShellOption String familyMemberId) {
+		boolean b = service.delete(familyMemberId);
+		return b ? "Family member deleted." : "Delete family member failed.";
+
+	}
 
 }
