@@ -47,8 +47,7 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
     }
 
     @Override
-    public List<FinancialOperation> createOrUpdate(String userId, String familyMemberId,
-                                                   MultipartFile file) {
+    public List<FinancialOperation> createOrUpdate(String userId, String familyMemberId, MultipartFile file) {
         if (!familyMemberService.isFamilyMemberExists(familyMemberId)) {
             throw new FamilyMemberDoesNotExistsException(
                     "Family familyMember with id " + familyMemberId + " doesn't exists.");
@@ -57,6 +56,7 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
         log.info("Parsing file: {} ..", file.getOriginalFilename());
         try {
             List<FinancialOperation> operations = Utilities.parseCsv(file);
+
             log.info("Parsing complete.");
             if (operations.size() > 0) {
 
@@ -137,7 +137,7 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
     public FinancialOperation create(FinancialOperationDto dto) {
         FinancialOperation operation = mapper.fromFinancialOperationDto(dto);
 
-        Date currentDate = removeTime(new Date());
+        Date currentDate = Utilities.removeTime(new Date());
 
         if (operation.getDate().after(new Date(currentDate.getTime() - 1000))) {
             return repository.save(operation);
@@ -148,7 +148,7 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
     public FinancialOperation update(FinancialOperationDto dto) {
         FinancialOperation operation = mapper.fromFinancialOperationDto(dto);
 
-        Date currentDate = removeTime(new Date());
+        Date currentDate = Utilities.removeTime(new Date());
         FinancialOperation oldOperation = findById(dto.getId());
 
         if (oldOperation.isPlanned() && !operation.getDate()
@@ -191,14 +191,5 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
         return null;
     }
 
-    private Date removeTime(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        try {
-            date = sdf.parse(sdf.format(date));
-            return date;
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return date;
-    }
+
 }

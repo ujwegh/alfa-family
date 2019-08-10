@@ -2,8 +2,11 @@ package ru.nik.alfafamily.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.shell.jline.InteractiveShellApplicationRunner;
@@ -29,6 +33,7 @@ import ru.nik.alfafamily.repository.CategoryRepository;
 import ru.nik.alfafamily.repository.FamilyMemberRepository;
 import ru.nik.alfafamily.repository.FinancialOperationRepository;
 import ru.nik.alfafamily.repository.UserRepository;
+import ru.nik.alfafamily.util.Utilities;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(properties = {
@@ -91,14 +96,17 @@ class FinancialOperationServiceImplTest {
 
 
 	@Test
-	void createCSV() {
+	void createCSV() throws IOException {
 		User user = userRepository.findAll().get(0);
 		FamilyMember familyMember = memberRepository.findAll().get(0);
-		Category category = categoryRepository.findAll().get(0);
-		FinancialOperation expected = new FinancialOperation(new Date(), "расход",
-				category, 999.99, "RUB", 1234567890L,
-				"оплата пошлины", "опять");
+		File file = new ClassPathResource("Budget_2019-07-01-2019-07-31.csv").getFile();
 
+		List<FinancialOperation> operations = service
+			.createOrUpdate(user.getId(), familyMember.getId(),
+				Utilities.convertToMultipartFile(file));
+
+		assertNotNull(operations);
+		assertTrue(operations.size()>0);
 		//FinancialOperation actual = service.createOrUpdate();
 //
 //		assertNotNull(actual);
@@ -160,8 +168,8 @@ class FinancialOperationServiceImplTest {
 	void update() {
 		Category category = categoryRepository.findAll().get(0);
 		FinancialOperation expected0 = new FinancialOperation(new Date(), "расход",
-					category, 999.99, "RUB", 1234567890L,
-					"оплата пошлины", "опять");
+			category, 999.99, "RUB", 1234567890L,
+			"оплата пошлины", "опять");
 
 		FinancialOperation expected = service.create(mapper.toFinancialOperationDto(expected0));
 		FinancialOperation actual = service.update(mapper.toFinancialOperationDto(expected));
@@ -174,21 +182,21 @@ class FinancialOperationServiceImplTest {
 	void delete() {
 		Category category = categoryRepository.findAll().get(0);
 		FinancialOperation expected0 = new FinancialOperation(new Date(), "расход",
-				category, 999.99, "RUB", 1234567890L,
-				"оплата пошлины", "опять");
+			category, 999.99, "RUB", 1234567890L,
+			"оплата пошлины", "опять");
 
 		FinancialOperation expected = service.create(mapper.toFinancialOperationDto(expected0));
 		boolean b = service.delete(expected.getId());
 		assertNotNull(b);
-	    assertTrue(b);
+		assertTrue(b);
 	}
 
 	@Test
 	void findById() {
 		Category category = categoryRepository.findAll().get(0);
 		FinancialOperation expected0 = new FinancialOperation(new Date(), "расход",
-				category, 999.99, "RUB", 1234567890L,
-				"оплата пошлины", "опять");
+			category, 999.99, "RUB", 1234567890L,
+			"оплата пошлины", "опять");
 
 		FinancialOperation expected = service.create(mapper.toFinancialOperationDto(expected0));
 		FinancialOperation actual = service.findById(expected.getId());

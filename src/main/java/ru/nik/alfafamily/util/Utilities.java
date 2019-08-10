@@ -6,16 +6,18 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.io.FileUtils;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import ru.nik.alfafamily.domain.Budget;
 import ru.nik.alfafamily.domain.Category;
@@ -29,7 +31,7 @@ public class Utilities {
 
 		List<FinancialOperation> operations = new ArrayList<>();
 
-		Reader in = new FileReader(convert(file), Charset.forName("windows-1251"));
+		Reader in = new FileReader(convertToFile(file), Charset.forName("windows-1251"));
 		Iterable<CSVRecord> records = CSVFormat.TDF.withHeader().withSkipHeaderRecord(true)
 			.parse(in);
 
@@ -52,17 +54,40 @@ public class Utilities {
 		return operations;
 	}
 
-	private File convert(MultipartFile file) throws IOException {
-		File convFile = null;
-		if (file != null) {
-			convFile = new File(file.getOriginalFilename());
-			convFile.createNewFile();
-			FileOutputStream fos = new FileOutputStream(convFile);
-			fos.write(file.getBytes());
-			fos.close();
+	public File convertToFile(MultipartFile file) throws IOException {
+//		File convFile = null;
+//
+//		if (file != null) {
+//			convFile = new File(file.getOriginalFilename());
+////			convFile.createNewFile();
+//			FileOutputStream fos = new FileOutputStream(convFile);
+//			fos.write(file.getBytes());
+//			fos.close();
+//		}
+//		return convFile;
+
+		File tempFile = File.createTempFile("tmp", ".tmp");
+		try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+			fos.write( file.getBytes());
 		}
-		return convFile;
+		return tempFile;
+//		File result = FileUtils.writeByteArrayToFile(new File(file.getName()), file.getBytes());
+
+//		File convFile = new File(System.getProperty("java.io.tmpdir")+"/"+file.getOriginalFilename());
+//		file.transferTo(convFile);
+//		return convFile;
 	}
+
+	public MultipartFile convertToMultipartFile(File file) throws IOException {
+		String name = file.getName();
+		byte[] content = null;
+
+		content = Files.readAllBytes(file.toPath());
+
+		return new MockMultipartFile(name, content);
+	}
+
+
 
 	public Budget countBudget(List<FinancialOperation> operations) {
 		Budget budget = new Budget();
@@ -92,5 +117,16 @@ public class Utilities {
 		});
 		result.sort(Comparator.comparing(FinancialOperation::getDate));
 		return result;
+	}
+
+	public Date removeTime(Date date) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		try {
+			date = sdf.parse(sdf.format(date));
+			return date;
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return date;
 	}
 }

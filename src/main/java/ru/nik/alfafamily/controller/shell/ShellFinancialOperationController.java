@@ -15,6 +15,7 @@ import ru.nik.alfafamily.dto.FinancialOperationDto;
 import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.service.FinancialOperationService;
 import org.springframework.mock.web.MockMultipartFile;
+import ru.nik.alfafamily.util.Utilities;
 
 @Slf4j
 @ShellComponent
@@ -35,13 +36,12 @@ public class ShellFinancialOperationController {
 	public String updateOperations(String userId, String memberId, String pathToFile) {
 
 		File file = new File(pathToFile);
-		String name = file.getName();
-		byte[] content = null;
+
+		MultipartFile result = null;
 		try {
-			content = Files.readAllBytes(file.toPath());
-		} catch (final IOException e) {
+			result = Utilities.convertToMultipartFile(file);
+		} catch (IOException e) {
 		}
-		MultipartFile result = new MockMultipartFile(name, content);
 
 		List<FinancialOperation> operationList = service.createOrUpdate(userId, memberId, result);
 		List<FinancialOperationDto> dtos = operationList.stream()

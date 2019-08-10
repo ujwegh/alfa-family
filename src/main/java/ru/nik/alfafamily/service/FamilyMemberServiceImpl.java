@@ -26,8 +26,8 @@ public class FamilyMemberServiceImpl implements FamilyMemberService {
 
 	@Autowired
 	public FamilyMemberServiceImpl(FamilyMemberRepository repository, UserService service,
-		@Lazy CategoryService categoryService,
-		@Lazy FamilyMemberPropertiesService propertiesService) {
+		CategoryService categoryService,
+		FamilyMemberPropertiesService propertiesService) {
 		this.repository = repository;
 		this.userService = service;
 		this.categoryService = categoryService;
