@@ -2,6 +2,7 @@ package ru.nik.alfafamily.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -13,6 +14,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.shell.jline.InteractiveShellApplicationRunner;
 import org.springframework.shell.jline.ScriptShellApplicationRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -22,6 +24,8 @@ import ru.nik.alfafamily.domain.FamilyMember;
 import ru.nik.alfafamily.domain.Role;
 import ru.nik.alfafamily.domain.User;
 import ru.nik.alfafamily.dto.Mapper;
+import ru.nik.alfafamily.dto.UserDto;
+import ru.nik.alfafamily.dto.UserRegistrationDto;
 import ru.nik.alfafamily.repository.FamilyMemberRepository;
 import ru.nik.alfafamily.repository.UserRepository;
 
@@ -33,7 +37,8 @@ import ru.nik.alfafamily.repository.UserRepository;
 @EnableMongoRepositories(basePackages = {"ru.nik.alfafamily.repository"})
 @EnableAutoConfiguration
 @ContextConfiguration(classes = {CategoryServiceImpl.class, FamilyMemberServiceImpl.class,
-	UserServiceImpl.class, Mapper.class, FamilyMemberPropertiesServiceImpl.class})
+	UserServiceImpl.class, Mapper.class, FamilyMemberPropertiesServiceImpl.class,
+	BCryptPasswordEncoder.class})
 class UserServiceImplTest {
 
 	@Autowired
@@ -43,13 +48,10 @@ class UserServiceImplTest {
 	private MongoTemplate template;
 
 	@Autowired
-	private FamilyMemberPropertiesService familyMemberPropertiesService;
-
-	@Autowired
-	private FamilyMemberRepository memberRepository;
-
-	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private Mapper mapper;
 
 	@BeforeEach
 	public void init() {
@@ -76,59 +78,84 @@ class UserServiceImplTest {
 
 
 	@Test
-	void save() {//    User save(UserRegistrationDto registration);
-		User user = new User("firstName1", "secondName1",
-			"admin@mail.com1", "password1");
-		//
-		// User user1 =
-
+	void save() {
+		UserRegistrationDto userRegistrationDto = new UserRegistrationDto();
+		userRegistrationDto.setEmail("user@mail.ru");
+		userRegistrationDto.setFirstName("usr1");
+		userRegistrationDto.setLastName("user1");
+		userRegistrationDto.setPassword("11user");
+		User actual = userService.save(userRegistrationDto);
+		assertNotNull(actual);
+		assertEquals("user@mail.ru", actual.getEmail());
+		assertEquals("usr1", actual.getFirstName());
+		assertEquals("user1", actual.getLastName());
+//		assertEquals(userRegistrationDto.getPassword(), user1.getPassword());
 	}
 
 	@Test
-	void update() {//    User update(UserDto userDto);
-
-	}
-
-	@Test
-	void findByEmail() {//    User findByEmail(String email);
-
-	}
-
-	@Test
-	void findById() {//    User findById(String userId);
-
-	}
-
-	@Test
-	void isUserExistsById() {//    Boolean isUserExistsById(String userId);
-
-	}
-
-	@Test
-	void isUserExistsByEmail() {//    Boolean isUserExistsByEmail(String email);
-
-	}
-
-	@Test
-	void findAll() {//    List<User> findAll();
-//  Category category = categoryRepository.findAll().get(0);
-//    List<Category> categories1 = service.findAll(category.getFamilyMember().getId());
-//    List<Category> categories = new ArrayList<>();
-//    for (Category c: categories1) {
-//      assertEquals(category.getFamilyMember().getId(), c.getFamilyMember().getId());
-//    }
-//    assertTrue(categories1.size() > 0);
+	void update() {
 		User user = repository.findAll().get(0);
-		List<User> users = userService.findAll();
-		// List<User> users1 = new ArrayList<>();
-		for (User u: users) {
-			assertEquals(user.getId(), u.getId());
-		}
-		assertTrue(users.size()>0);
+		UserDto expected = mapper.toUserDto(user);
+		expected.setLastName("halo");
+		expected.setFirstName("halo");
+		User actual = userService.update(expected);
+		assertNotNull(actual);
+		assertNotNull(actual.getEmail());
+		assertNotNull(actual.getId());
+		assertEquals(expected.getId(), actual.getId());
+		assertEquals(expected.getEmail(), actual.getEmail());
+		assertEquals(expected.getFirstName(), actual.getFirstName());
 	}
 
 	@Test
-	void findAllByIdIn() {//    List<User> findAllByIdIn(List<String> ids);
+	void findByEmail() {
+		User expected = repository.findAll().get(0);
+		User actual = userService.findByEmail(expected.getEmail());
+		assertNotNull(actual);
+		assertEquals(expected.getId(), actual.getId());
+		assertEquals(expected.getEmail(), actual.getEmail());
+		assertEquals(expected.getFirstName(), actual.getFirstName());
+	}
 
+	@Test
+	void findById() {
+		User expected = repository.findAll().get(0);
+		User actual = userService.findById(expected.getId());
+		assertNotNull(actual);
+		assertEquals(expected.getId(), actual.getId());
+		assertEquals(expected.getEmail(), actual.getEmail());
+		assertEquals(expected.getFirstName(), actual.getFirstName());
+	}
+
+	@Test
+	void isUserExistsById() {
+		User expected = repository.findAll().get(0);
+		Boolean b = userService.isUserExistsById(expected.getId());
+		assertTrue(b);
+	}
+
+	@Test
+	void isUserExistsByEmail() {
+		User user = repository.findAll().get(0);
+		Boolean b = userService.isUserExistsByEmail(user.getEmail());
+		assertTrue(b);
+	}
+
+	@Test
+	void findAll() {
+		User expected = repository.findAll().get(0);
+		List<User> actual = userService.findAll();
+		actual.forEach(u -> assertEquals(expected.getId(), u.getId()));
+		assertTrue(actual.size() > 0);
+	}
+
+	@Test
+	void findAllByIdIn() {
+		User user = repository.findAll().get(0);
+		List<String> list = new ArrayList<>();
+		list.add(user.getId());
+		List<User> users = userService.findAllByIdIn(list);
+		users.forEach(u -> assertEquals(user.getId(), u.getId()));
+		assertEquals(1,list.size());
 	}
 }
