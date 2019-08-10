@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,171 +29,175 @@ import ru.nik.alfafamily.util.Utilities;
 @Slf4j
 public class FinancialOperationServiceImpl implements FinancialOperationService {
 
-	private final FinancialOperationRepository repository;
+    private final FinancialOperationRepository repository;
 
-	private final FamilyMemberService familyMemberService;
+    private final FamilyMemberService familyMemberService;
 
-	private final UserService userService;
+    private final UserService userService;
 
-	private final Mapper mapper;
+    private final Mapper mapper;
 
-	@Autowired
-	public FinancialOperationServiceImpl(FinancialOperationRepository repository,
-		FamilyMemberService familyMemberService, UserService userService, Mapper mapper) {
-		this.repository = repository;
-		this.familyMemberService = familyMemberService;
-		this.userService = userService;
-		this.mapper = mapper;
-	}
+    @Autowired
+    public FinancialOperationServiceImpl(FinancialOperationRepository repository,
+                                         FamilyMemberService familyMemberService, UserService userService, Mapper mapper) {
+        this.repository = repository;
+        this.familyMemberService = familyMemberService;
+        this.userService = userService;
+        this.mapper = mapper;
+    }
 
-	@Override
-	public List<FinancialOperation> createOrUpdate(String userId, String familyMemberId,
-		MultipartFile file) {
-		if (!familyMemberService.isFamilyMemberExists(familyMemberId)) {
-			throw new FamilyMemberDoesNotExistsException(
-				"Family familyMember with id " + familyMemberId + " doesn't exists.");
-		}
+    @Override
+    public List<FinancialOperation> createOrUpdate(String userId, String familyMemberId,
+                                                   MultipartFile file) {
+        if (!familyMemberService.isFamilyMemberExists(familyMemberId)) {
+            throw new FamilyMemberDoesNotExistsException(
+                    "Family familyMember with id " + familyMemberId + " doesn't exists.");
+        }
 
-		log.info("Parsing file: {} ..", file.getOriginalFilename());
-		try {
-			List<FinancialOperation> operations = Utilities.parseCsv(file);
-			log.info("Parsing complete.");
-			if (operations.size() > 0) {
+        log.info("Parsing file: {} ..", file.getOriginalFilename());
+        try {
+            List<FinancialOperation> operations = Utilities.parseCsv(file);
+            log.info("Parsing complete.");
+            if (operations.size() > 0) {
 
-				Map<String, Category> categoryMap = new HashMap<>();
-				List<String> categoryList = new ArrayList<>();
+                Map<String, Category> categoryMap = new HashMap<>();
+                List<String> categoryList = new ArrayList<>();
 
-				operations.forEach(o -> categoryMap.put(o.getCategory().getName(),
-					new Category(o.getCategory().getName(), null)));
+                operations.forEach(o -> categoryMap.put(o.getCategory().getName(),
+                        new Category(o.getCategory().getName(), null)));
 
-				categoryMap.values().forEach(category -> categoryList.add(category.getName()));
+                categoryMap.values().forEach(category -> categoryList.add(category.getName()));
 
-				FamilyMember member = familyMemberService
-					.updateCategories(familyMemberId, categoryList);
+                FamilyMember member = familyMemberService
+                        .updateCategories(familyMemberId, categoryList);
 
-				operations.forEach(operation -> member.getCategories().forEach(m -> {
-					if (operation.getCategory().getName().equals(m.getName())) {
-						operation.setCategory(m);
-					}
-				}));
-				return repository.saveAll(operations);
-			}
-			// TODO разобраться с ексепшнами
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return Collections.emptyList();
-	}
+                operations.forEach(operation -> member.getCategories().forEach(m -> {
+                    if (operation.getCategory().getName().equals(m.getName())) {
+                        operation.setCategory(m);
+                    }
+                }));
+                return repository.saveAll(operations);
+            }
+            // TODO разобраться с ексепшнами
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return Collections.emptyList();
+    }
 
-	@Override
-	public List<FinancialOperation> findAllForUser(String userId) {
-		return userService.isUserExistsById(userId) ? repository
-			.findAllByCategoryInOrderByDateDesc(getUserCategories(userId))
-			: Collections.emptyList();
-	}
+    @Override
+    public List<FinancialOperation> findAllForUser(String userId) {
+        return userService.isUserExistsById(userId) ? repository
+                .findAllByCategoryInOrderByDateDesc(getUserCategories(userId))
+                : Collections.emptyList();
+    }
 
-	@Override
-	public Boolean deleteAllForFamilyMember(String userId, String familyMemberId) {
-		if (!userService.isUserExistsById(userId)) {
-			return repository.deleteAllByCategoryIn(getFamilyMemberCategories(userId, familyMemberId)) != 0;
-		}
-		return false;
-	}
+    @Override
+    public Boolean deleteAllForFamilyMember(String userId, String familyMemberId) {
+        if (!userService.isUserExistsById(userId)) {
+            return repository.deleteAllByCategoryIn(getFamilyMemberCategories(userId, familyMemberId)) != 0;
+        }
+        return false;
+    }
 
-	@Override
-	public List<FinancialOperation> findAllForUserBetweenDates(String userId, Date start,
-		Date end) {
-		return userService.isUserExistsById(userId) ? repository
-			.findAllByCategoryInAndDateBetweenOrderByDateDesc(getUserCategories(userId), start, end)
-			: Collections.emptyList();
-	}
+    @Override
+    public List<FinancialOperation> findAllForUserBetweenDates(String userId, Date start, Date end) {
+        if (userService.isUserExistsById(userId)) {
 
-	@Override
-	public List<FinancialOperation> findAllForFamilyMemberBetweenDates(String userId,
-		String familyMemberId,
-		Date start, Date end) {
-		if (userService.isUserExistsById(userId)) {
-			return repository.findAllByCategoryInAndDateBetweenOrderByDateDesc(
-				getFamilyMemberCategories(userId, familyMemberId), start, end);
-		}
-		return Collections.emptyList();
-	}
+            List<Category> categories = getUserCategories(userId);
+            List<String> categoryIds = categories.stream().map(Category::getId).collect(Collectors.toList());
 
-	/**
-	 * Create financial operation "by hands".
-	 * Creation is possible only today or later.
-	 *
-	 * @param dto
-	 * @return FinancialOperation entity
-	 */
-	@Override
-	public FinancialOperation create(FinancialOperationDto dto) {
-		FinancialOperation operation = mapper.fromFinancialOperationDto(dto);
+            return repository.findAllByCategory_IdInAndDateBetweenOrderByDateDesc(categoryIds, start, end);
+        } else return Collections.emptyList();
+    }
 
-		Date currentDate = removeTime(new Date());
+    @Override
+    public List<FinancialOperation> findAllForFamilyMemberBetweenDates(String userId, String familyMemberId, Date start, Date end) {
+        if (userService.isUserExistsById(userId)) {
 
-		if (operation.getDate().after(new Date(currentDate.getTime() - 1000))) {
-			return repository.save(operation);
-		} else throw new FinancialOperationException("Wrong date of financial operation creation.");
-	}
+            List<Category> categories = getFamilyMemberCategories(userId, familyMemberId);
+            List<String> categoryIds = categories.stream().map(Category::getId).collect(Collectors.toList());
 
-	@Override
-	public FinancialOperation update(FinancialOperationDto dto) {
-		FinancialOperation operation = mapper.fromFinancialOperationDto(dto);
+            return repository.findAllByCategory_IdInAndDateBetweenOrderByDateDesc(categoryIds, start, end);
+        }
+        return Collections.emptyList();
+    }
 
-		Date currentDate = removeTime(new Date());
-		FinancialOperation oldOperation = findById(dto.getId());
+    /**
+     * Create financial operation "by hands".
+     * Creation is possible only today or later.
+     *
+     * @param dto
+     * @return FinancialOperation entity
+     */
+    @Override
+    public FinancialOperation create(FinancialOperationDto dto) {
+        FinancialOperation operation = mapper.fromFinancialOperationDto(dto);
 
-		if (oldOperation.isPlanned() && !operation.getDate()
-			.after(new Date(currentDate.getTime() - 1000))) {
-			throw new FinancialOperationException("Wrong date of financial operation creation.");
-		}
-		return repository.save(operation);
-	}
+        Date currentDate = removeTime(new Date());
 
-	@Override
-	public Boolean delete(String operationId) {
-		repository.deleteById(operationId);
-		return repository.existsById(operationId);
-	}
+        if (operation.getDate().after(new Date(currentDate.getTime() - 1000))) {
+            return repository.save(operation);
+        } else throw new FinancialOperationException("Wrong date of financial operation creation.");
+    }
 
-	@Override
-	public FinancialOperation findById(String operationId) {
-		return repository.findById(operationId).orElse(null);
-	}
+    @Override
+    public FinancialOperation update(FinancialOperationDto dto) {
+        FinancialOperation operation = mapper.fromFinancialOperationDto(dto);
+
+        Date currentDate = removeTime(new Date());
+        FinancialOperation oldOperation = findById(dto.getId());
+
+        if (oldOperation.isPlanned() && !operation.getDate()
+                .after(new Date(currentDate.getTime() - 1000))) {
+            throw new FinancialOperationException("Wrong date of financial operation creation.");
+        }
+        return repository.save(operation);
+    }
+
+    @Override
+    public Boolean delete(String operationId) {
+        repository.deleteById(operationId);
+        return !repository.existsById(operationId);
+    }
+
+    @Override
+    public FinancialOperation findById(String operationId) {
+        return repository.findById(operationId).orElse(null);
+    }
 
 
-	private List<Category> getUserCategories(String userId) {
-		List<Category> allCategories = new ArrayList<>();
-		List<FamilyMember> members = familyMemberService.findAll(userId);
-		members.forEach(m -> allCategories.addAll(m.getCategories()));
-		return allCategories;
-	}
+    private List<Category> getUserCategories(String userId) {
+        List<Category> allCategories = new ArrayList<>();
+        List<FamilyMember> members = familyMemberService.findAll(userId);
+        members.forEach(m -> allCategories.addAll(m.getCategories()));
+        return allCategories;
+    }
 
-	private List<Category> getFamilyMemberCategories(String userId, String familyMemberId) {
-		FamilyMember neededMember = null;
-		List<FamilyMember> members = familyMemberService.findAll(userId);
-		for (FamilyMember member : members) {
-			if (member.getId().equals(familyMemberId)) {
-				neededMember = member;
-			}
-		}
-		if (neededMember != null) {
-			return neededMember.getCategories();
-		}
-		return null;
-	}
+    private List<Category> getFamilyMemberCategories(String userId, String familyMemberId) {
+        FamilyMember neededMember = null;
+        List<FamilyMember> members = familyMemberService.findAll(userId);
+        for (FamilyMember member : members) {
+            if (member.getId().equals(familyMemberId)) {
+                neededMember = member;
+            }
+        }
+        if (neededMember != null) {
+            return neededMember.getCategories();
+        }
+        return null;
+    }
 
-	private Date removeTime(Date date) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		try {
-			date = sdf.parse(sdf.format(date));
-			return date;
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return date;
-	}
+    private Date removeTime(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            date = sdf.parse(sdf.format(date));
+            return date;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
 }

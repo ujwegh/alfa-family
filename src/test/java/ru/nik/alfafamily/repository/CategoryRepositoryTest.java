@@ -34,7 +34,7 @@ class CategoryRepositoryTest {
 	@BeforeEach
 	public void init() {
 		User user = new User("firstName", "secondName",
-			"admin@mail.com", "password");
+				"admin@mail.com", "password");
 		Role role = new Role("USER");
 		template.save(role);
 		user.setRoles(Collections.singleton(role));
@@ -91,7 +91,7 @@ class CategoryRepositoryTest {
 		FamilyMember member = memberRepository.findAll().get(0);
 		Category category1 = new Category("бензин", member);
 		List<Category> categories = categoryRepository.findAllByFamilyMember_IdAndNameIn(member.getId(),
-			Collections.singletonList(category1.getName()));
+				Collections.singletonList(category1.getName()));
 
 		assertEquals(1, categories.size());
 		assertEquals(category1.getName(), categories.get(0).getName());

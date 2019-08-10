@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collections;
 import java.util.List;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +22,7 @@ import ru.nik.alfafamily.domain.User;
 @DataMongoTest
 class FamilyMemberPropertiesRepositoryTest {
 
+
 	@Autowired
 	private FamilyMemberPropertiesRepository repository;
 
@@ -32,8 +35,9 @@ class FamilyMemberPropertiesRepositoryTest {
 
 	@BeforeEach
 	public void init() {
+
 		User user = new User("firstName", "secondName",
-			"admin@mail.com", "password");
+				"admin@mail.com", "password");
 		Role role = new Role("USER");
 		template.save(role);
 		user.setRoles(Collections.singleton(role));
@@ -49,11 +53,14 @@ class FamilyMemberPropertiesRepositoryTest {
 		template.save(savedMember);
 	}
 
+	@AfterEach
+	public void cleanup() {
+		template.getDb().drop();
+	}
 
 	@Test
 	void deleteByFamilyMember_Id() {
 		List<FamilyMember> members = memberRepository.findAll();
-
 		int i = repository.deleteByFamilyMember_Id(members.get(0).getId());
 		assertEquals(1, i);
 		assertEquals(Collections.emptyList(), repository.findAll());
@@ -61,11 +68,9 @@ class FamilyMemberPropertiesRepositoryTest {
 
 	@Test
 	void findFirstByFamilyMember_Id() {
-		FamilyMember member = memberRepository.findAll().get(0);// получаем мембера
-		FamilyMemberProperties properties2 = repository.findFirstByFamilyMember_Id(member.getId());
-		// assertNotNull(properties2);
-
-		assertEquals(member.getProperties().getId(), properties2.getId());
-		assertEquals(member.getProperties().getColor(), properties2.getColor());
+		FamilyMember member1 = memberRepository.findAll().get(0); // получаем мембера
+		FamilyMemberProperties properties2 = repository.findFirstByFamilyMember_Id(member1.getId());
+		assertEquals(member1.getProperties().getId(), properties2.getId());
+		assertEquals(member1.getProperties().getColor(), properties2.getColor());
 	}
 }

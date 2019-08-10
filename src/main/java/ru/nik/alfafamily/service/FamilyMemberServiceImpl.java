@@ -56,7 +56,7 @@ public class FamilyMemberServiceImpl implements FamilyMemberService {
 	public FamilyMember update(String familyMemberId, String name) {
 		FamilyMember familyMember = findById(familyMemberId);
 		familyMember.setName(name);
-		return null;
+		return familyMember;
 	}
 
 	@Override

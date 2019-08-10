@@ -20,6 +20,7 @@ import ru.nik.alfafamily.domain.User;
 @DataMongoTest
 class FamilyMemberRepositoryTest {
 
+
 	@Autowired
 	private FamilyMemberRepository repository;
 
@@ -33,7 +34,7 @@ class FamilyMemberRepositoryTest {
 	@BeforeEach
 	public void init() {
 		User user = new User("firstName", "secondName",
-			"admin@mail.com", "password");
+				"admin@mail.com", "password");
 		Role role = new Role("USER");
 		template.save(role);
 		user.setRoles(Collections.singleton(role));

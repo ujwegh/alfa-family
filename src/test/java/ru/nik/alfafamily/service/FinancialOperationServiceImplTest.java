@@ -26,6 +26,7 @@ import ru.nik.alfafamily.domain.User;
 import ru.nik.alfafamily.dto.FinancialOperationDto;
 import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.repository.CategoryRepository;
+import ru.nik.alfafamily.repository.FamilyMemberRepository;
 import ru.nik.alfafamily.repository.FinancialOperationRepository;
 import ru.nik.alfafamily.repository.UserRepository;
 
@@ -51,10 +52,11 @@ class FinancialOperationServiceImplTest {
 	private MongoTemplate template;
 
 	@Autowired
-	private FinancialOperationService operationService;
-
-	@Autowired
 	private Mapper mapper;
+	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private FamilyMemberRepository memberRepository;
 
 	@BeforeEach
 	public void init() {
@@ -88,7 +90,18 @@ class FinancialOperationServiceImplTest {
 
 	@Test
 	void createOrUpdate() {
+		User user = userRepository.findAll().get(0);
+	//	FamilyMember familyMember = memberRepository.
+		Category category = categoryRepository.findAll().get(0);
+		FinancialOperation expected = new FinancialOperation(new Date(), "расход",
+				category, 999.99, "RUB", 1234567890L,
+				"оплата пошлины", "опять");
 
+		//FinancialOperation actual = service.createOrUpdate();
+//
+//		assertNotNull(actual);
+//		assertNotNull(actual.getCategory());
+//		assertEquals(expected.getDescription(), actual.getDescription());
 	}
 
 	@Test
@@ -127,16 +140,42 @@ class FinancialOperationServiceImplTest {
 
 	@Test
 	void update() {
+		Category category = categoryRepository.findAll().get(0);
+		FinancialOperation expected0 = new FinancialOperation(new Date(), "расход",
+					category, 999.99, "RUB", 1234567890L,
+					"оплата пошлины", "опять");
 
+		FinancialOperation expected = service.create(mapper.toFinancialOperationDto(expected0));
+		FinancialOperation actual = service.update(mapper.toFinancialOperationDto(expected));
+		assertNotNull(actual);
+		assertNotNull(actual.getCategory());
+		assertEquals(expected.getDescription(), actual.getDescription());
 	}
 
 	@Test
 	void delete() {
+		Category category = categoryRepository.findAll().get(0);
+		FinancialOperation expected0 = new FinancialOperation(new Date(), "расход",
+				category, 999.99, "RUB", 1234567890L,
+				"оплата пошлины", "опять");
 
+		FinancialOperation expected = service.create(mapper.toFinancialOperationDto(expected0));
+		boolean b = service.delete(expected.getId());
+		assertNotNull(b);
+	    assertTrue(b);
 	}
 
 	@Test
 	void findById() {
+		Category category = categoryRepository.findAll().get(0);
+		FinancialOperation expected0 = new FinancialOperation(new Date(), "расход",
+				category, 999.99, "RUB", 1234567890L,
+				"оплата пошлины", "опять");
 
+		FinancialOperation expected = service.create(mapper.toFinancialOperationDto(expected0));
+		FinancialOperation actual = service.findById(expected.getId());
+		assertNotNull(actual);
+		assertNotNull(actual.getCategory());
+		assertEquals(expected.getDescription(), actual.getDescription());
 	}
 }

@@ -12,7 +12,7 @@ public interface FinancialOperationRepository extends MongoRepository<FinancialO
 
 	int deleteAllByCategoryIn(List<Category> categories);
 
-	List<FinancialOperation> findAllByCategoryInAndDateBetweenOrderByDateDesc(List<Category> categories, Date start, Date end);
+	List<FinancialOperation> findAllByCategory_IdInAndDateBetweenOrderByDateDesc(List<String> categories, Date start, Date end);
 
 	boolean existsById(String operationId);
 }

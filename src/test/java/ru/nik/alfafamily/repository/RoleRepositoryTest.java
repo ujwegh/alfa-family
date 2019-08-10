@@ -19,7 +19,6 @@ import ru.nik.alfafamily.domain.User;
 @DataMongoTest
 class RoleRepositoryTest {
 
-
 	@Autowired
 	private RoleRepository repository;
 

@@ -1,14 +1,16 @@
 package ru.nik.alfafamily.domain;
 
+import java.util.Collections;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.stream.Collectors;
+
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @Document(collection = "family_members")
 public class FamilyMember {
@@ -34,12 +36,17 @@ public class FamilyMember {
 
 	@Override
 	public String toString() {
+		List<String> names = Collections.emptyList();
+		if (categories!= null){
+			names = categories.stream().map(category -> category.getName()+", ").collect(Collectors.toList());
+		}
+
 		return "FamilyMember{" +
 			"id='" + id + '\'' +
 			", name='" + name + '\'' +
 			", properties=" + properties +
 			", user=" + user.getId() +
-			", categories=" + categories.stream().toString() +
+			", categories="+ names.toString() +
 			'}';
 	}
 }

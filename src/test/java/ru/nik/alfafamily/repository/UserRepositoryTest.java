@@ -3,6 +3,8 @@ package ru.nik.alfafamily.repository;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collections;
+import java.util.List;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +21,6 @@ import ru.nik.alfafamily.domain.User;
 @DataMongoTest
 class UserRepositoryTest {
 
-
 	@Autowired
 	private UserRepository userRepository;
 
@@ -29,7 +30,7 @@ class UserRepositoryTest {
 	@BeforeEach
 	public void init() {
 		User user = new User("firstName", "secondName",
-			"admin@mail.com", "password");
+				"admin@mail.com", "password");
 		template.save(user);
 	}
 
@@ -44,11 +45,31 @@ class UserRepositoryTest {
 		assertNotNull(user);
 		assertEquals("admin@mail.com", user.getEmail());
 	}
+	@Test
+	void findById() {
+		User user0 = userRepository.findAll().get(0);
+		User user = userRepository.findById(user0.getId());
+		assertNotNull(user);
+		assertEquals(user0.getId(), user.getId());
+	}
+	@Test
+	void findAllByIdIn() {
+		List<User> users = userRepository.findAll();
+		assertNotNull(users);
+		assertEquals(1, users.size());
+	}
 
 	@Test
 	void existsById() {
 		User user = userRepository.findAll().get(0);
 		boolean exist = userRepository.existsById(user.getId());
+		assertTrue(exist);
+	}
+
+	@Test
+	void existsByEmail() {
+		User user = userRepository.findAll().get(0);
+		boolean exist = userRepository.existsByEmail(user.getEmail());
 		assertTrue(exist);
 	}
 }
