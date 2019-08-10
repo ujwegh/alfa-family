@@ -157,7 +157,6 @@ class FamilyMemberServiceImplTest {
 	void isFamilyMemberExists() {
 		FamilyMember familyMember = memberRepository.findAll().get(0);
 		boolean b = familyMemberService.isFamilyMemberExists(familyMember.getId());
-		assertNotNull(b);
 		assertTrue(b);
 	}
 }

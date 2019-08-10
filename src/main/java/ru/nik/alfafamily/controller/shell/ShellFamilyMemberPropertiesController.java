@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.shell.standard.ShellComponent;
 
 @Slf4j
-//@ShellComponent
+@ShellComponent
 public class ShellFamilyMemberPropertiesController {
 
 }
