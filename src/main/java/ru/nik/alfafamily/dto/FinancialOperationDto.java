@@ -1,5 +1,6 @@
 package ru.nik.alfafamily.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,7 @@ public class FinancialOperationDto {
 
 	private String id;
 
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private Date date;
 
 	private String type;

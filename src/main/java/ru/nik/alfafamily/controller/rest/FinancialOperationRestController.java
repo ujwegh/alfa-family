@@ -1,5 +1,7 @@
 package ru.nik.alfafamily.controller.rest;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +20,7 @@ import ru.nik.alfafamily.dto.FinancialOperationDto;
 import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.service.FinancialOperationService;
 
+@Api(value="Financial operation rest controller", description="Financial operations manager")
 @Slf4j
 @RestController
 @RequestMapping("/rest/finoperations")
@@ -35,6 +38,7 @@ public class FinancialOperationRestController {
 	}
 
 
+	@ApiOperation(value = "Find all financial operations for user", response = List.class)
 	@GetMapping("/user/{userId}")
 	public List<FinancialOperationDto> findAllForUser(@PathVariable String userId) {
 		log.info("Find all financial operations for user: {}", userId);
@@ -44,12 +48,14 @@ public class FinancialOperationRestController {
 		return dtos;
 	}
 
+	@ApiOperation(value = "Delete operation with id")
 	@DeleteMapping("/operation/{operationId}")
 	public void delete(@PathVariable String operationId) {
 		log.info("Delete operation with id: {}", operationId);
 		service.delete(operationId);
 	}
 
+	@ApiOperation(value = "Create new financial operation", response = FinancialOperationDto.class)
 	@PostMapping("/operation")
 	public FinancialOperationDto create(@RequestBody FinancialOperationDto operationDto) {
 		log.info("Create new financial operation: {}", operationDto.toString());
@@ -57,15 +63,19 @@ public class FinancialOperationRestController {
 		return operation != null ? mapper.toFinancialOperationDto(operation) : null;
 	}
 
+	@ApiOperation(value = "Find financial operation by id", response = FinancialOperationDto.class)
 	@GetMapping("/operation/{operationId}")
 	public FinancialOperationDto findById(@PathVariable String operationId) {
+		log.info("Find financial operation by id: {}", operationId);
 		FinancialOperation operation = service.findById(operationId);
 		return operation != null ? mapper.toFinancialOperationDto(operation) : null;
 	}
 
+	@ApiOperation(value = "Find financial operation by id", response = FinancialOperationDto.class)
 	@PostMapping("/upload/{familyMemberId}")
 	public List<FinancialOperationDto> createFromCsv(@PathVariable String familyMemberId,
 		@RequestParam("file") MultipartFile file) {
+		log.info("Create financial operations from csv file: {}", file.getName());
 		List<FinancialOperation> list = service.createOrUpdate(familyMemberId, file);
 
 		List<FinancialOperationDto> dtos = new ArrayList<>();

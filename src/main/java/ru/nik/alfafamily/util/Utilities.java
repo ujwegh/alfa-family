@@ -80,10 +80,7 @@ public class Utilities {
 
 	public MultipartFile convertToMultipartFile(File file) throws IOException {
 		String name = file.getName();
-		byte[] content = null;
-
-		content = Files.readAllBytes(file.toPath());
-
+		byte[] content = Files.readAllBytes(file.toPath());
 		return new MockMultipartFile(name, content);
 	}
 
@@ -95,9 +92,9 @@ public class Utilities {
 		Double outcome = 0.0;
 
 		for (FinancialOperation operation : operations) {
-			if (operation.getType() != null && operation.getType().equals("доход")) {
+			if (operation.getType() != null && operation.getType().toLowerCase().equals("доход")) {
 				income += operation.getSum();
-			} else if (operation.getType() != null && operation.getType().equals("расход")) {
+			} else if (operation.getType() != null && operation.getType().toLowerCase().equals("расход")) {
 				outcome += operation.getSum();
 			}
 		}

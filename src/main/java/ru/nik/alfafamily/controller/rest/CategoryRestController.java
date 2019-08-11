@@ -1,5 +1,7 @@
 package ru.nik.alfafamily.controller.rest;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,7 @@ import ru.nik.alfafamily.dto.CategoryDto;
 import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.service.CategoryService;
 
+@Api(value="Category rest controller", description="Category manager of current family member")
 @Slf4j
 @RestController
 @RequestMapping("/rest/categories")
@@ -31,7 +34,7 @@ public class CategoryRestController {
 		this.mapper = mapper;
 	}
 
-
+	@ApiOperation(value = "Get all categories for family member", response = List.class)
 	@GetMapping("/{familyMemberId}")
 	public List<CategoryDto> findAll(@PathVariable String familyMemberId) {
 		log.info("Find all categories for family member: {}", familyMemberId);
@@ -41,6 +44,7 @@ public class CategoryRestController {
 		return dtos;
 	}
 
+	@ApiOperation(value = "Find category by id", response = CategoryDto.class)
 	@GetMapping("/category/{categoryId}")
 	public CategoryDto findById(@PathVariable String categoryId) {
 		log.info("Find category by id: {}", categoryId);
@@ -48,6 +52,7 @@ public class CategoryRestController {
 		return category != null ? mapper.toCategoryDto(category) : null;
 	}
 
+	@ApiOperation(value = "Find category by name", response = CategoryDto.class)
 	@GetMapping("/{familyMemberId}/category/{name}")
 	public CategoryDto findByName(@PathVariable String familyMemberId, @PathVariable String name) {
 		log.info("Find category by name: {} from family member: {}", name, familyMemberId);
@@ -55,6 +60,7 @@ public class CategoryRestController {
 		return category != null ? mapper.toCategoryDto(category) : null;
 	}
 
+	@ApiOperation(value = "Create new category", response = CategoryDto.class)
 	@PostMapping
 	public CategoryDto create(@RequestBody CategoryDto dto) {
 		log.info("Create new category: {}", dto.toString());
@@ -62,6 +68,7 @@ public class CategoryRestController {
 		return category != null ? mapper.toCategoryDto(category) : null;
 	}
 
+	@ApiOperation(value = "Update category", response = CategoryDto.class)
 	@PutMapping
 	public CategoryDto update(@RequestBody CategoryDto dto) {
 		log.info("Update category: {}", dto.toString());
@@ -69,8 +76,10 @@ public class CategoryRestController {
 		return category != null ? mapper.toCategoryDto(category) : null;
 	}
 
+	@ApiOperation(value = "Delete category by name")
 	@DeleteMapping("/{familyMemberId}/category/{name}")
 	public void delete(@PathVariable String familyMemberId, @PathVariable String name) {
+		log.info("Delete category by name: {} from family member: {}", name, familyMemberId);
 		service.deleteByName(familyMemberId, name);
 	}
 }

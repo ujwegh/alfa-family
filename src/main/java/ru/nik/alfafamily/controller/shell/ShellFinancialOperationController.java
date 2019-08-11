@@ -39,8 +39,7 @@ public class ShellFinancialOperationController {
 	}
 
 	@ShellMethod("Create financial operations from csv file")
-	public String csvoperation(@ShellOption String userId, @ShellOption String memberId,
-		@ShellOption String pathToFile) {
+	public String csvoperation(@ShellOption String memberId, @ShellOption String pathToFile) {
 
 		File file = new File(pathToFile);
 
@@ -50,7 +49,7 @@ public class ShellFinancialOperationController {
 		} catch (IOException e) {
 		}
 
-		List<FinancialOperation> operationList = service.createOrUpdate(userId, memberId, result);
+		List<FinancialOperation> operationList = service.createOrUpdate(memberId, result);
 		List<FinancialOperationDto> dtos = toDtoList(operationList);
 
 		List<String> strings = dtos.stream().map(dto -> dto.toString() + "\n")

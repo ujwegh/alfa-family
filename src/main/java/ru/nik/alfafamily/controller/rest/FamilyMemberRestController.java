@@ -1,5 +1,7 @@
 package ru.nik.alfafamily.controller.rest;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +23,7 @@ import ru.nik.alfafamily.dto.FamilyMemberPropertiesDto;
 import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.service.FamilyMemberService;
 
+@Api(value="Family member rest controller", description="Family members manager")
 @Slf4j
 @RestController
 @RequestMapping("/rest/family")
@@ -37,6 +40,7 @@ public class FamilyMemberRestController {
 		this.mapper = mapper;
 	}
 
+	@ApiOperation(value = "Get all family members for user", response = List.class)
 	@GetMapping("/members/{userId}")
 	public List<FamilyMemberDto> getAll(@PathVariable String userId) {
 		log.info("Get all family members for user: {}", userId);
@@ -45,24 +49,32 @@ public class FamilyMemberRestController {
 			.collect(Collectors.toList()) : Collections.emptyList();
 	}
 
+	@ApiOperation(value = "Find family member by id", response = FamilyMemberDto.class)
 	@GetMapping("/members/member/{familyMemberId}")
 	public FamilyMemberDto findById(@PathVariable String familyMemberId) {
+		log.info("Find family member by id: ", familyMemberId);
 		return mapper.toFamilyMemberDto(service.findById(familyMemberId));
 	}
 
+	@ApiOperation(value = "Delete family member by id")
 	@DeleteMapping("/members/member/{familyMemberId}")
 	public void delete(@PathVariable String familyMemberId) {
+		log.info("Delete family member by id: {}", familyMemberId);
 		service.delete(familyMemberId);
 	}
 
+	@ApiOperation(value = "Update family member", response = FamilyMemberDto.class)
 	@PutMapping("/members/member")
 	public FamilyMemberDto update(@RequestBody FamilyMemberDto dto) {
+		log.info("Update family member: {}", dto.toString());
 		FamilyMember member = service.update(dto.getId(), dto.getName());
 		return mapper.toFamilyMemberDto(member);
 	}
 
+	@ApiOperation(value = "Update categories for family member", response = FamilyMemberDto.class)
 	@PutMapping("/members/member/categories")
 	public FamilyMemberDto updateCategories(@RequestBody FamilyMemberDto dto) {
+		log.info("Update categories for family member: {}", dto.toString());
 		List<CategoryDto> dtos = dto.getCategories();
 		List<String> names = new ArrayList<>();
 		dtos.forEach(categoryDto -> names.add(categoryDto.getName()));
@@ -70,8 +82,10 @@ public class FamilyMemberRestController {
 		return mapper.toFamilyMemberDto(member);
 	}
 
+	@ApiOperation(value = "Update family members properties", response = FamilyMemberDto.class)
 	@PutMapping("/members/member/properties")
 	public FamilyMemberDto updateProperties(@RequestBody FamilyMemberDto dto) {
+		log.info("Update family members properties");
 		FamilyMemberPropertiesDto propertiesDto = dto.getProperties();
 		if (propertiesDto != null) {
 			return mapper.toFamilyMemberDto(service.updateProperties(dto.getId(), propertiesDto.getColor()));
@@ -79,8 +93,10 @@ public class FamilyMemberRestController {
 		return null;
 	}
 
+	@ApiOperation(value = "Create family member", response = FamilyMemberDto.class)
 	@PostMapping("/members")
 	public FamilyMemberDto create(@RequestBody FamilyMemberDto dto){
+		log.info("Create family member: {}", dto.toString());
 		return mapper.toFamilyMemberDto(service.create(dto.getUserId(), dto.getName()));
 	}
 }

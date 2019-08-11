@@ -1,5 +1,7 @@
 package ru.nik.alfafamily.controller.rest;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,7 @@ import ru.nik.alfafamily.dto.UserDto;
 import ru.nik.alfafamily.dto.UserRegistrationDto;
 import ru.nik.alfafamily.service.UserService;
 
+@Api(value="User rest controller", description="User manager")
 @Slf4j
 @RestController
 @RequestMapping("/rest/users")
@@ -32,6 +35,7 @@ public class UserRestController {
 		this.mapper = mapper;
 	}
 
+	@ApiOperation(value = "Get all users", response = List.class)
 	@GetMapping
 	public List<UserDto> getAll() {
 		log.info("Get all users");
@@ -41,25 +45,28 @@ public class UserRestController {
 		return dtos;
 	}
 
-
+	@ApiOperation(value = "Find user by id", response = UserDto.class)
 	@GetMapping("/id/{userId}")
 	public UserDto findById(@PathVariable String userId) {
 		log.info("Find user by id: {}", userId);
 		return mapper.toUserDto(service.findById(userId));
 	}
 
+	@ApiOperation(value = "Find user by email", response = UserDto.class)
 	@GetMapping("/email/{email}")
 	public UserDto findByEmail(@PathVariable String email) {
 		log.info("Find user by email: {}", email);
 		return mapper.toUserDto(service.findByEmail(email));
 	}
 
+	@ApiOperation(value = "Delete user by id")
 	@DeleteMapping("/{userId}")
 	public void delete(@PathVariable String userId) {
 		log.info("Delete user by id: {}", userId);
 		service.delete(userId);
 	}
 
+	@ApiOperation(value = "Create new user", response = UserDto.class)
 	@PostMapping
 	public UserDto create(@RequestBody UserDto dto) {
 		log.info("Create new user: {}", dto.toString());
@@ -77,6 +84,7 @@ public class UserRestController {
 		return user != null ? mapper.toUserDto(user) : null;
 	}
 
+	@ApiOperation(value = "Update user", response = UserDto.class)
 	public UserDto update(@RequestBody UserDto dto){
 		log.info("Update user: {}", dto.toString());
 		User user = service.update(dto);
