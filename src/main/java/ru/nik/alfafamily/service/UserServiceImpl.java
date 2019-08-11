@@ -66,9 +66,16 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User update(UserDto userDto) {
-		User user = userRepository.findById(userDto.getId());
-		User newUser = mapper.fromUserDto(userDto);
-		newUser.setMembers(user.getMembers());
+		User user = userRepository.findById(userDto.getId()).orElse(null);
+		if (user == null) {
+			throw new UserDoesNotExistsException(
+				"User with id: " + userDto.getId() + " doesn't exists.");
+		}
+		user.setFirstName(userDto.getFirstName());
+		user.setLastName(userDto.getLastName());
+		user.setPassword(userDto.getPassword());
+		user.setEmail(userDto.getEmail());
+		user.setEnabled(userDto.isEnabled());
 
 		List<Role> allRoles = (List<Role>) user.getRoles();
 
@@ -94,7 +101,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User findById(String userId) {
-		return userRepository.findById(userId);
+		return userRepository.findById(userId).orElse(null);
 	}
 
 	@Override
@@ -121,6 +128,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<User> findAllByIdIn(List<String> ids) {
 		return userRepository.findAllByIdIn(ids);
+	}
+
+	@Override
+	public void delete(String userId) {
+		userRepository.deleteById(userId);
 	}
 
 	@HystrixCommand(fallbackMethod = "getDefaultUser")

@@ -48,7 +48,7 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
     }
 
     @Override
-    public List<FinancialOperation> createOrUpdate(String userId, String familyMemberId, MultipartFile file) {
+    public List<FinancialOperation> createOrUpdate( String familyMemberId, MultipartFile file) {
         if (!familyMemberService.isFamilyMemberExists(familyMemberId)) {
             throw new FamilyMemberDoesNotExistsException(
                     "Family familyMember with id " + familyMemberId + " doesn't exists.");

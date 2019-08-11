@@ -23,4 +23,6 @@ public interface UserService extends UserDetailsService {
 	List<User> findAll();
 
 	List<User> findAllByIdIn(List<String> ids);
+
+	void delete(String userId);
 }

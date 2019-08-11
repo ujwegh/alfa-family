@@ -1,7 +1,6 @@
 package ru.nik.alfafamily.repository;
 
 import java.util.List;
-import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import ru.nik.alfafamily.domain.FamilyMember;
 

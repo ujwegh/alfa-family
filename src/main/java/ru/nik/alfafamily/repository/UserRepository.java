@@ -4,11 +4,9 @@ import java.util.List;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import ru.nik.alfafamily.domain.User;
 
-public interface UserRepository extends MongoRepository<User, Integer> {
+public interface UserRepository extends MongoRepository<User, String> {
 
 	User findByEmail(String email);
-
-	User findById(String id);
 
 	boolean existsById(String userId);
 

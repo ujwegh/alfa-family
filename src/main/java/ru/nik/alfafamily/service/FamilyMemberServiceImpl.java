@@ -67,7 +67,7 @@ public class FamilyMemberServiceImpl implements FamilyMemberService {
 	}
 
 	@Override
-	public FamilyMember findById(String familyMemberId) {
+	public FamilyMember findById(String familyMemberId) throws FamilyMemberDoesNotExistsException{
 		if (!isFamilyMemberExists(familyMemberId))
 			throw new FamilyMemberDoesNotExistsException(
 				"Family familyMember with id " + familyMemberId + " doesn't exists.");
@@ -89,7 +89,7 @@ public class FamilyMemberServiceImpl implements FamilyMemberService {
 		Map<String, Category> categoryMap = new HashMap<>();
 		categories.forEach(newCategoryName -> categoryMap.put(newCategoryName, new Category(newCategoryName, null)));
 
-		// update categories with existed ones
+		// updateByName categories with existed ones
 		categoryMap.forEach((k,v) -> existedCategories.forEach(existedCategory -> {
 			if (k.equals(existedCategory.getName())){
 				categoryMap.put(k, existedCategory);

@@ -8,7 +8,7 @@ import ru.nik.alfafamily.dto.FinancialOperationDto;
 
 public interface FinancialOperationService {
 
-	List<FinancialOperation> createOrUpdate(String userId, String familyMemberId, MultipartFile file);
+	List<FinancialOperation> createOrUpdate(String familyMemberId, MultipartFile file);
 
 	List<FinancialOperation> findAllForUser(String userId);
 

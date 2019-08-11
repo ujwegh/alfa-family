@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.nik.alfafamily.domain.Budget;
 import ru.nik.alfafamily.dto.BudgetDto;
@@ -11,7 +12,8 @@ import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.service.BudgetService;
 
 @Slf4j
-@RestController("/rest/budget")
+@RestController
+@RequestMapping("/rest/budget")
 public class BudgetRestController {
 
 

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.nik.alfafamily.domain.FamilyMember;
 import ru.nik.alfafamily.dto.CategoryDto;
@@ -21,7 +22,8 @@ import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.service.FamilyMemberService;
 
 @Slf4j
-@RestController("/rest/family")
+@RestController
+@RequestMapping("/rest/family")
 public class FamilyMemberRestController {
 
 	private final FamilyMemberService service;

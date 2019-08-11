@@ -98,12 +98,11 @@ class FinancialOperationServiceImplTest {
 
 	@Test
 	void createCSV() throws IOException {
-		User user = userRepository.findAll().get(0);
 		FamilyMember familyMember = memberRepository.findAll().get(0);
 		File file = new ClassPathResource("Budget_2019-07-01-2019-07-31.csv").getFile();
 
 		List<FinancialOperation> operations = service
-			.createOrUpdate(user.getId(), familyMember.getId(), Utilities.convertToMultipartFile(file));
+			.createOrUpdate(familyMember.getId(), Utilities.convertToMultipartFile(file));
 
 		operations.forEach(operation -> System.out.println(operation.toString() + "\n"));
 

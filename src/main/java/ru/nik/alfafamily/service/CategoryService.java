@@ -5,13 +5,17 @@ import ru.nik.alfafamily.domain.Category;
 
 public interface CategoryService {
 
-	Category create(String userId, String familyMemberId, String name);
+	Category create(String familyMemberId, String name);
 
 	List<Category> bulkCreate(List<Category> categories);
 
-	Category update(String familyMemberId, String oldName, String newName);
+	Category updateByName(String familyMemberId, String oldName, String newName);
 
-	Boolean delete(String familyMemberId, String name);
+	Category updateById(String categoryId, String newName);
+
+	Boolean deleteByName(String familyMemberId, String name);
+
+	Boolean deleteById(String categoryId);
 
 	List<Category> findAll(String familyMemberId);
 

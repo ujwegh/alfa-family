@@ -62,10 +62,9 @@ public class ShellCategoryController {
 	}
 
 	@ShellMethod("Create new category")
-	public String newcategory(@ShellOption String userId, @ShellOption String familyMemberId,
-		@ShellOption String name){
+	public String newcategory(@ShellOption String familyMemberId, @ShellOption String name){
 
-		Category category = service.create(userId, familyMemberId, name);
+		Category category = service.create(familyMemberId, name);
 
 		if (category == null) return "Create new category: <"+ name+ "> was failed.";
 		CategoryDto dto = mapper.toCategoryDto(category);
@@ -74,7 +73,7 @@ public class ShellCategoryController {
 
 	@ShellMethod("Delete category by name")
 	public String deletecategory(@ShellOption String familyMemberId, @ShellOption String name){
-		boolean b = service.delete(familyMemberId, name);
+		boolean b = service.deleteByName(familyMemberId, name);
 		return b ? "Category deleted." : "Delete category failed.";
 	}
 
@@ -91,8 +90,8 @@ public class ShellCategoryController {
 	@ShellMethod("Update category")
 	public String updatecategory(@ShellOption String familyMemberId, @ShellOption String oldName,
 		@ShellOption String newName){
-		Category category = service.update(familyMemberId, oldName, newName);
-		if (category == null) return "Category update was failed.";
+		Category category = service.updateByName(familyMemberId, oldName, newName);
+		if (category == null) return "Category updateByName was failed.";
 		CategoryDto dto = mapper.toCategoryDto(category);
 		return "Category updated:" + dto.toString();
 	}

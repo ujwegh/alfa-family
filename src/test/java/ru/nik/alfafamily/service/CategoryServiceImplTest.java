@@ -6,13 +6,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,10 +17,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.shell.jline.InteractiveShellApplicationRunner;
 import org.springframework.shell.jline.ScriptShellApplicationRunner;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 import ru.nik.alfafamily.domain.Category;
 import ru.nik.alfafamily.domain.FamilyMember;
 import ru.nik.alfafamily.domain.Role;
@@ -86,7 +81,7 @@ class CategoryServiceImplTest {
 	void create() {
 		User user = userRepository.findAll().get(0);
 		FamilyMember member = memberRepository.findAll().get(0);
-		Category category = service.create(user.getId(), member.getId(), "Еда и рестораны");
+		Category category = service.create(member.getId(), "Еда и рестораны");
 		assertNotNull(category);
 		assertNotNull(category.getFamilyMember());
 		assertNotNull(category.getFamilyMember().getUser());
@@ -106,7 +101,7 @@ class CategoryServiceImplTest {
 	@Test
 	void update() {
 		Category category = categoryRepository.findAll().get(0);
-		Category category1 = service.update(category.getFamilyMember().getId(),category.getName(), "Развлечения");
+		Category category1 = service.updateByName(category.getFamilyMember().getId(),category.getName(), "Развлечения");
 		assertNotNull(category1);
 		assertNotNull(category1.getFamilyMember());
 		assertNotNull(category1.getFamilyMember().getUser());
@@ -117,7 +112,7 @@ class CategoryServiceImplTest {
 	@Test
 	void delete() {
 		Category category = categoryRepository.findAll().get(0);
-		Boolean b = service.delete(category.getFamilyMember().getId(),category.getName());
+		Boolean b = service.deleteByName(category.getFamilyMember().getId(),category.getName());
 		assertNotNull(b);
 		assertTrue(b);
 	}

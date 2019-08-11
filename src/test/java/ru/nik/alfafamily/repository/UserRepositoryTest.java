@@ -48,7 +48,7 @@ class UserRepositoryTest {
 	@Test
 	void findById() {
 		User user0 = userRepository.findAll().get(0);
-		User user = userRepository.findById(user0.getId());
+		User user = userRepository.findById(user0.getId()).orElse(null);
 		assertNotNull(user);
 		assertEquals(user0.getId(), user.getId());
 	}
