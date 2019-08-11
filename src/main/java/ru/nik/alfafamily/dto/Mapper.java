@@ -1,10 +1,12 @@
 package ru.nik.alfafamily.dto;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import ru.nik.alfafamily.domain.Budget;
 import ru.nik.alfafamily.domain.Category;
 import ru.nik.alfafamily.domain.FamilyMember;
 import ru.nik.alfafamily.domain.FamilyMemberProperties;
@@ -30,6 +32,17 @@ public class Mapper {
 		this.userService = userService;
 		this.repository = repository;
 		this.familyMemberService = familyMemberService;
+	}
+
+	public BudgetDto toBudgetDto(Budget budget){
+		BudgetDto dto = new BudgetDto();
+		dto.setUserId(budget.getUserId());
+		dto.setFamilyMemberId(budget.getFamilyMemberId());
+		dto.setIncome(budget.getIncome());
+		dto.setOutcome(budget.getOutcome());
+		dto.setStartDate(budget.getStartDate());
+		dto.setEndDate(budget.getEndDate());
+		return dto;
 	}
 
 	public FamilyMemberDto toFamilyMemberDto(FamilyMember familyMember) {
@@ -69,6 +82,7 @@ public class Mapper {
 	}
 
 	public FamilyMemberPropertiesDto toFamilyMemberPropertiesDto(FamilyMemberProperties properties) {
+		if (properties == null) return null;
 		FamilyMemberPropertiesDto dto = new FamilyMemberPropertiesDto();
 		dto.setColor(properties.getColor());
 		dto.setFamilyMemberId(properties.getFamilyMember().getId());
@@ -77,6 +91,7 @@ public class Mapper {
 	}
 
 	public FamilyMemberProperties fromFamilyMemberPropertiesDto(FamilyMemberPropertiesDto dto) {
+		if (dto == null) return null;
 		FamilyMemberProperties properties = new FamilyMemberProperties();
 		properties.setColor(dto.getColor());
 		properties.setId(dto.getId());
@@ -172,11 +187,13 @@ public class Mapper {
 
 
 	private List<CategoryDto> toCategoryDtoList(List<Category> categories) {
+		if (categories == null) return Collections.emptyList();
 		return categories.stream().map(this::toCategoryDto)
 			.collect(Collectors.toList());
 	}
 
 	private List<Category> toCategoryList(List<CategoryDto> categories) {
+		if (categories == null) return Collections.emptyList();
 		return categories.stream().map(this::fromCategoryDto)
 			.collect(Collectors.toList());
 	}

@@ -1,40 +1,39 @@
 package ru.nik.alfafamily.domain;
 
+import java.util.Date;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @NoArgsConstructor
-@Document(collection = "budget")
 public class Budget {
 
 	@Id
 	private String id;
 
+	private String userId;
+
+	private String familyMemberId;
+
 	private Double income;
 
 	private Double outcome;
 
-	@DBRef
-	private User user;
+	private Date startDate;
 
-	public Budget(Budget budget) {
-		this.id = budget.getId();
-		this.income = budget.getIncome();
-		this.outcome = budget.getOutcome();
-		this.user = budget.getUser();
-	}
+	private Date endDate;
 
-	@Override
-	public String toString() {
-		return "Budget{" +
-			"id='" + id + '\'' +
-			", income=" + income +
-			", outcome=" + outcome +
-			", user=" + user.getId() +
-			'}';
+	public Budget(String userId, String familyMemberId, Double income, Double outcome,
+		Date startDate, Date endDate) {
+		this.userId = userId;
+		this.familyMemberId = familyMemberId;
+		this.income = income;
+		this.outcome = outcome;
+		this.startDate = startDate;
+		this.endDate = endDate;
 	}
 }

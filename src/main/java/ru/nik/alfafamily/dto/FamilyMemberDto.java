@@ -25,14 +25,4 @@ public class FamilyMemberDto {
 
 	private FamilyMemberPropertiesDto properties;
 
-//	FamilyMemberDto toFamilyMemberDto(FamilyMember familyMember) {
-//
-//
-//
-//
-//
-//
-//	}
-
-
 }

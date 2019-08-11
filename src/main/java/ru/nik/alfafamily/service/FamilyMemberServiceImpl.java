@@ -47,7 +47,7 @@ public class FamilyMemberServiceImpl implements FamilyMemberService {
 			FamilyMember familyMember = new FamilyMember();
 			familyMember.setUser(user);
 			familyMember.setName(name);
-			return familyMember;
+			return repository.save(familyMember);
 		}
 		return null;
 	}

@@ -101,6 +101,11 @@ public class Utilities {
 				outcome += operation.getSum();
 			}
 		}
+
+		Date start = operations.get(operations.size()-1).getDate();
+		Date end = operations.get(0).getDate();
+		budget.setStartDate(start);
+		budget.setEndDate(end);
 		return budget;
 	}
 

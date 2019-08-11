@@ -91,6 +91,7 @@ class FamilyMemberServiceImplTest {
 		FamilyMember familyMember1 = familyMemberService.create(user.getId(), "Mama");
 		assertNotNull(familyMember1);
 		assertNotNull(familyMember1.getUser());
+		assertNotNull(familyMember1.getId());
 		assertNotNull(familyMember1.getName());
 		assertEquals("Mama", familyMember1.getName());
 		assertEquals(user.getId(), familyMember1.getUser().getId());

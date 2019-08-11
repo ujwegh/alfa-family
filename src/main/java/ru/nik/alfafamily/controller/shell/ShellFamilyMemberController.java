@@ -38,7 +38,7 @@ public class ShellFamilyMemberController {
 	@ShellMethod("Get all family members")
 	public String familymembers(@ShellOption String email) {
 		User user = userService.findByEmail(email);
-
+		if (user == null) return "User with email: <"+ email+"> doesn't exist.";
 		List<FamilyMember> list = service.findAll(user.getId());
 		List<FamilyMemberDto> memberDtos = list.stream()
 			.map(mapper::toFamilyMemberDto)
@@ -49,7 +49,6 @@ public class ShellFamilyMemberController {
 	@ShellMethod("Create family familyMember")
 	public String createmember(@ShellOption String email, @ShellOption String name) {
 		User user = userService.findByEmail(email);
-		System.out.println(user.getId());
 		FamilyMemberDto dto = mapper.toFamilyMemberDto(service.create(user.getId(), name));
 		return "New family member has been created: " + dto.toString();
 	}
