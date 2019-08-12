@@ -4,8 +4,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,10 +40,10 @@ public class FinancialOperationRestController {
 		this.mapper = mapper;
 	}
 
-
+//	@PreAuthorize("#userId == authentication.details.id")
 	@ApiOperation(value = "Find all financial operations for user", response = List.class)
 	@GetMapping("/user/{userId}")
-	public List<FinancialOperationDto> findAllForUser(@PathVariable String userId) {
+	public List<FinancialOperationDto> findAllForUser(@PathVariable @NonNull final String userId) {
 		log.info("Find all financial operations for user: {}", userId);
 		List<FinancialOperation> list = service.findAllForUser(userId);
 		List<FinancialOperationDto> dtos = new ArrayList<>();
