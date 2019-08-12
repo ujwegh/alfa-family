@@ -16,11 +16,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import ru.nik.alfafamily.domain.FinancialOperation;
+import ru.nik.alfafamily.dto.DateBetweenRequestDto;
 import ru.nik.alfafamily.dto.FinancialOperationDto;
 import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.service.FinancialOperationService;
 
-@Api(value="Financial operation rest controller", description="Financial operations manager")
+@Api(value = "Financial operation rest controller", description = "Financial operations manager")
 @Slf4j
 @RestController
 @RequestMapping("/rest/finoperations")
@@ -83,17 +84,27 @@ public class FinancialOperationRestController {
 		return dtos;
 	}
 
-//	public List<FinancialOperationDto>
+	@PostMapping("/user/between/{userId}")
+	public List<FinancialOperationDto> userOperationsBetween(@PathVariable String userid,
+		@RequestBody DateBetweenRequestDto dto) {
+		List<FinancialOperation> operations = service
+			.findAllForUserBetweenDates(userid, dto.getStartDate(), dto.getEndDate());
+		List<FinancialOperationDto> dtos = new ArrayList<>();
 
+		operations.forEach(operation -> dtos.add(mapper.toFinancialOperationDto(operation)));
+		return dtos;
+	}
 
+	@PostMapping("/member/between/{familyMemberId}")
+	public List<FinancialOperationDto> memberOperationsBetween(@PathVariable String familyMemberId,
+		@RequestBody DateBetweenRequestDto dto) {
+		List<FinancialOperation> operations = service
+			.findAllForUserBetweenDates(familyMemberId, dto.getStartDate(), dto.getEndDate());
+		List<FinancialOperationDto> dtos = new ArrayList<>();
 
-
-
-
-
-
-
-
+		operations.forEach(operation -> dtos.add(mapper.toFinancialOperationDto(operation)));
+		return dtos;
+	}
 
 
 }

@@ -3,6 +3,7 @@ package ru.nik.alfafamily.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -40,7 +41,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				"/img/**",
 				"/webjars/**").permitAll()
 			.anyRequest().fullyAuthenticated()
-
+			.antMatchers(HttpMethod.GET,
+				"/rest/users",
+				"/rest/users/id/{userId}",
+				"/rest/users/email/{email}").hasRole("ADMIN")
+			.and().authorizeRequests()
+			.antMatchers(HttpMethod.DELETE,
+				"/rest/users/{userId}").hasRole("ADMIN")
+			.and().authorizeRequests()
+			.antMatchers(HttpMethod.POST,
+				"/rest/users").hasRole("ADMIN")
+			.antMatchers(HttpMethod.PUT,
+				"/rest/users").hasRole("ADMIN")
 			.and()
 				.formLogin()
 				.loginPage("/login")

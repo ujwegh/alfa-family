@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -83,11 +85,16 @@ class FinancialOperationServiceImplTest {
 		Category savedCategory1 = template.save(category1);
 		Category savedCategory2 = template.save(category2);
 
+		member1.setCategories(Arrays.asList(savedCategory1, savedCategory2));
+		template.save(member1);
+
 		FinancialOperation operation = new FinancialOperation(new Date(), "расход",
 			savedCategory1, 555.55, "RUB", 1234567890L,
 			"оплата продуктов", "дороговато вышло");
 
 		template.save(operation);
+
+
 	}
 
 	@AfterEach
@@ -127,8 +134,15 @@ class FinancialOperationServiceImplTest {
 	}
 
 	@Test
-	void findAllForUserBetweenDates() {
-
+	void findAllForUserBetweenDates() { //List<FinancialOperation>
+		User user = userRepository.findAll().get(0);
+		List<FinancialOperation> operations = service.findAllForUser(user.getId());
+		Date start = operations.get(0).getDate();
+		Date and = operations.get(operations.size()-1).getDate();
+		List<FinancialOperation> expected = service.findAllForUserBetweenDates(user.getId(), start, and);
+		assertNotNull(expected);
+		assertTrue(expected.size() > 0);
+		assertEquals(1, expected.size());
 	}
 
 	@Test
