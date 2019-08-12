@@ -60,7 +60,8 @@ class FamilyMemberServiceImplTest {
 
 		FamilyMember member1 = new FamilyMember("test-1-familyMember", user);
 		template.save(member1);
-		FamilyMemberProperties familyMemberProperties = new FamilyMemberProperties(member1, "green");
+		FamilyMemberProperties familyMemberProperties = new FamilyMemberProperties(member1,
+			"green");
 		template.save(familyMemberProperties);
 		member1.setProperties(familyMemberProperties);
 		template.save(member1);
@@ -148,7 +149,8 @@ class FamilyMemberServiceImplTest {
 		FamilyMember familyMember = memberRepository.findAll().get(0);
 		assertNotNull(familyMember);
 
-		FamilyMember familyMember1 = familyMemberService.updateProperties(familyMember.getId(), "blue");
+		FamilyMember familyMember1 = familyMemberService
+			.updateProperties(familyMember.getId(), "blue");
 		assertNotNull(familyMember1);
 		assertNotNull(familyMember1.getProperties());
 		assertEquals("blue", familyMember1.getProperties().getColor());

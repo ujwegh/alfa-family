@@ -1,6 +1,5 @@
 package ru.nik.alfafamily.service;
 
-import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -24,7 +23,7 @@ public class FamilyMemberPropertiesServiceImpl implements FamilyMemberProperties
 	public FamilyMemberProperties createOrUpdate(String familyMemberId, Map<String, String> properties) {
 		FamilyMember member = familyMemberService.findById(familyMemberId);
 
-		FamilyMemberProperties property = repository.findFirstByFamilyMember_Id(member.getId());
+		FamilyMemberProperties property = repository.findByFamilyMember(member);
 		if (property == null) {
 			property = new FamilyMemberProperties(member, null);
 		}

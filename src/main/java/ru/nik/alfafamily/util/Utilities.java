@@ -68,7 +68,7 @@ public class Utilities {
 
 		File tempFile = File.createTempFile("tmp", ".tmp");
 		try (FileOutputStream fos = new FileOutputStream(tempFile)) {
-			fos.write( file.getBytes());
+			fos.write(file.getBytes());
 		}
 		return tempFile;
 //		File result = FileUtils.writeByteArrayToFile(new File(file.getName()), file.getBytes());
@@ -85,7 +85,6 @@ public class Utilities {
 	}
 
 
-
 	public Budget countBudget(List<FinancialOperation> operations) {
 		Budget budget = new Budget();
 		Double income = 0.0;
@@ -94,19 +93,26 @@ public class Utilities {
 		for (FinancialOperation operation : operations) {
 			if (operation.getType() != null && operation.getType().toLowerCase().equals("доход")) {
 				income += operation.getSum();
-			} else if (operation.getType() != null && operation.getType().toLowerCase().equals("расход")) {
+			} else if (operation.getType() != null && operation.getType().toLowerCase()
+				.equals("расход")) {
 				outcome += operation.getSum();
 			}
 		}
-
-		Date start = operations.get(operations.size()-1).getDate();
-		Date end = operations.get(0).getDate();
+		Date start = new Date();
+		Date end = new Date();
+		if (operations.size() > 0) {
+			start =  operations.get(0).getDate();
+			end =operations.get(operations.size() - 1).getDate();
+		}
+		budget.setIncome(income);
+		budget.setOutcome(outcome);
 		budget.setStartDate(start);
 		budget.setEndDate(end);
 		return budget;
 	}
 
-	public List<FinancialOperation> getByDateBetween(List<FinancialOperation> operations, Date start, Date end) {
+	public List<FinancialOperation> getByDateBetween(List<FinancialOperation> operations,
+		Date start, Date end) {
 		List<FinancialOperation> result = new ArrayList<>();
 
 		operations.forEach(operation -> {

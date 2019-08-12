@@ -67,9 +67,9 @@ class FamilyMemberPropertiesRepositoryTest {
 	}
 
 	@Test
-	void findFirstByFamilyMember_Id() {
+	void findByFamilyMember() {
 		FamilyMember member1 = memberRepository.findAll().get(0); // получаем мембера
-		FamilyMemberProperties properties2 = repository.findFirstByFamilyMember_Id(member1.getId());
+		FamilyMemberProperties properties2 = repository.findByFamilyMember(member1);
 		assertEquals(member1.getProperties().getId(), properties2.getId());
 		assertEquals(member1.getProperties().getColor(), properties2.getColor());
 	}

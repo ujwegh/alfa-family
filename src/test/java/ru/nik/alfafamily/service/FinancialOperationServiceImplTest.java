@@ -47,7 +47,6 @@ import ru.nik.alfafamily.util.Utilities;
 @ContextConfiguration(classes = {FinancialOperationServiceImpl.class,
 	UserServiceImpl.class, FamilyMemberServiceImpl.class, Mapper.class, CategoryServiceImpl.class,
 	FamilyMemberPropertiesServiceImpl.class})
-//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class FinancialOperationServiceImplTest {
 
 	@Autowired
@@ -78,8 +77,10 @@ class FinancialOperationServiceImplTest {
 		template.save(user);
 
 		FamilyMember member1 = new FamilyMember("test-1-familyMember", user);
+		List<FamilyMember> members = new ArrayList<>();
+		members.add(member1);
 		template.save(member1);
-
+		user.setMembers(members);
 		Category category1 = new Category("бензин", member1);
 		Category category2 = new Category("продукты", member1);
 		Category savedCategory1 = template.save(category1);
@@ -88,20 +89,31 @@ class FinancialOperationServiceImplTest {
 		member1.setCategories(Arrays.asList(savedCategory1, savedCategory2));
 		template.save(member1);
 
-		FinancialOperation operation = new FinancialOperation(new Date(), "расход",
+		FinancialOperation op1 = new FinancialOperation(new Date(), "расход",
 			savedCategory1, 555.55, "RUB", 1234567890L,
 			"оплата продуктов", "дороговато вышло");
+		FinancialOperation op2 = new FinancialOperation(new Date(), "расход",
+			savedCategory1, 999.99, "RUB", 1234567890L,
+			"оплата пошлины", "опять");
+		FinancialOperation op3 = new FinancialOperation(new Date(), "доход",
+			savedCategory1, 999.99, "RUB", 1234567890L,
+			"возврат пошлины", "ура");
+		FinancialOperation op4 = new FinancialOperation(new Date(), "доход",
+			savedCategory1, 1000.0, "RUB", 1234567890L,
+			"возврат цены за торт", "ура!!!");
 
-		template.save(operation);
-
-
+		template.save(op1);
+		template.save(op2);
+		template.save(op3);
+		template.save(op4);
+		member1.setCategories(Arrays.asList(savedCategory1, savedCategory2));
+		template.save(member1);
 	}
 
 	@AfterEach
 	public void cleanup() {
 		template.getDb().drop();
 	}
-
 
 	@Test
 	void createCSV() throws IOException {
@@ -114,23 +126,47 @@ class FinancialOperationServiceImplTest {
 		operations.forEach(operation -> System.out.println(operation.toString() + "\n"));
 
 		assertNotNull(operations);
-		assertTrue(operations.size()>0);
+		assertTrue(operations.size() > 0);
 
 	}
 
 	@Test
 	void updateCSV() {
-//		Not implemented yet
+//  Not implemented yet
 	}
 
 	@Test
-	void findAllForUser() {
+	void findAllForUser() { //List<FinancialOperation>
 
+		User user = userRepository.findAll().get(0);
+		List<Category> categories = categoryRepository.findAll();
+
+		FinancialOperation op1 = new FinancialOperation(new Date(), "расход",
+			categories.get(0), 999.99, "RUB", 1234567890L,
+			"оплата пошлины", "опять");
+		FinancialOperation op2 = new FinancialOperation(new Date(), "доход",
+			categories.get(0), 999.99, "RUB", 1234567890L, "возврат пошлины", "ура");
+		FinancialOperation op3 = new FinancialOperation(new Date(), "доход",
+			categories.get(0), 1000.0, "RUB", 1234567890L,
+			"возврат цены за торт", "ура!!!");
+		List<FinancialOperation> operations = new ArrayList<>();
+		operations.add(op1);
+		operations.add(op2);
+		operations.add(op3);
+
+		List<FinancialOperation> expected = service.findAllForUser(user.getId());
+		assertNotNull(expected);
+		assertTrue(expected.size() > 0);
+		assertNotNull(expected);
+		assertEquals(operations.size(), expected.size() - 1);
 	}
 
 	@Test
-	void deleteAllForFamilyMember() {
-
+	void deleteAllForFamily0Member() { //Boolean
+		FamilyMember familyMember = memberRepository.findAll().get(0);
+		User user = familyMember.getUser();
+		boolean b = service.deleteAllForFamilyMember(user.getId(), familyMember.getId());
+		assertTrue(b);
 	}
 
 	@Test
@@ -138,15 +174,28 @@ class FinancialOperationServiceImplTest {
 		User user = userRepository.findAll().get(0);
 		List<FinancialOperation> operations = service.findAllForUser(user.getId());
 		Date start = operations.get(0).getDate();
-		Date and = operations.get(operations.size()-1).getDate();
-		List<FinancialOperation> expected = service.findAllForUserBetweenDates(user.getId(), start, and);
+		Date and = operations.get(operations.size() - 1).getDate();
+		List<FinancialOperation> expected = service
+			.findAllForUserBetweenDates(user.getId(), start, and);
 		assertNotNull(expected);
 		assertTrue(expected.size() > 0);
-		assertEquals(1, expected.size());
+		assertEquals(4, operations.size());
+		assertEquals(4, expected.size());
 	}
 
 	@Test
-	void findAllForFamilyMemberBetweenDates() {
+	void findAllForFamilyMemberBetween0Dates() { //List<FinancialOperation>
+		FamilyMember familyMember = memberRepository.findAll().get(0);
+		User user = familyMember.getUser();
+		List<FinancialOperation> operations = service.findAllForUser(user.getId());
+		Date start = operations.get(0).getDate();
+		Date and = operations.get(operations.size() - 1).getDate();
+		List<FinancialOperation> expected = service
+			.findAllForFamilyMemberBetweenDates(user.getId(), familyMember.getId(), start, and);
+		assertNotNull(expected);
+		assertTrue(expected.size() > 0);
+		assertEquals(4, operations.size());
+		assertEquals(4, expected.size());
 
 	}
 
@@ -194,9 +243,8 @@ class FinancialOperationServiceImplTest {
 	@Test
 	void findById() {
 		Category category = categoryRepository.findAll().get(0);
-		FinancialOperation expected0 = new FinancialOperation(new Date(), "расход",
-			category, 999.99, "RUB", 1234567890L,
-			"оплата пошлины", "опять");
+		FinancialOperation expected0 = new FinancialOperation(new Date(), "расход", category,
+			999.99, "RUB", 1234567890L, "оплата пошлины", "опять");
 
 		FinancialOperation expected = service.create(mapper.toFinancialOperationDto(expected0));
 		FinancialOperation actual = service.findById(expected.getId());

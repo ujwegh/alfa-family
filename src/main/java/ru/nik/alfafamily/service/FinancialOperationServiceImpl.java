@@ -94,7 +94,7 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
 
 	@Override
 	public Boolean deleteAllForFamilyMember(String userId, String familyMemberId) {
-		if (!userService.isUserExistsById(userId)) {
+		if (userService.isUserExistsById(userId)) {
 			return
 				repository.deleteAllByCategoryIn(getFamilyMemberCategories(userId, familyMemberId))
 					!= 0;

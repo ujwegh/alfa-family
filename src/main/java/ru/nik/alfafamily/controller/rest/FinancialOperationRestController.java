@@ -40,7 +40,7 @@ public class FinancialOperationRestController {
 		this.mapper = mapper;
 	}
 
-//	@PreAuthorize("#userId == authentication.details.id")
+	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Find all financial operations for user", response = List.class)
 	@GetMapping("/user/{userId}")
 	public List<FinancialOperationDto> findAllForUser(@PathVariable @NonNull final String userId) {
