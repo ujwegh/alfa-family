@@ -20,9 +20,4 @@ public class FamilyMemberDto {
 	private String name;
 
 	private String userId;
-
-	private List<CategoryDto> categories;
-
-	private FamilyMemberPropertiesDto properties;
-
 }

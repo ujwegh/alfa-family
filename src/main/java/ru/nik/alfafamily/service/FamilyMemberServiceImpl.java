@@ -40,6 +40,7 @@ public class FamilyMemberServiceImpl implements FamilyMemberService {
 			FamilyMember familyMember = new FamilyMember();
 			familyMember.setUser(user);
 			familyMember.setName(name);
+
 			return repository.save(familyMember);
 		}
 		return null;
@@ -49,7 +50,7 @@ public class FamilyMemberServiceImpl implements FamilyMemberService {
 	public FamilyMember update(String familyMemberId, String name) {
 		FamilyMember familyMember = findById(familyMemberId);
 		familyMember.setName(name);
-		return familyMember;
+		return repository.save(familyMember);
 	}
 
 	@Override
@@ -66,50 +67,6 @@ public class FamilyMemberServiceImpl implements FamilyMemberService {
 				"Family familyMember with id " + familyMemberId + " doesn't exists.");
 		return repository.findById(familyMemberId).orElse(null);
 	}
-
-//	/**
-//	 * Update members categories by adding new ones and reusing existed ones
-//	 *
-//	 * @param familyMemberId - id of the family familyMember
-//	 * @param categories - category list
-//	 * @return familyMember with updated categories
-//	 */
-//	@Override
-//	public FamilyMember updateCategories(String familyMemberId, List<String> categories) {
-//		FamilyMember member = findById(familyMemberId);
-//		List<Category> existedCategories = categoryService.findAllByNamesIn(familyMemberId, categories);
-//
-//		Map<String, Category> categoryMap = new HashMap<>();
-//		categories.forEach(newCategoryName -> categoryMap.put(newCategoryName, new Category(newCategoryName, null)));
-//
-//		// updateByName categories with existed ones
-//		categoryMap.forEach((k,v) -> existedCategories.forEach(existedCategory -> {
-//			if (k.equals(existedCategory.getName())){
-//				categoryMap.put(k, existedCategory);
-//			}
-//		}));
-//
-//		// new categories to save
-//		List<Category> newCategories = new ArrayList<>();
-//		categoryMap.forEach((k,v) -> {
-//			if (v.getId() == null){
-//				newCategories.add(v);
-//			}
-//		});
-//
-//		categoryService.bulkCreate(newCategories);
-//
-//		return member;
-//	}
-//
-//	@Override
-//	public FamilyMember updateProperties(String familyMemberId, String color) {
-//		FamilyMember member = findById(familyMemberId);
-//		Map<String, String> map = new HashMap<>();
-//		map.put("color", color);
-//		propertiesService.createOrUpdate(familyMemberId, map);
-//		return member;
-//	}
 
 	@Override
 	public Boolean isFamilyMemberExists(String familyMemberId) {

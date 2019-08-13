@@ -49,8 +49,6 @@ public class Mapper {
 		FamilyMemberDto dto = new FamilyMemberDto();
 		dto.setId(familyMember.getId());
 		dto.setName(familyMember.getName());
-//		dto.setCategories(toCategoryDtoList(familyMember.getCategories()));
-//		dto.setProperties(toFamilyMemberPropertiesDto(familyMember.getProperties()));
 		dto.setUserId(familyMember.getUser().getId());
 		return dto;
 	}
@@ -59,8 +57,6 @@ public class Mapper {
 		FamilyMember familyMember = new FamilyMember();
 		familyMember.setId(dto.getId());
 		familyMember.setName(dto.getName());
-//		familyMember.setCategories(toCategoryList(dto.getCategories()));
-//		familyMember.setProperties(fromFamilyMemberPropertiesDto(dto.getProperties()));
 		familyMember.setUser(userService.findById(dto.getUserId()));
 		return familyMember;
 	}
