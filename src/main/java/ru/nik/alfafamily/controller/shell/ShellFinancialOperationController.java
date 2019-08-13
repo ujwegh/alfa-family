@@ -39,7 +39,7 @@ public class ShellFinancialOperationController {
 	}
 
 	@ShellMethod("Create financial operations from csv file")
-	public String csvoperation(@ShellOption String memberId, @ShellOption String pathToFile) {
+	public String csv_operation(@ShellOption String memberId, @ShellOption String pathToFile) {
 
 		File file = new File(pathToFile);
 
@@ -60,7 +60,7 @@ public class ShellFinancialOperationController {
 
 
 	@ShellMethod("Show all financial operations for user")
-	public String allforuser(@ShellOption String userId) {
+	public String all_for_user(@ShellOption String userId) {
 
 		List<FinancialOperation> operations = service.findAllForUser(userId);
 		List<FinancialOperationDto> dtos = toDtoList(operations);
@@ -72,7 +72,7 @@ public class ShellFinancialOperationController {
 	}
 
 	@ShellMethod("Show all financial operations for user between dates")
-	public String allforuserbetween(@ShellOption String userId, @ShellOption String startDate,
+	public String all_for_user_between(@ShellOption String userId, @ShellOption String startDate,
 		@ShellOption String endDate) {
 
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
@@ -97,7 +97,7 @@ public class ShellFinancialOperationController {
 	}
 
 	@ShellMethod("Show all financial operations for family member between dates")
-	public String allformemberbetween(@ShellOption String userId,
+	public String all_for_member_between(@ShellOption String userId,
 		@ShellOption String familyMemberId,
 		@ShellOption String startDate, @ShellOption String endDate) {
 
@@ -124,7 +124,7 @@ public class ShellFinancialOperationController {
 
 
 	@ShellMethod("Create new financial operation")
-	public String newoperation(@ShellOption String categoryId, @ShellOption String date,
+	public String new_operation(@ShellOption String categoryId, @ShellOption String date,
 		@ShellOption String type, @ShellOption String sum, @ShellOption String currency,
 		@ShellOption String accountNumber) {
 
@@ -153,24 +153,24 @@ public class ShellFinancialOperationController {
 	}
 
 	@ShellMethod("Delete operation")
-	public String deleteoperation(@ShellOption String operationId) {
+	public String delete_operation(@ShellOption String operationId) {
 		boolean b = service.delete(operationId);
 		return b ? "Operation deleted." : "Delete operation failed.";
 	}
 
 	@ShellMethod("Find operation")
-	public String findoperation(@ShellOption String operationId) {
+	public String findo_peration(@ShellOption String operationId) {
 		FinancialOperationDto dto = mapper.toFinancialOperationDto(service.findById(operationId));
 		return dto.toString();
 	}
 
 	@ShellMethod("Delete all operations for family member")
-	public String deletememberops(@ShellOption String userId, @ShellOption String familyMemberId) {
+	public String delete_memberops(@ShellOption String userId, @ShellOption String familyMemberId) {
 		boolean b = service.deleteAllForFamilyMember(userId, familyMemberId);
 		return b ? "Operations deleted." : "Delete operations failed.";
 	}
 
-	public String updateoperation(@ShellOption String operationId, @ShellOption String categoryId,
+	public String update_operation(@ShellOption String operationId, @ShellOption String categoryId,
 		@ShellOption String date, @ShellOption String type, @ShellOption String sum,
 		@ShellOption String currency, @ShellOption String accountNumber) {
 

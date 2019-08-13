@@ -30,7 +30,7 @@ public class ShellFamilyMemberPropertiesController {
 	}
 
 	@ShellMethod("Get family member properties")
-	public String memberproperties(@ShellOption String propertyId) {
+	public String member_properties(@ShellOption String propertyId) {
 		FamilyMemberProperties properties = service.findById(propertyId);
 		if (properties == null) return "Family member properties with id: <" + propertyId +"> doest't exists.";
 		FamilyMemberPropertiesDto dto = mapper.toFamilyMemberPropertiesDto(properties);
@@ -39,7 +39,7 @@ public class ShellFamilyMemberPropertiesController {
 
 
 	@ShellMethod("Create family member properties")
-	public String creatememberprops(@ShellOption String familyMemberId, @ShellOption String color) {
+	public String create_member_props(@ShellOption String familyMemberId, @ShellOption String color) {
 
 		Map<String, String> map = new HashMap<>();
 		map.put("color", color);
@@ -51,7 +51,7 @@ public class ShellFamilyMemberPropertiesController {
 
 
 	@ShellMethod("Delete family member properties")
-	public String deleteproperty(@ShellOption String familyMemberId) {
+	public String delete_property(@ShellOption String familyMemberId) {
 		boolean b = service.delete(familyMemberId);
 		return b ? "Family member properties deleted." : "Delete family member properties failed.";
 	}

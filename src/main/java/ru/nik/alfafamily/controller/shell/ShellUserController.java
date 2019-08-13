@@ -2,6 +2,7 @@ package ru.nik.alfafamily.controller.shell;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,40 +46,46 @@ public class ShellUserController {
 	}
 
 	@ShellMethod("Update existed user")
-	public String updateuser(@ShellOption String firstName, @ShellOption String lastName,
+	public String update_user(@ShellOption String firstName, @ShellOption String lastName,
 		@ShellOption String email, @ShellOption String password, @ShellOption String enabled,
 		@ShellOption String roles) {
 		log.info("Updating user..");
 		User user = service.findByEmail(email);
-		List<String> roleList = Arrays.asList(roles.split(","));
+		List<String> roleList;
+		if (roles.contains(",")) {
+			roleList = Arrays.asList(roles.split(","));
+		} else {
+			roleList = Collections.singletonList(roles);
+		}
 
-		UserDto dto = new UserDto(user.getId(), firstName, lastName, email, password, mapper.toRoleDtoList(roleList),
+		UserDto dto = new UserDto(user.getId(), firstName, lastName, email, password,
+			mapper.toRoleDtoList(roleList),
 			Boolean.valueOf(enabled));
-		return service.update(dto).toString();
+		return mapper.toUserDto(service.update(dto)).toString();
 	}
 
 	@ShellMethod("Fine user by Id")
-	public String finduserbyid(@ShellOption String userId) {
+	public String find_user_by_id(@ShellOption String userId) {
 		log.info("Find user by id..");
 		service.isUserExistsById(userId);
 		return String.valueOf(service.findById(userId));
 	}
 
 	@ShellMethod("Find user by email")
-	public String finduserbyemail(@ShellOption String email) {
+	public String find_user_by_email(@ShellOption String email) {
 		log.info("Find user by email..");
 		service.isUserExistsByEmail(email);
 		return String.valueOf(service.findByEmail(email));
 	}
 
 	@ShellMethod("check user exists")
-	public String isuserexist(@ShellOption String userId) {
+	public String is_user_exist(@ShellOption String userId) {
 		log.info("Find user by id..");
 		return service.isUserExistsById(userId).toString();
 	}
 
 	@ShellMethod("Find all users")
-	public String allusers() {
+	public String all_users() {
 		log.info("Find all users..");
 		List<User> users = service.findAll();
 		List<UserDto> allUsers = new ArrayList<>();

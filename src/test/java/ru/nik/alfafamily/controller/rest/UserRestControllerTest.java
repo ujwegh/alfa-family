@@ -1,6 +1,5 @@
 package ru.nik.alfafamily.controller.rest;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -20,22 +19,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.nik.alfafamily.controller.shell.ShellUserController;
 import ru.nik.alfafamily.domain.Role;
 import ru.nik.alfafamily.domain.User;
 import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.dto.RoleDto;
 import ru.nik.alfafamily.dto.UserDto;
 import ru.nik.alfafamily.dto.UserRegistrationDto;
-import ru.nik.alfafamily.repository.RoleRepository;
 import ru.nik.alfafamily.security.AuthenticationSuccessHandlerImpl;
-import ru.nik.alfafamily.service.FamilyMemberService;
 import ru.nik.alfafamily.service.UserService;
 
 @ExtendWith(SpringExtension.class)
@@ -52,33 +46,14 @@ class UserRestControllerTest {
 	private Mapper mapper;
 
 	@MockBean
-	private RoleRepository repository;
-
-	@MockBean
-	private FamilyMemberService familyMemberService;
-
-	@MockBean
 	private AuthenticationSuccessHandlerImpl successHandler;
 
 	private List<User> users = new ArrayList<>();
 
 	private List<UserDto> userDtos = new ArrayList<>();
 
-	private UserRegistrationDto dto;
-
 	@BeforeEach
 	void init() {
-		UserRegistrationDto registrationDto = new UserRegistrationDto();
-		registrationDto.setFirstName("Firstname");
-		registrationDto.setLastName("Lastname");
-		registrationDto.setEmail("email");
-		registrationDto.setConfirmEmail("email");
-		registrationDto.setPassword("password");
-		registrationDto.setConfirmPassword("password");
-		registrationDto.setTerms(true);
-
-		dto = registrationDto;
-
 		User first = new User();
 		first.setId("first111");
 		first.setFirstName("Firstname");
@@ -113,23 +88,46 @@ class UserRestControllerTest {
 		verify(this.service, Mockito.atLeastOnce()).findAll();
 	}
 
+	@WithMockUser(authorities = "ROLE_ADMIN")
 	@Test
-	void findById() {
+	void findById() throws Exception {
+		Mockito.when(service.findById("first111")).thenReturn(users.get(0));
+		Mockito.when(mapper.toUserDto(users.get(0))).thenReturn(userDtos.get(0));
+		UserDto dto = userDtos.get(0);
 
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/users/id/{userId}", "first111")
+			.accept(MediaType.APPLICATION_JSON_VALUE);
+		mvc.perform(requestBuilder).andExpect(status().isOk())
+			.andExpect(content().json(asJsonString(dto))).andReturn();
+		verify(this.service, Mockito.atLeastOnce()).findById("first111");
 	}
 
+	@WithMockUser(authorities = "ROLE_ADMIN")
 	@Test
-	void findByEmail() {
+	void findByEmail() throws Exception {
+		Mockito.when(service.findByEmail("email")).thenReturn(users.get(0));
+		Mockito.when(mapper.toUserDto(users.get(0))).thenReturn(userDtos.get(0));
+		UserDto dto = userDtos.get(0);
 
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/users/email/{email}", "email")
+			.accept(MediaType.APPLICATION_JSON_VALUE);
+		mvc.perform(requestBuilder).andExpect(status().isOk())
+			.andExpect(content().json(asJsonString(dto))).andReturn();
+		verify(this.service, Mockito.atLeastOnce()).findByEmail("email");
 	}
 
+	@WithMockUser(authorities = "ROLE_ADMIN")
 	@Test
-	void delete() {
-
+	void delete() throws Exception {
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/users/{userId}", "first111")
+			.with(csrf());
+		this.mvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
+		verify(this.service, Mockito.atLeastOnce()).delete("first111");
 	}
 
+	@WithMockUser(authorities = "ROLE_ADMIN")
 	@Test
-	void create() {
+	void create() throws Exception {
 		UserRegistrationDto registrationDto = new UserRegistrationDto();
 		registrationDto.setFirstName("qwe");
 		registrationDto.setLastName("qwe");
@@ -139,33 +137,40 @@ class UserRestControllerTest {
 		registrationDto.setConfirmPassword("passqweword");
 		registrationDto.setTerms(true);
 
-		Mockito.when(service.save(registrationDto)).thenReturn(users.get(0));
+		User newUser = new User("qwe", "qwe", "qwe@aa.ru", "passqweword",
+			Collections.singletonList(new Role("ROLE_USER")));
+		newUser.setId("third333");
 
-//		expected.add(new Author("Лермонтов"));
-//		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/rest/authors").with(csrf())
-//			.contentType(MediaType.APPLICATION_JSON)
-//			.content(asJsonString(new AuthorDto(0,"Лермонтов", Collections.emptyList())));
-//		this.mvc.perform(requestBuilder).andExpect(status().isOk())
-//			.andExpect(content().json("{\"id\":0,\"name\":\"Лермонтов\",\"bookNames\":[]}")).andReturn();
-//		verify(this.service, Mockito.atLeastOnce()).addAuthor( "Лермонтов");
+		Mockito.when(service.save(registrationDto)).thenReturn(newUser);
+		Mockito.when(mapper.toUserDto(newUser)).thenReturn(toUserDto(newUser));
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/rest/users")
+			.with(csrf()).contentType(MediaType.APPLICATION_JSON)
+			.content("{\"id\":null,\"firstName\":\"qwe\",\"lastName\":\"qwe\",\"email\":\"qwe@aa.ru\","
+				+ "\"password\":\"passqweword\",\"roles\":[{\"id\":null,\"name\":null}],\"enabled\":true}");
+		this.mvc.perform(requestBuilder).andExpect(status().isOk())
+			.andExpect(content().json("{\"id\":\"third333\",\"firstName\":\"qwe\",\"lastName\":\"qwe\",\"email\":\"qwe@aa.ru\",\"password\":\"passqweword\",\"roles\":\"null\",\"enabled\":true}")).andReturn();
+		verify(this.service, Mockito.atLeastOnce()).save(registrationDto);
 	}
 
+	@WithMockUser(authorities = "ROLE_ADMIN")
 	@Test
-	void update() {
+	void update() throws Exception {
+		User user = users.get(0);
+		user.setPassword("newPass");
 
+		Mockito.when(service.update(toUserDto(user))).thenReturn(user);
+		Mockito.when(mapper.toUserDto(user)).thenReturn(toUserDto(user));
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/users")
+			.with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(asJsonString(toUserDto(user)));
+		this.mvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
+		verify(this.service, Mockito.atLeastOnce()).update(toUserDto(user));
 	}
 
-
-
-
-
-
-
-
-
-
-
-	private static String asJsonString(final UserDto obj) {
+	private static String asJsonString(final Object obj) {
 		try {
 			return new ObjectMapper().writeValueAsString(obj);
 		} catch (Exception e) {

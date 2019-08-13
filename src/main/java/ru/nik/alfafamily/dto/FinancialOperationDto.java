@@ -33,7 +33,7 @@ public class FinancialOperationDto {
 
 	private String comment;
 
-	private Boolean planned;
+	private Boolean planned = false;
 
 	@Override
 	public String toString() {

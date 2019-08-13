@@ -36,7 +36,7 @@ public class ShellFamilyMemberController {
 
 
 	@ShellMethod("Get all family members")
-	public String familyMembers(@ShellOption String email) {
+	public String family_members(@ShellOption String email) {
 		User user = userService.findByEmail(email);
 		if (user == null) return "User with email: <"+ email+"> doesn't exist.";
 		List<FamilyMember> list = service.findAll(user.getId());
@@ -47,7 +47,7 @@ public class ShellFamilyMemberController {
 	}
 
 	@ShellMethod("Create family familyMember")
-	public String createmember(@ShellOption String email, @ShellOption String name) {
+	public String create_member(@ShellOption String email, @ShellOption String name) {
 		User user = userService.findByEmail(email);
 		FamilyMemberDto dto = mapper.toFamilyMemberDto(service.create(user.getId(), name));
 		return "New family member has been created: " + dto.toString();
@@ -65,7 +65,7 @@ public class ShellFamilyMemberController {
 	}
 
 	@ShellMethod("Update family member")
-	public String updatemember(@ShellOption String familyMemberId, @ShellOption String name) {
+	public String update_member(@ShellOption String familyMemberId, @ShellOption String name) {
 		FamilyMember member = service.update(familyMemberId, name);
 		if (member == null) {
 			return "Update family member was failed.";
@@ -75,38 +75,12 @@ public class ShellFamilyMemberController {
 	}
 
 	@ShellMethod("Check is family member exists")
-	public String ismemberexist(@ShellOption String familyMemberId) {
+	public String is_member_exist(@ShellOption String familyMemberId) {
 		return service.isFamilyMemberExists(familyMemberId).toString();
 	}
 
-//	@ShellMethod("Update family member categories")
-//	public String updatemembercategories(@ShellOption String familyMemberId,
-//		@ShellOption String categories) {
-//		List<String> categoryList;
-//		if (categories.contains(",")) {
-//			categoryList = Arrays.asList(categories.split(","));
-//		} else {
-//			categoryList = Collections.singletonList(categories);
-//		}
-//
-//		FamilyMember member = service.updateCategories(familyMemberId, categoryList);
-//		FamilyMemberDto dto = mapper.toFamilyMemberDto(member);
-//		return dto.toString();
-//	}
-//
-//	@ShellMethod("Update family member properties")
-//	public String updatememberproperties(@ShellOption String familyMemberId,
-//		@ShellOption String color) {
-//		FamilyMember member = service.updateProperties(familyMemberId, color);
-//		if (member == null) {
-//			return "Update family member was failed.";
-//		}
-//		FamilyMemberDto dto = mapper.toFamilyMemberDto(member);
-//		return dto.toString();
-//	}
-
 	@ShellMethod("Delete family member")
-	public String deletemember(@ShellOption String familyMemberId) {
+	public String delete_member(@ShellOption String familyMemberId) {
 		boolean b = service.delete(familyMemberId);
 		return b ? "Family member deleted." : "Delete family member failed.";
 	}

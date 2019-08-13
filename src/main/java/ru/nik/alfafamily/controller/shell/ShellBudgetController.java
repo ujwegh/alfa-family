@@ -27,24 +27,24 @@ public class ShellBudgetController {
 	}
 
 	@ShellMethod("Show budget for user for all time")
-	public String userbudget(@ShellOption String userId) {
+	public String user_budget(@ShellOption String userId) {
 		Budget budget = service.countForAllTimeForUser(userId);
 		if (budget == null) return "Cant calculate budget for user: " + userId;
 		return budget.toString();
 	}
 
 	@ShellMethod("Show budget for family member for all time")
-	public String familymemberbudget(@ShellOption String userId, @ShellOption String familyMemberId) {
+	public String family_member_budget(@ShellOption String userId, @ShellOption String familyMemberId) {
 		Budget budget = service.countForAllTimeForFamilyMember(userId, familyMemberId);
 		if (budget == null) return "Cant calculate budget for family member: " + familyMemberId;
 		return budget.toString();
 	}
 
 	@ShellMethod("Show budget for user between dates")
-	public String userbudgetbetween(@ShellOption String userId, @ShellOption String startDate,
+	public String user_budget_between(@ShellOption String userId, @ShellOption String startDate,
 		@ShellOption String endDate) {
 
-		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 		Date start;
 		Date end;
 		try {
@@ -59,10 +59,10 @@ public class ShellBudgetController {
 	}
 
 	@ShellMethod("Show budget for family member between dates")
-	public String familymemberbudgetbetween(@ShellOption String userId, @ShellOption String familyMemberId,
+	public String family_member_budget_between(@ShellOption String userId, @ShellOption String familyMemberId,
 		@ShellOption String startDate, @ShellOption String endDate) {
 
-		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 		Date start;
 		Date end;
 		try {

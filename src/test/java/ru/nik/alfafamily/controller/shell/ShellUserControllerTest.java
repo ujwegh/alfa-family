@@ -1,6 +1,7 @@
 package ru.nik.alfafamily.controller.shell;
 
 
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,9 @@ import org.springframework.shell.jline.ScriptShellApplicationRunner;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.nik.alfafamily.domain.User;
 import ru.nik.alfafamily.dto.Mapper;
+import ru.nik.alfafamily.dto.UserDto;
 import ru.nik.alfafamily.dto.UserRegistrationDto;
+import ru.nik.alfafamily.service.FamilyMemberService;
 import ru.nik.alfafamily.service.UserService;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,8 +35,8 @@ class ShellUserControllerTest {
 	@Autowired
 	private Mapper mapper;
 
+	@Autowired
 	private ShellUserController controller;
-
 
 	@BeforeEach
 	void init() {
@@ -51,36 +54,55 @@ class ShellUserControllerTest {
 	}
 
 
-
 	@Test
 	void register() {
-
+		String b = controller.register("firstName12", "secondName12",
+			"admin12@mail.com", "password12");
+		User user = service.findAll().get(1);
+		assertNotNull(b);
+		assertEquals(user.toString(), b);
 	}
 
 	@Test
-	void updateuser() {
-
-	}
-
-	@Test
-	void finduserbyid() {
+	void update_user() {
 		User user = service.findAll().get(0);
-		String result = controller.finduserbyid(user.getId());
+
+		String roles = "USER_ROLE";
+		String s = controller.update_user("Firstname2", user.getLastName(),
+			"email", "password1", "password", roles);
+
+		User user1 = service.findById(user.getId());
+		UserDto dto = mapper.toUserDto(user1);
+		assertNotNull(s);
+		assertEquals(dto.toString(), s);
+	}
+
+	@Test
+	void find_user_by_id() {
+		User user = service.findAll().get(0);
+		String result = controller.find_user_by_id(user.getId());
 		assertEquals(user.toString(), result);
 	}
 
 	@Test
-	void finduserbyemail() {
-
+	void find_user_by_email() {
+		User user = service.findAll().get(0);
+		String result = controller.find_user_by_email(user.getEmail());
+		assertEquals(user.toString(), result);
 	}
 
 	@Test
-	void isuserexist() {
-
+	void is_user_exist() {
+		User user = service.findAll().get(0);
+		String b = controller.is_user_exist(user.getId());
+		assertEquals("true", b);
 	}
 
 	@Test
-	void allusers() {
-
+	void all_users() {
+		String b = controller.all_users();
+		List<User> users = service.findAll();
+		assertNotNull(b);
+		assertEquals(users.toString(),b);
 	}
 }

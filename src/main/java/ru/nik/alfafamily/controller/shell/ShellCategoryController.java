@@ -37,7 +37,7 @@ public class ShellCategoryController {
 	}
 
 	@ShellMethod("Get all categories in names")
-	public String categoriesbynames(@ShellOption String familyMemberId, @ShellOption String categories){
+	public String categories_by_names(@ShellOption String familyMemberId, @ShellOption String categories){
 		List<String> categoryList;
 		if (categories.contains(",")) {
 			categoryList = Arrays.asList(categories.split(","));
@@ -62,7 +62,7 @@ public class ShellCategoryController {
 	}
 
 	@ShellMethod("Create new category")
-	public String newcategory(@ShellOption String familyMemberId, @ShellOption String name){
+	public String new_category(@ShellOption String familyMemberId, @ShellOption String name){
 
 		Category category = service.create(familyMemberId, name);
 
@@ -72,7 +72,7 @@ public class ShellCategoryController {
 	}
 
 	@ShellMethod("Delete category by name")
-	public String deletecategory(@ShellOption String familyMemberId, @ShellOption String name){
+	public String delete_category(@ShellOption String familyMemberId, @ShellOption String name){
 		boolean b = service.deleteByName(familyMemberId, name);
 		return b ? "Category deleted." : "Delete category failed.";
 	}
@@ -80,7 +80,7 @@ public class ShellCategoryController {
 
 
 	@ShellMethod("Get category by name")
-	public String categorybyname(@ShellOption String familyMemberId, @ShellOption String name){
+	public String category_by_name(@ShellOption String familyMemberId, @ShellOption String name){
 		Category category = service.findByName(familyMemberId, name);
 		if (category == null) return "Category: <"+ name+ "> doesn't exists.";
 		CategoryDto dto = mapper.toCategoryDto(category);
@@ -88,7 +88,7 @@ public class ShellCategoryController {
 	}
 
 	@ShellMethod("Update category")
-	public String updatecategory(@ShellOption String familyMemberId, @ShellOption String oldName,
+	public String update_category(@ShellOption String familyMemberId, @ShellOption String oldName,
 		@ShellOption String newName){
 		Category category = service.updateByName(familyMemberId, oldName, newName);
 		if (category == null) return "Category updateByName was failed.";
