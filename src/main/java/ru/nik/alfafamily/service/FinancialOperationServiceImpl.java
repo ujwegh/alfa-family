@@ -2,14 +2,12 @@ package ru.nik.alfafamily.service;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +36,17 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
 
 	private final Mapper mapper;
 
+	private final CategoryService categoryService;
+
 	@Autowired
 	public FinancialOperationServiceImpl(FinancialOperationRepository repository,
-		FamilyMemberService familyMemberService, UserService userService, Mapper mapper) {
+		FamilyMemberService familyMemberService, UserService userService, Mapper mapper,
+		CategoryService categoryService) {
 		this.repository = repository;
 		this.familyMemberService = familyMemberService;
 		this.userService = userService;
 		this.mapper = mapper;
+		this.categoryService = categoryService;
 	}
 
 	@Override
@@ -69,14 +71,17 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
 
 				categoryMap.values().forEach(category -> categoryList.add(category.getName()));
 
-				FamilyMember member = familyMemberService
-					.updateCategories(familyMemberId, categoryList);
+//				FamilyMember member = familyMemberService
+//					.updateCategories(familyMemberId, categoryList);
 
-				operations.forEach(operation -> member.getCategories().forEach(m -> {
+				List<Category> categories = categoryService.bulkUpdate(familyMemberId, categoryList);
+
+				operations.forEach(operation -> categories.forEach(m -> {
 					if (operation.getCategory().getName().equals(m.getName())) {
 						operation.setCategory(m);
 					}
 				}));
+
 				return repository.saveAll(operations);
 			}
 		} catch (IOException | ParseException e) {
@@ -95,9 +100,7 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
 	@Override
 	public Boolean deleteAllForFamilyMember(String userId, String familyMemberId) {
 		if (userService.isUserExistsById(userId)) {
-			return
-				repository.deleteAllByCategoryIn(getFamilyMemberCategories(userId, familyMemberId))
-					!= 0;
+			return repository.deleteAllByCategoryIn(getFamilyMemberCategories(familyMemberId)) != 0;
 		}
 		return false;
 	}
@@ -123,7 +126,7 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
 		String familyMemberId, Date start, Date end) {
 		if (userService.isUserExistsById(userId)) {
 
-			List<Category> categories = getFamilyMemberCategories(userId, familyMemberId);
+			List<Category> categories = getFamilyMemberCategories(familyMemberId);
 			List<FinancialOperation> operations = repository
 				.findAllByCategoryInOrderByDateDesc(categories);
 
@@ -177,28 +180,12 @@ public class FinancialOperationServiceImpl implements FinancialOperationService 
 
 
 	private List<Category> getUserCategories(String userId) {
-		List<Category> allCategories = new ArrayList<>();
 		List<FamilyMember> members = familyMemberService.findAll(userId);
-		members.forEach(m -> {
-			if (m.getCategories() != null) {
-				allCategories.addAll(m.getCategories());
-			}
-		});
-		return allCategories;
+		return categoryService.findAllByFamilyMemberIn(members);
 	}
 
-	private List<Category> getFamilyMemberCategories(String userId, String familyMemberId) {
-		FamilyMember neededMember = null;
-		List<FamilyMember> members = familyMemberService.findAll(userId);
-		for (FamilyMember member : members) {
-			if (member.getId().equals(familyMemberId)) {
-				neededMember = member;
-			}
-		}
-		if (neededMember != null) {
-			return neededMember.getCategories();
-		}
-		return null;
+	private List<Category> getFamilyMemberCategories(String familyMemberId) {
+		return categoryService.findAll(familyMemberId);
 	}
 
 

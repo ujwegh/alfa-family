@@ -80,31 +80,31 @@ public class FamilyMemberRestController {
 		return mapper.toFamilyMemberDto(member);
 	}
 
-	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
-	@ApiOperation(value = "Update categories for family member", response = FamilyMemberDto.class)
-	@PutMapping("/members/member/categories")
-	public FamilyMemberDto updateCategories(@PathVariable @Nonnull final String userId,
-		@RequestBody FamilyMemberDto dto) {
-		log.info("Update categories for family member: {}", dto.toString());
-		List<CategoryDto> dtos = dto.getCategories();
-		List<String> names = new ArrayList<>();
-		dtos.forEach(categoryDto -> names.add(categoryDto.getName()));
-		FamilyMember member = service.updateCategories(dto.getId(), names);
-		return mapper.toFamilyMemberDto(member);
-	}
-
-	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
-	@ApiOperation(value = "Update family members properties", response = FamilyMemberDto.class)
-	@PutMapping("/members/member/properties")
-	public FamilyMemberDto updateProperties(@PathVariable @Nonnull final String userId,
-		@RequestBody FamilyMemberDto dto) {
-		log.info("Update family members properties");
-		FamilyMemberPropertiesDto propertiesDto = dto.getProperties();
-		if (propertiesDto != null) {
-			return mapper.toFamilyMemberDto(service.updateProperties(dto.getId(), propertiesDto.getColor()));
-		}
-		return null;
-	}
+//	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
+//	@ApiOperation(value = "Update categories for family member", response = FamilyMemberDto.class)
+//	@PutMapping("/members/member/categories")
+//	public FamilyMemberDto updateCategories(@PathVariable @Nonnull final String userId,
+//		@RequestBody FamilyMemberDto dto) {
+//		log.info("Update categories for family member: {}", dto.toString());
+//		List<CategoryDto> dtos = dto.getCategories();
+//		List<String> names = new ArrayList<>();
+//		dtos.forEach(categoryDto -> names.add(categoryDto.getName()));
+//		FamilyMember member = service.updateCategories(dto.getId(), names);
+//		return mapper.toFamilyMemberDto(member);
+//	}
+//
+//	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
+//	@ApiOperation(value = "Update family members properties", response = FamilyMemberDto.class)
+//	@PutMapping("/members/member/properties")
+//	public FamilyMemberDto updateProperties(@PathVariable @Nonnull final String userId,
+//		@RequestBody FamilyMemberDto dto) {
+//		log.info("Update family members properties");
+//		FamilyMemberPropertiesDto propertiesDto = dto.getProperties();
+//		if (propertiesDto != null) {
+//			return mapper.toFamilyMemberDto(service.updateProperties(dto.getId(), propertiesDto.getColor()));
+//		}
+//		return null;
+//	}
 
 	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Create family member", response = FamilyMemberDto.class)

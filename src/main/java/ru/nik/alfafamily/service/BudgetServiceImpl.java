@@ -30,7 +30,7 @@ public class BudgetServiceImpl implements BudgetService {
 
 	@Override
 	public Budget countForAllTimeForUser(String userId) {
-		User user = userService.findById(userId);
+		userService.isUserExistsById(userId);
 		List<FinancialOperation> operations = service.findAllForUser(userId);
 		Budget budget = Utilities.countBudget(operations);
 		budget.setUserId(userId);
@@ -39,7 +39,8 @@ public class BudgetServiceImpl implements BudgetService {
 
 	@Override
 	public Budget countForAllTimeForFamilyMember(String userId, String memberId) {
-		FamilyMember member = memberService.findById(memberId);
+		userService.isUserExistsById(userId);
+		memberService.isFamilyMemberExists(memberId);
 		List<FinancialOperation> operations = service.findAllForUser(userId);
 		List<FinancialOperation> memberOperations = operations.stream()
 			.filter(o -> o.getCategory().getFamilyMember().getId().equals(memberId))
@@ -52,8 +53,7 @@ public class BudgetServiceImpl implements BudgetService {
 
 	@Override
 	public Budget countForUserBetweenDates(String userId, Date start, Date end) {
-		User user = userService.findById(userId);
-		List<FinancialOperation> operations = service.findAllForUserBetweenDates(userId, start, end);
+		userService.isUserExistsById(userId);		List<FinancialOperation> operations = service.findAllForUserBetweenDates(userId, start, end);
 		Budget budget = Utilities.countBudget(operations);
 		budget.setUserId(userId);
 		return budget;
@@ -61,7 +61,8 @@ public class BudgetServiceImpl implements BudgetService {
 
 	@Override
 	public Budget countForFamilyMemberBetweenDates(String userId, String memberId, Date start, Date end) {
-		FamilyMember member = memberService.findById(memberId);
+		userService.isUserExistsById(userId);
+		memberService.isFamilyMemberExists(memberId);
 		List<FinancialOperation> operations = service.findAllForFamilyMemberBetweenDates(userId, memberId, start, end);
 		Budget budget = Utilities.countBudget(operations);
 		budget.setUserId(userId);

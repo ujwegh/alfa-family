@@ -64,8 +64,8 @@ class FamilyMemberPropertiesServiceImplTest {
 
         template.save(familyMemberProperties);
 
-        member1.setProperties(familyMemberProperties);
-        template.save(member1);
+//        member1.setProperties(familyMemberProperties);
+//        template.save(member1);
         Category category1 = new Category("бензин", member1);
         Category category2 = new Category("продукты", member1);
         template.save(category1);
@@ -80,48 +80,51 @@ class FamilyMemberPropertiesServiceImplTest {
     @Test
     void create() {
         FamilyMember familyMember = memberRepository.findAll().get(1);
-        FamilyMemberProperties oldProperty = familyMember.getProperties();
-        assertNull(oldProperty);
+//        FamilyMemberProperties oldProperty = familyMember.getProperties();
+//        assertNull(oldProperty);
+
+        FamilyMemberProperties expected = new FamilyMemberProperties(familyMember, "red");
 
         Map<String, String> map = new HashMap<>();
-        map.put("color", "green");
-
-        FamilyMemberProperties actual = service.createOrUpdate(familyMember.getId(), map);
-
-        assertNotNull(actual);
-        assertEquals("green", actual.getColor());
-    }
-
-    @Test
-    void update() {
-        FamilyMember familyMember = memberRepository.findAll().get(0);
-        FamilyMemberProperties oldProperty = familyMember.getProperties();
-        FamilyMemberProperties expected = new FamilyMemberProperties(familyMember, "green");
-
-        Map<String, String> map = new HashMap<>();
-        map.put("color", "green");
+        map.put("color", expected.getColor());
 
         FamilyMemberProperties actual = service.createOrUpdate(familyMember.getId(), map);
 
         assertNotNull(actual);
         assertEquals(expected.getFamilyMember().getId(), actual.getFamilyMember().getId());
         assertEquals(expected.getColor(), actual.getColor());
-        assertNotEquals(oldProperty.getColor(), actual.getColor());
+    }
+
+    @Test
+    void update() {
+        FamilyMember familyMember = memberRepository.findAll().get(0);
+//        FamilyMemberProperties oldProperty = familyMember.getProperties();
+        FamilyMemberProperties expected = new FamilyMemberProperties(familyMember, "green");
+
+        Map<String, String> map = new HashMap<>();
+        map.put("color", "blue");
+
+        FamilyMemberProperties actual = service.createOrUpdate(familyMember.getId(), map);
+
+        assertNotNull(actual);
+        assertEquals(expected.getFamilyMember().getId(), actual.getFamilyMember().getId());
+        assertEquals(expected.getColor(), actual.getColor());
     }
 
     @Test
     void delete() {
         FamilyMember member1 = memberRepository.findAll().get(0);
-        FamilyMemberProperties familyMemberProperties = member1.getProperties();
-        System.out.println(familyMemberProperties);
-        boolean a = familyMemberService.delete(familyMemberProperties.getId());
+//        FamilyMemberProperties familyMemberProperties = member1.getProperties();
+        FamilyMemberProperties properties = service.findByFamilyMemberId(member1.getId());
+        boolean a = familyMemberService.delete(properties.getId());
         assertTrue(a);
     }
 
     @Test
     void findById() {
         FamilyMember member1 = memberRepository.findAll().get(0);
-        FamilyMemberProperties expected = member1.getProperties();
+        FamilyMemberProperties expected = new FamilyMemberProperties(member1, "red");
+
         FamilyMemberProperties actual = service.findById(expected.getId());
         assertNotNull(actual);
         assertNotNull(actual.getId());

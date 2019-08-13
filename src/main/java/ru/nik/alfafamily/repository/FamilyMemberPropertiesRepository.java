@@ -9,5 +9,5 @@ public interface FamilyMemberPropertiesRepository extends MongoRepository<Family
 
 	int deleteByFamilyMember_Id(String familyMemberId);
 
-	FamilyMemberProperties findByFamilyMember(FamilyMember id);
+	FamilyMemberProperties findByFamilyMember_Id(String id);
 }

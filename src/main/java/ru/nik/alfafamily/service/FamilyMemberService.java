@@ -15,9 +15,9 @@ public interface FamilyMemberService {
 
 	FamilyMember findById(String familyMemberId);
 
-	FamilyMember updateCategories(String familyMemberId, List<String> categories);
-
-	FamilyMember updateProperties(String familyMemberId, String color);
+//	FamilyMember updateCategories(String familyMemberId, List<String> categories);
+//
+//	FamilyMember updateProperties(String familyMemberId, String color);
 
 	Boolean isFamilyMemberExists(String familyMemberId);
 

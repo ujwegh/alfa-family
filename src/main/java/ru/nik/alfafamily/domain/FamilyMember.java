@@ -21,13 +21,7 @@ public class FamilyMember {
 	private String name;
 
 	@DBRef
-	private FamilyMemberProperties properties;
-
-	@DBRef
 	private User user;
-
-	@DBRef
-	private List<Category> categories;
 
 	public FamilyMember(String name, User user) {
 		this.name = name;
@@ -37,16 +31,11 @@ public class FamilyMember {
 	@Override
 	public String toString() {
 		List<String> names = Collections.emptyList();
-		if (categories!= null){
-			names = categories.stream().map(category -> category.getName()+", ").collect(Collectors.toList());
-		}
 
 		return "FamilyMember{" +
 			"id='" + id + '\'' +
 			", name='" + name + '\'' +
-			", properties=" + properties +
 			", user=" + user.getId() +
-			", categories="+ names.toString() +
 			'}';
 	}
 }

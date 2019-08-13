@@ -11,19 +11,22 @@ import ru.nik.alfafamily.repository.FamilyMemberPropertiesRepository;
 @Service
 public class FamilyMemberPropertiesServiceImpl implements FamilyMemberPropertiesService {
 
-	@Autowired
-	private FamilyMemberPropertiesRepository repository;
+	private final FamilyMemberPropertiesRepository repository;
 
-	@Lazy
-	@Autowired
-	private FamilyMemberService familyMemberService;
+	private final FamilyMemberService familyMemberService;
 
+	@Autowired
+	public FamilyMemberPropertiesServiceImpl(FamilyMemberPropertiesRepository repository,
+		FamilyMemberService familyMemberService) {
+		this.repository = repository;
+		this.familyMemberService = familyMemberService;
+	}
 
 	@Override
 	public FamilyMemberProperties createOrUpdate(String familyMemberId, Map<String, String> properties) {
 		FamilyMember member = familyMemberService.findById(familyMemberId);
 
-		FamilyMemberProperties property = repository.findByFamilyMember(member);
+		FamilyMemberProperties property = repository.findByFamilyMember_Id(familyMemberId);
 		if (property == null) {
 			property = new FamilyMemberProperties(member, null);
 		}
@@ -39,5 +42,10 @@ public class FamilyMemberPropertiesServiceImpl implements FamilyMemberProperties
 	@Override
 	public FamilyMemberProperties findById(String propertiesId) {
 		return repository.findById(propertiesId).orElse(null);
+	}
+
+	@Override
+	public FamilyMemberProperties findByFamilyMemberId(String familyMemberId) {
+		return repository.findByFamilyMember_Id(familyMemberId);
 	}
 }

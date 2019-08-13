@@ -86,8 +86,8 @@ class FinancialOperationServiceImplTest {
 		Category savedCategory1 = template.save(category1);
 		Category savedCategory2 = template.save(category2);
 
-		member1.setCategories(Arrays.asList(savedCategory1, savedCategory2));
-		template.save(member1);
+//		member1.setCategories(Arrays.asList(savedCategory1, savedCategory2));
+//		template.save(member1);
 
 		FinancialOperation op1 = new FinancialOperation(new Date(), "расход",
 			savedCategory1, 555.55, "RUB", 1234567890L,
@@ -106,8 +106,8 @@ class FinancialOperationServiceImplTest {
 		template.save(op2);
 		template.save(op3);
 		template.save(op4);
-		member1.setCategories(Arrays.asList(savedCategory1, savedCategory2));
-		template.save(member1);
+//		member1.setCategories(Arrays.asList(savedCategory1, savedCategory2));
+//		template.save(member1);
 	}
 
 	@AfterEach

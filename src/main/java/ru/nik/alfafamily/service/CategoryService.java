@@ -2,6 +2,7 @@ package ru.nik.alfafamily.service;
 
 import java.util.List;
 import ru.nik.alfafamily.domain.Category;
+import ru.nik.alfafamily.domain.FamilyMember;
 
 public interface CategoryService {
 
@@ -19,11 +20,15 @@ public interface CategoryService {
 
 	List<Category> findAll(String familyMemberId);
 
+	List<Category> findAllByFamilyMemberIn(List<FamilyMember> familyMembers);
+
 	List<Category> findAllByNamesIn(String familyMemberId, List<String> names);
 
 	Category findByName(String familyMemberId, String name);
 
 	Category findById(String categoryId);
+
+	List<Category> bulkUpdate(String familyMemberId, List<String> categories);
 
 
 }

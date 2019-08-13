@@ -79,31 +79,31 @@ public class ShellFamilyMemberController {
 		return service.isFamilyMemberExists(familyMemberId).toString();
 	}
 
-	@ShellMethod("Update family member categories")
-	public String updatemembercategories(@ShellOption String familyMemberId,
-		@ShellOption String categories) {
-		List<String> categoryList;
-		if (categories.contains(",")) {
-			categoryList = Arrays.asList(categories.split(","));
-		} else {
-			categoryList = Collections.singletonList(categories);
-		}
-
-		FamilyMember member = service.updateCategories(familyMemberId, categoryList);
-		FamilyMemberDto dto = mapper.toFamilyMemberDto(member);
-		return dto.toString();
-	}
-
-	@ShellMethod("Update family member properties")
-	public String updatememberproperties(@ShellOption String familyMemberId,
-		@ShellOption String color) {
-		FamilyMember member = service.updateProperties(familyMemberId, color);
-		if (member == null) {
-			return "Update family member was failed.";
-		}
-		FamilyMemberDto dto = mapper.toFamilyMemberDto(member);
-		return dto.toString();
-	}
+//	@ShellMethod("Update family member categories")
+//	public String updatemembercategories(@ShellOption String familyMemberId,
+//		@ShellOption String categories) {
+//		List<String> categoryList;
+//		if (categories.contains(",")) {
+//			categoryList = Arrays.asList(categories.split(","));
+//		} else {
+//			categoryList = Collections.singletonList(categories);
+//		}
+//
+//		FamilyMember member = service.updateCategories(familyMemberId, categoryList);
+//		FamilyMemberDto dto = mapper.toFamilyMemberDto(member);
+//		return dto.toString();
+//	}
+//
+//	@ShellMethod("Update family member properties")
+//	public String updatememberproperties(@ShellOption String familyMemberId,
+//		@ShellOption String color) {
+//		FamilyMember member = service.updateProperties(familyMemberId, color);
+//		if (member == null) {
+//			return "Update family member was failed.";
+//		}
+//		FamilyMemberDto dto = mapper.toFamilyMemberDto(member);
+//		return dto.toString();
+//	}
 
 	@ShellMethod("Delete family member")
 	public String deletemember(@ShellOption String familyMemberId) {

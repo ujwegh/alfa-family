@@ -42,15 +42,15 @@ class FamilyMemberPropertiesRepositoryTest {
 		template.save(role);
 		user.setRoles(Collections.singleton(role));
 		template.save(user);
-
 		FamilyMember member1 = new FamilyMember("test-1-familyMember", user);
+		template.save(member1);
 		FamilyMemberProperties properties = new FamilyMemberProperties(member1, "c04000");
-		FamilyMember savedMember = template.save(member1);
-		member1.setProperties(properties);
-		FamilyMemberProperties savedProps = template.save(properties);
+//		FamilyMember savedMember = template.save(member1);
+//		member1.setProperties(properties);
+		template.save(properties);
 
-		savedMember.setProperties(savedProps);
-		template.save(savedMember);
+//		savedMember.setProperties(savedProps);
+//		template.save(savedMember);
 	}
 
 	@AfterEach
@@ -68,9 +68,9 @@ class FamilyMemberPropertiesRepositoryTest {
 
 	@Test
 	void findByFamilyMember() {
-		FamilyMember member1 = memberRepository.findAll().get(0); // получаем мембера
-		FamilyMemberProperties properties2 = repository.findByFamilyMember(member1);
-		assertEquals(member1.getProperties().getId(), properties2.getId());
-		assertEquals(member1.getProperties().getColor(), properties2.getColor());
+		FamilyMember member1 = memberRepository.findAll().get(0);
+		FamilyMemberProperties expected = new FamilyMemberProperties(member1, "c04000");
+		FamilyMemberProperties actaul = repository.findByFamilyMember_Id(member1.getId());
+		assertEquals(expected.getColor(), actaul.getColor());
 	}
 }

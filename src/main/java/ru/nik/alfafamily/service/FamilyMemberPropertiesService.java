@@ -11,4 +11,6 @@ public interface FamilyMemberPropertiesService {
 
 	FamilyMemberProperties findById(String propertiesId);
 
+	FamilyMemberProperties findByFamilyMemberId(String familyMemberId);
+
 }

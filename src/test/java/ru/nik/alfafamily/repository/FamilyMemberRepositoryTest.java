@@ -68,7 +68,9 @@ class FamilyMemberRepositoryTest {
 
 		FamilyMember member = repository.findById(members.get(0).getId()).orElse(null);
 		assertNotNull(member);
-		assertEquals(members.get(0), member);
+		assertEquals(members.get(0).getId(), member.getId());
+		assertEquals(members.get(0).getName(), member.getName());
+		assertEquals(members.get(0).getUser().getId(), member.getUser().getId());
 	}
 
 	@Test
