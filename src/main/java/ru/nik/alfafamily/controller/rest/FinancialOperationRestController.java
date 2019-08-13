@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nonnull;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ import ru.nik.alfafamily.service.FinancialOperationService;
 @Api(value = "Financial operation rest controller", description = "Financial operations manager")
 @Slf4j
 @RestController
-@RequestMapping("/rest/finoperations")
+@RequestMapping("/rest/{userId}/finoperations")
 public class FinancialOperationRestController {
 
 	private final FinancialOperationService service;
@@ -42,8 +43,8 @@ public class FinancialOperationRestController {
 
 	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Find all financial operations for user", response = List.class)
-	@GetMapping("/user/{userId}")
-	public List<FinancialOperationDto> findAllForUser(@PathVariable @NonNull final String userId) {
+	@GetMapping
+	public List<FinancialOperationDto> findAllForUser(@PathVariable @Nonnull final String userId) {
 		log.info("Find all financial operations for user: {}", userId);
 		List<FinancialOperation> list = service.findAllForUser(userId);
 		List<FinancialOperationDto> dtos = new ArrayList<>();
@@ -51,32 +52,39 @@ public class FinancialOperationRestController {
 		return dtos;
 	}
 
+	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Delete operation with id")
 	@DeleteMapping("/operation/{operationId}")
-	public void delete(@PathVariable String operationId) {
+	public void delete(@PathVariable @Nonnull final String userId, @PathVariable String operationId) {
 		log.info("Delete operation with id: {}", operationId);
 		service.delete(operationId);
 	}
 
+	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Create new financial operation", response = FinancialOperationDto.class)
 	@PostMapping("/operation")
-	public FinancialOperationDto create(@RequestBody FinancialOperationDto operationDto) {
+	public FinancialOperationDto create(@PathVariable @Nonnull final String userId,
+		@RequestBody FinancialOperationDto operationDto) {
 		log.info("Create new financial operation: {}", operationDto.toString());
 		FinancialOperation operation = service.create(operationDto);
 		return operation != null ? mapper.toFinancialOperationDto(operation) : null;
 	}
 
+	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Find financial operation by id", response = FinancialOperationDto.class)
 	@GetMapping("/operation/{operationId}")
-	public FinancialOperationDto findById(@PathVariable String operationId) {
+	public FinancialOperationDto findById(@PathVariable @Nonnull final String userId,
+		@PathVariable String operationId) {
 		log.info("Find financial operation by id: {}", operationId);
 		FinancialOperation operation = service.findById(operationId);
 		return operation != null ? mapper.toFinancialOperationDto(operation) : null;
 	}
 
+	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Find financial operation by id", response = FinancialOperationDto.class)
 	@PostMapping("/upload/{familyMemberId}")
-	public List<FinancialOperationDto> createFromCsv(@PathVariable String familyMemberId,
+	public List<FinancialOperationDto> createFromCsv(@PathVariable @Nonnull final String userId,
+		@PathVariable String familyMemberId,
 		@RequestParam("file") MultipartFile file) {
 		log.info("Create financial operations from csv file: {}", file.getName());
 		List<FinancialOperation> list = service.createOrUpdate(familyMemberId, file);
@@ -86,20 +94,22 @@ public class FinancialOperationRestController {
 		return dtos;
 	}
 
-	@PostMapping("/user/between/{userId}")
-	public List<FinancialOperationDto> userOperationsBetween(@PathVariable String userid,
+	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
+	@PostMapping("/user/between")
+	public List<FinancialOperationDto> userOperationsBetween(@PathVariable @Nonnull final String userId,
 		@RequestBody DateBetweenRequestDto dto) {
 		List<FinancialOperation> operations = service
-			.findAllForUserBetweenDates(userid, dto.getStartDate(), dto.getEndDate());
+			.findAllForUserBetweenDates(userId, dto.getStartDate(), dto.getEndDate());
 		List<FinancialOperationDto> dtos = new ArrayList<>();
 
 		operations.forEach(operation -> dtos.add(mapper.toFinancialOperationDto(operation)));
 		return dtos;
 	}
 
-	@PostMapping("/member/between/{familyMemberId}")
-	public List<FinancialOperationDto> memberOperationsBetween(@PathVariable String familyMemberId,
-		@RequestBody DateBetweenRequestDto dto) {
+	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
+	@PostMapping("/member/{familyMemberId}/between")
+	public List<FinancialOperationDto> memberOperationsBetween(@PathVariable @Nonnull final String userId,
+		@PathVariable String familyMemberId, @RequestBody DateBetweenRequestDto dto) {
 		List<FinancialOperation> operations = service
 			.findAllForUserBetweenDates(familyMemberId, dto.getStartDate(), dto.getEndDate());
 		List<FinancialOperationDto> dtos = new ArrayList<>();
@@ -107,6 +117,5 @@ public class FinancialOperationRestController {
 		operations.forEach(operation -> dtos.add(mapper.toFinancialOperationDto(operation)));
 		return dtos;
 	}
-
 
 }

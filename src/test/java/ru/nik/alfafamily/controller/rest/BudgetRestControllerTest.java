@@ -12,7 +12,7 @@ class BudgetRestControllerTest {
 	}
 
 	@Test
-	void familyMemberBudget() {
+	void memberBudget() {
 
 	}
 }

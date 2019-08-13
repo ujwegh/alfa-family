@@ -1,7 +1,7 @@
 package ru.nik.alfafamily.security;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import javax.annotation.Nonnull;
-import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -18,9 +18,14 @@ public class AuthorizationComponent implements IAuthorizationComponent {
 		this.service = service;
 	}
 
+	@HystrixCommand(fallbackMethod = "error")
 	@Override
-	public boolean mayGetAccess(@Nonnull final UserDetails principal, @Nonnull @NonNull String userId) {
+	public boolean mayGetAccess(@Nonnull final UserDetails principal, @Nonnull final String userId) {
 		User user = service.findByEmail(principal.getUsername());
 		return user.getId().equals(userId);
+	}
+
+	public boolean error(@Nonnull final UserDetails principal, @Nonnull final String userId){
+		return false;
 	}
 }

@@ -5,8 +5,10 @@ import io.swagger.annotations.ApiOperation;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +24,7 @@ import ru.nik.alfafamily.service.FamilyMemberPropertiesService;
 @Api(value="Family member properties rest controller", description="Properties manager of current family member")
 @Slf4j
 @RestController
-@RequestMapping("/rest/properties")
+@RequestMapping("/rest/{userId}/properties")
 public class FamilyMemberPropertiesRestController {
 
 	private final FamilyMemberPropertiesService service;
@@ -36,9 +38,11 @@ public class FamilyMemberPropertiesRestController {
 		this.mapper = mapper;
 	}
 
+	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Update family members properties", response = FamilyMemberPropertiesDto.class)
 	@PostMapping
-	public FamilyMemberPropertiesDto update(@RequestBody FamilyMemberPropertiesDto dto) {
+	public FamilyMemberPropertiesDto update(@PathVariable @Nonnull final String userId,
+		@RequestBody FamilyMemberPropertiesDto dto) {
 		log.info("Update family members properties: {}", dto.toString());
 		Map<String, String> map = new HashMap<>();
 		map.put("color", dto.getColor());
@@ -46,16 +50,20 @@ public class FamilyMemberPropertiesRestController {
 		return properties != null ? mapper.toFamilyMemberPropertiesDto(properties) : null;
 	}
 
+	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Delete family member properties")
 	@DeleteMapping("/{familyMemberId}")
-	public void delete(@PathVariable String familyMemberId) {
+	public void delete(@PathVariable @Nonnull final String userId,
+		@PathVariable @Nonnull final String familyMemberId) {
 		log.info("Delete family member properties");
 		service.delete(familyMemberId);
 	}
 
+	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Get family member properties by id", response = FamilyMemberPropertiesDto.class)
 	@GetMapping("/{familyMemberId}")
-	public FamilyMemberPropertiesDto get(@PathVariable String familyMemberId) {
+	public FamilyMemberPropertiesDto get(@PathVariable @Nonnull final String userId,
+		@PathVariable @Nonnull final String familyMemberId) {
 		log.info("Get family member properties by id: ", familyMemberId);
 		FamilyMemberProperties properties = service.findById(familyMemberId);
 		return properties != null ? mapper.toFamilyMemberPropertiesDto(properties) : null;

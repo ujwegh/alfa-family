@@ -51,7 +51,7 @@ public class ShellFamilyMemberPropertiesController {
 
 
 	@ShellMethod("Delete family member properties")
-	public String ss(@ShellOption String familyMemberId) {
+	public String deleteproperty(@ShellOption String familyMemberId) {
 		boolean b = service.delete(familyMemberId);
 		return b ? "Family member properties deleted." : "Delete family member properties failed.";
 	}

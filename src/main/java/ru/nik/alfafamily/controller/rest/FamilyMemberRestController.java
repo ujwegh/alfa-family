@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +28,7 @@ import ru.nik.alfafamily.service.FamilyMemberService;
 @Api(value="Family member rest controller", description="Family members manager")
 @Slf4j
 @RestController
-@RequestMapping("/rest/family")
+@RequestMapping("/rest/{userId}/family")
 public class FamilyMemberRestController {
 
 	private final FamilyMemberService service;
@@ -40,40 +42,49 @@ public class FamilyMemberRestController {
 		this.mapper = mapper;
 	}
 
+	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Get all family members for user", response = List.class)
-	@GetMapping("/members/{userId}")
-	public List<FamilyMemberDto> getAll(@PathVariable String userId) {
+	@GetMapping("/members")
+	public List<FamilyMemberDto> getAll(@PathVariable @Nonnull final String userId) {
 		log.info("Get all family members for user: {}", userId);
 		List<FamilyMember> members = service.findAll(userId);
 		return members != null ? members.stream().map(mapper::toFamilyMemberDto)
 			.collect(Collectors.toList()) : Collections.emptyList();
 	}
 
+	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Find family member by id", response = FamilyMemberDto.class)
 	@GetMapping("/members/member/{familyMemberId}")
-	public FamilyMemberDto findById(@PathVariable String familyMemberId) {
+	public FamilyMemberDto findById(@PathVariable @Nonnull final String userId,
+		@PathVariable @Nonnull final String familyMemberId) {
 		log.info("Find family member by id: ", familyMemberId);
 		return mapper.toFamilyMemberDto(service.findById(familyMemberId));
 	}
 
+	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Delete family member by id")
 	@DeleteMapping("/members/member/{familyMemberId}")
-	public void delete(@PathVariable String familyMemberId) {
+	public void delete(@PathVariable @Nonnull final String userId,
+		@PathVariable @Nonnull final String familyMemberId) {
 		log.info("Delete family member by id: {}", familyMemberId);
 		service.delete(familyMemberId);
 	}
 
+	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Update family member", response = FamilyMemberDto.class)
 	@PutMapping("/members/member")
-	public FamilyMemberDto update(@RequestBody FamilyMemberDto dto) {
+	public FamilyMemberDto update(@PathVariable @Nonnull final String userId,
+		@RequestBody FamilyMemberDto dto) {
 		log.info("Update family member: {}", dto.toString());
 		FamilyMember member = service.update(dto.getId(), dto.getName());
 		return mapper.toFamilyMemberDto(member);
 	}
 
+	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Update categories for family member", response = FamilyMemberDto.class)
 	@PutMapping("/members/member/categories")
-	public FamilyMemberDto updateCategories(@RequestBody FamilyMemberDto dto) {
+	public FamilyMemberDto updateCategories(@PathVariable @Nonnull final String userId,
+		@RequestBody FamilyMemberDto dto) {
 		log.info("Update categories for family member: {}", dto.toString());
 		List<CategoryDto> dtos = dto.getCategories();
 		List<String> names = new ArrayList<>();
@@ -82,9 +93,11 @@ public class FamilyMemberRestController {
 		return mapper.toFamilyMemberDto(member);
 	}
 
+	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Update family members properties", response = FamilyMemberDto.class)
 	@PutMapping("/members/member/properties")
-	public FamilyMemberDto updateProperties(@RequestBody FamilyMemberDto dto) {
+	public FamilyMemberDto updateProperties(@PathVariable @Nonnull final String userId,
+		@RequestBody FamilyMemberDto dto) {
 		log.info("Update family members properties");
 		FamilyMemberPropertiesDto propertiesDto = dto.getProperties();
 		if (propertiesDto != null) {
@@ -93,9 +106,11 @@ public class FamilyMemberRestController {
 		return null;
 	}
 
+	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Create family member", response = FamilyMemberDto.class)
 	@PostMapping("/members")
-	public FamilyMemberDto create(@RequestBody FamilyMemberDto dto){
+	public FamilyMemberDto create(@PathVariable @Nonnull final String userId,
+		@RequestBody FamilyMemberDto dto){
 		log.info("Create family member: {}", dto.toString());
 		return mapper.toFamilyMemberDto(service.create(dto.getUserId(), dto.getName()));
 	}

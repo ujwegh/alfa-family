@@ -36,7 +36,7 @@ public class ShellFamilyMemberController {
 
 
 	@ShellMethod("Get all family members")
-	public String familymembers(@ShellOption String email) {
+	public String familyMembers(@ShellOption String email) {
 		User user = userService.findByEmail(email);
 		if (user == null) return "User with email: <"+ email+"> doesn't exist.";
 		List<FamilyMember> list = service.findAll(user.getId());
