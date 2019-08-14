@@ -2,13 +2,16 @@ package ru.nik.alfafamily.controller.rest;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -104,19 +107,22 @@ class FamilyMemberPropertiesRestControllerTest {
 	@WithMockUser(username = "email")
 	@Test
 	void update() throws Exception {
-//  FamilyMemberProperties familyMemberProperties = famMembProperties.get(0);
-//  familyMemberProperties.setColor("Red");
-//  Map<String, String> map = new HashMap<>();
-//  map.put("color",famMembPropDtos.get(0).getColor());
-//  Mockito.when(service.createOrUpdate(familyMembers.get(0).getId(), map) .update(toFamilyMemberPropertiesDto(familyMemberProperties)).thenReturn(familyMemberProperties));
-//  Mockito.when(mapper.toFamilyMemberPropertiesDto(familyMemberProperties)).thenReturn(toFamilyMemberPropertiesDto(familyMemberProperties));
-//
-//  RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/{userId}/properties")
-//    .with(csrf())
-//    .contentType(MediaType.APPLICATION_JSON)
-//    .content(asJsonString(toFamilyMemberPropertiesDto(familyMemberProperties)));
-//  this.mvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
-//  verify(this.service, Mockito.atLeastOnce()).createOrUpdate(familyMembers.get(0).getId(),map ).update(toFamilyMemberPropertiesDto(familyMemberProperties));
+		FamilyMemberProperties familyMemberProperties = famMembProperties.get(0);
+		familyMemberProperties.setColor("Red");
+		FamilyMemberPropertiesDto dto = toFamilyMemberPropertiesDto(familyMemberProperties);
+
+		Map<String, String> map = new HashMap<>();
+		map.put("color", famMembPropDtos.get(0).getColor());
+		Mockito.when(service.createOrUpdate(member.getId(), map)).thenReturn(familyMemberProperties);
+		Mockito.when(mapper.toFamilyMemberPropertiesDto(familyMemberProperties))
+			.thenReturn(dto);
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/{userId}/properties", "first111")
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(asJsonString(dto));
+		this.mvc.perform(requestBuilder).andExpect(status().isOk())
+			.andExpect(content().json(asJsonString(dto))).andReturn();
+		verify(this.service, Mockito.atLeastOnce()).createOrUpdate(member.getId(), map);
 	}
 
 	@WithMockUser(username = "email")
@@ -124,8 +130,7 @@ class FamilyMemberPropertiesRestControllerTest {
 	void delete() throws Exception {
 		Mockito.when(service.delete(member.getId())).thenReturn(true);
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.delete(
-			"/rest/{userId}/properties/{familyMemberId}",
-			"first111", "fam.memb.1");
+			"/rest/{userId}/properties/{familyMemberId}","first111", "member111");
 		this.mvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
 		verify(this.service, Mockito.atLeastOnce()).delete(member.getId());
 	}
@@ -137,12 +142,12 @@ class FamilyMemberPropertiesRestControllerTest {
 		FamilyMemberPropertiesDto dto = famMembPropDtos.get(0);
 
 		Mockito.when(mapper.toFamilyMemberPropertiesDto(property)).thenReturn(dto);
-		Mockito.when(service.findByFamilyMemberId("fam.memb.1")).thenReturn(property);
+		Mockito.when(service.findByFamilyMemberId("member111")).thenReturn(property);
 
 		Mockito.when(mapper.fromFamilyMemberPropertiesDto(dto)).thenReturn(property);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-			.get("/rest/{userId}/properties/{familyMemberId}", "first111", "fam.memb.1")
+			.get("/rest/{userId}/properties/{familyMemberId}", "first111", "member111")
 			.accept(MediaType.APPLICATION_JSON_VALUE);
 		this.mvc.perform(requestBuilder).andExpect(status().isOk())
 			.andExpect(content().json(asJsonString(dto))).andReturn();

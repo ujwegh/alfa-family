@@ -6,12 +6,12 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +33,7 @@ import ru.nik.alfafamily.domain.FinancialOperation;
 import ru.nik.alfafamily.domain.Role;
 import ru.nik.alfafamily.domain.User;
 import ru.nik.alfafamily.dto.CategoryDto;
+import ru.nik.alfafamily.dto.DateBetweenRequestDto;
 import ru.nik.alfafamily.dto.FamilyMemberDto;
 import ru.nik.alfafamily.dto.FinancialOperationDto;
 import ru.nik.alfafamily.dto.Mapper;
@@ -75,7 +76,7 @@ class FinancialOperationRestControllerTest {
 			return Mockito.spy(AuthorizationComponent.class);
 		}
 	}
-
+	private User user;
 
 	private FamilyMember member;
 
@@ -96,7 +97,7 @@ class FinancialOperationRestControllerTest {
 		user.setPassword("password");
 		user.setEnabled(true);
 		user.setRoles(Collections.singleton(new Role("ROLE_USER")));
-
+		this.user = user;
 		this.member = new FamilyMember("Rumba", user);
 		this.member.setId("member111");
 		this.category = new Category("Ненужные вещи", member);
@@ -195,7 +196,26 @@ class FinancialOperationRestControllerTest {
 
 	@WithMockUser(username = "email")
 	@Test
-	void userOperationsBetween() {
+	void userOperationsBetween() throws Exception {
+
+		DateBetweenRequestDto dto = new DateBetweenRequestDto();
+		dto.setStartDate(new Date(new Date().getTime() - 3000));
+		dto.setEndDate(new Date(new Date().getTime() + 3000));
+
+		Mockito.when(service.findAllForUserBetweenDates(user.getId(), dto.getStartDate(),
+			dto.getEndDate())).thenReturn(Collections.singletonList(operations.get(0)));
+
+		Mockito.when(mapper.toFinancialOperationDto(operations.get(0))).thenReturn(operationDtos.get(0));
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders
+			.post("/rest/{userId}/finoperations/user/between", "first111")
+			.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON_UTF8)
+			.content(asJsonString(dto));
+		this.mvc.perform(requestBuilder).andExpect(status().isOk())
+			.andExpect(content().json(listAsJsonString(Collections.singletonList(operationDtos.get(0)))))
+			.andReturn();
+		verify(this.service, Mockito.atLeastOnce()).findAllForUserBetweenDates(user.getId(),
+			dto.getStartDate(), dto.getEndDate());
 
 	}
 

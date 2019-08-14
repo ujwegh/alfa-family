@@ -168,7 +168,8 @@ class UserRestControllerTest {
 		System.out.println(jsonString);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/users")
-			.contentType(MediaType.APPLICATION_JSON_VALUE)
+			.accept(MediaType.APPLICATION_JSON)
+			.contentType(MediaType.APPLICATION_JSON)
 			.content(jsonString);
 
 		this.mvc.perform(requestBuilder).andExpect(status().isOk())

@@ -95,7 +95,7 @@ class ShellBudgetControllerTest {
 	}
 
 	@Test
-	void user_budget() { //String userBudget(@ShellOption String userId)
+	void user_budget() {
 		User user = userService.findAll().get(0);
 		FamilyMember familyMember = memberService.findAll(user.getId()).get(0);
 		assertNotNull(familyMember);
@@ -107,7 +107,6 @@ class ShellBudgetControllerTest {
 
 	@Test
 	void family_member_budget() {
-		//  String familyMemberBudget(@ShellOption String userId, @ShellOption String familyMemberId)
 		User user = userService.findAll().get(0);
 		FamilyMember familyMember = memberService.findAll(user.getId()).get(0);
 		assertNotNull(familyMember);
@@ -154,7 +153,6 @@ class ShellBudgetControllerTest {
 		String s = controller.family_member_budget_between(user.getId(), familyMember.getId(),
 			parseDate(start), parseDate(end));
 		Budget budget = service.countForFamilyMemberBetweenDates(user.getId(),familyMember.getId(), start, end);
-		assertEquals(4, operationService.findAllForFamilyMemberBetweenDates(user.getId(),familyMember.getId(), start, end).size());
 		assertNotNull(s);
 		assertEquals(budget.toString(), s);
 	}
