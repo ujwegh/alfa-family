@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -111,18 +112,22 @@ public class Utilities {
 		return budget;
 	}
 
-	public List<FinancialOperation> getByDateBetween(List<FinancialOperation> operations,
-		Date start, Date end) {
+	public List<FinancialOperation> getByDateBetween(List<FinancialOperation> operations, Date start, Date end) {
 		List<FinancialOperation> result = new ArrayList<>();
 
-		operations.forEach(operation -> {
-			Date operationDate = operation.getDate();
+		Date endd = end;
 
-			if ((operationDate.after(start) || operationDate.equals(start)) &
-				(operationDate.before(end) || operationDate.equals(end))) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(endd);
+		c.add(Calendar.DATE, 1);
+		endd = c.getTime();
+
+		for (FinancialOperation operation : operations) {
+			Date operationDate = operation.getDate();
+			if (operationDate.compareTo(start) >= 0 && operationDate.compareTo(simplifyDate(endd)) <= 0) {
 				result.add(operation);
 			}
-		});
+		}
 		result.sort(Comparator.comparing(FinancialOperation::getDate));
 		return result;
 	}
@@ -132,6 +137,19 @@ public class Utilities {
 		try {
 			date = sdf.parse(sdf.format(date));
 			return date;
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return date;
+	}
+
+	private Date simplifyDate(Date date) {
+		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+
+		String dat = format.format(date);
+
+		try {
+			return format.parse(dat);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

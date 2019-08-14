@@ -84,10 +84,6 @@ class FinancialOperationServiceImplTest {
 		Category category1 = new Category("бензин", member1);
 		Category category2 = new Category("продукты", member1);
 		Category savedCategory1 = template.save(category1);
-		Category savedCategory2 = template.save(category2);
-
-//		member1.setCategories(Arrays.asList(savedCategory1, savedCategory2));
-//		template.save(member1);
 
 		FinancialOperation op1 = new FinancialOperation(new Date(), "расход",
 			savedCategory1, 555.55, "RUB", 1234567890L,
@@ -106,8 +102,6 @@ class FinancialOperationServiceImplTest {
 		template.save(op2);
 		template.save(op3);
 		template.save(op4);
-//		member1.setCategories(Arrays.asList(savedCategory1, savedCategory2));
-//		template.save(member1);
 	}
 
 	@AfterEach
@@ -136,7 +130,7 @@ class FinancialOperationServiceImplTest {
 	}
 
 	@Test
-	void findAllForUser() { //List<FinancialOperation>
+	void findAllForUser() {
 
 		User user = userRepository.findAll().get(0);
 		List<Category> categories = categoryRepository.findAll();
@@ -162,7 +156,7 @@ class FinancialOperationServiceImplTest {
 	}
 
 	@Test
-	void deleteAllForFamily0Member() { //Boolean
+	void deleteAllForFamily0Member() {
 		FamilyMember familyMember = memberRepository.findAll().get(0);
 		User user = familyMember.getUser();
 		boolean b = service.deleteAllForFamilyMember(user.getId(), familyMember.getId());
@@ -170,7 +164,7 @@ class FinancialOperationServiceImplTest {
 	}
 
 	@Test
-	void findAllForUserBetweenDates() { //List<FinancialOperation>
+	void findAllForUserBetweenDates() {
 		User user = userRepository.findAll().get(0);
 		List<FinancialOperation> operations = service.findAllForUser(user.getId());
 		Date start = operations.get(0).getDate();
@@ -184,7 +178,7 @@ class FinancialOperationServiceImplTest {
 	}
 
 	@Test
-	void findAllForFamilyMemberBetween0Dates() { //List<FinancialOperation>
+	void findAllForFamilyMemberBetween0Dates() {
 		FamilyMember familyMember = memberRepository.findAll().get(0);
 		User user = familyMember.getUser();
 		List<FinancialOperation> operations = service.findAllForUser(user.getId());

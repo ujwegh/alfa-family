@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -97,68 +98,85 @@ class ShellFinancialOperationControllerTest {
 	@Test
 	void csv_operation() {
 		User user = userService.findAll().get(0);
+		List<FinancialOperation> existed = service.findAllForUser(user.getId());
+
+		existed.forEach(e -> service.delete(e.getId())); // clean operations
+
 		FamilyMember familyMember = memberService.findAll(user.getId()).get(0);
-		List<FinancialOperation> financialOperations = service.findAllForUser(user.getId());
+
 		assertNotNull(familyMember);
-		File file = new File("/Budget_2019-07-01-2019-07-31.csv");
-//		MultipartFile result = null;
-//		try {
-//			result = Utilities.convertToMultipartFile(file);
-//		} catch (IOException e) {
-//		}
+		ClassLoader classLoader = getClass().getClassLoader();
+
+		File file = new File(classLoader.getResource("Budget_2019-07-01-2019-07-31.csv").getFile());
 		String s = controller.csv_operation(familyMember.getId(),file.getPath());
 		assertNotNull(s);
-//        List<String> strings = financialOperations.stream().map(dto -> dto.toString() + "\n")
-//                .collect(Collectors.toList());
-//		       assertEquals("New financial operations: \n" + strings.toString(), s);
+
+		List<FinancialOperation> financialOperations = service.findAllForUser(user.getId());
+		List<FinancialOperationDto> dtos = toDtoList(financialOperations);
+		List<String> strings = dtos.stream().map(dto -> dto.toString() + "\n")
+			.collect(Collectors.toList());
+
+		assertEquals("New financial operations: \n" + strings.toString(), s);
 	}
 
 	@Test
 	void all_forUser() {
 		User user = userService.findAll().get(0);
 		List<FinancialOperation> finOperations = service.findAllForUser(user.getId());
-		List<FinancialOperationDto> dtos = new ArrayList<>();
-		for (FinancialOperation f : finOperations
-		) {
-			FinancialOperationDto dto = mapper.toFinancialOperationDto(f);
-			dtos.add(dto);
-		}
+		List<FinancialOperationDto> dtos = toDtoList(finOperations);
+
+		List<String> strings = dtos.stream().map(dto -> dto.toString() + "\n")
+			.collect(Collectors.toList());
+
 		String s = controller.all_for_user(user.getId());
 		assertNotNull(s);
-		assertEquals("All operations for user: " + user.getId() + "\n" + dtos.toString(), s);
+		assertEquals("All operations for user: " + user.getId() + "\n" + strings, s);
 	}
-
 	@Test
 	void allForUserBetween() {
 		User user = userService.findAll().get(0);
 		FamilyMember familyMember = memberService.findAll(user.getId()).get(0);
-		Date start = service.findAllForUser(user.getId()).get(0).getDate();
-		Date end = service.findAllForUser(user.getId()).get(userService.findAll().size()).getDate();
-		List<FinancialOperation> finOperations = service
-			.findAllForUserBetweenDates(user.getId(), start, end);
 		assertNotNull(familyMember);
-		String s = controller.all_for_user_between(user.getId(), start.toString(), end.toString());
+		List<FinancialOperation> operations = service.findAllForUser(user.getId());
+
+
+		Date start = operations.get(operations.size()-1).getDate();
+		Date end = operations.get(0).getDate();
+
+		List<FinancialOperation> finOperations = service.findAllForUserBetweenDates(user.getId(), start, end);
+		List<FinancialOperationDto> dtos = toDtoList(finOperations);
+
+		List<String> strings = dtos.stream().map(dto -> dto.toString() + "\n")
+			.collect(Collectors.toList());
+
+		String s = controller.all_for_user_between(user.getId(), parseDate(start), parseDate(end));
 		assertNotNull(s);
-		assertEquals(
-			"All operations for user: " + user.getId() + ", between " + start + " end " + end
-				+ "\n" + finOperations.toString(), s);
+		assertEquals("All operations for user: " + user.getId() + ", between " +
+			parseDate(start) + " end " + parseDate(end) + "\n" + strings, s);
 	}
 
 	@Test
 	void allForMemberBetween() {
 		User user = userService.findAll().get(0);
 		FamilyMember familyMember = memberService.findAll(user.getId()).get(0);
-		Date start = service.findAllForUser(user.getId()).get(0).getDate();
-		Date end = service.findAllForUser(user.getId()).get(userService.findAll().size()).getDate();
-		List<FinancialOperation> finOperations = service
-			.findAllForFamilyMemberBetweenDates(user.getId(), familyMember.getId(), start, end);
 		assertNotNull(familyMember);
-		String s = controller
-			.all_for_member_between(user.getId(), familyMember.getId(), start.toString(),
-				end.toString());
+		List<FinancialOperation> operations = service.findAllForUser(user.getId());
+
+		Date start = operations.get(operations.size()-1).getDate();
+		Date end = operations.get(0).getDate();
+
+		List<FinancialOperation> finOperations = service.findAllForFamilyMemberBetweenDates(user.getId(), familyMember.getId(), start, end);
+		List<FinancialOperationDto> dtos = toDtoList(finOperations);
+
+		List<String> strings = dtos.stream().map(dto -> dto.toString() + "\n")
+			.collect(Collectors.toList());
+
+
+		String s = controller.all_for_member_between(user.getId(), familyMember.getId(),
+			parseDate(start), parseDate(end));
 		assertNotNull(s);
-		assertEquals("All operations for user: " + user.getId() + ", between " +
-			start + " end " + end + "\n" + finOperations.toString(), s);
+		assertEquals("All operations for member: " + familyMember.getId() + ", between " +
+			parseDate(start) + " end " + parseDate(end) + "\n" + strings, s);
 	}
 
 	@Test
@@ -166,14 +184,16 @@ class ShellFinancialOperationControllerTest {
 		User user = userService.findAll().get(0);
 		FamilyMember familyMember = memberService.findAll(user.getId()).get(0);
 		Category category = categoryService.findByName(familyMember.getId(), "some-category");
+		List<FinancialOperation> operations = service.findAllForUser(user.getId());
+
 		FinancialOperation op = new FinancialOperation(new Date(), "доход",
 			category, 1000.0, "RUB", 1234567890L,
 			"перевод долга", "наконец-то!");
-		FinancialOperationDto dto = mapper.toFinancialOperationDto(op);
-		assertNotNull(dto);
-		String s = controller
-			.new_operation(category.getId(), dto.getDate().toString(), dto.getType(),
-				dto.getSum().toString(), dto.getCurrency(), dto.getAccountNumber().toString());
+		String s = controller.new_operation(category.getId(), parseDate(op.getDate()), op.getType(),
+				op.getSum().toString(), op.getCurrency(), op.getAccountNumber().toString());
+
+		FinancialOperation newOps = service.findAllForUser(user.getId()).get(operations.size());
+		FinancialOperationDto dto = mapper.toFinancialOperationDto(newOps);
 		assertNotNull(s);
 		assertEquals("Created new financial operation: \n" + dto.toString(), s);
 	}
@@ -216,19 +236,30 @@ class ShellFinancialOperationControllerTest {
 	}
 
 	@Test
-	void updateOperation() { //ФОРМАТ ЕБУЧЕЙ ДАТЫ
+	void updateOperation() {
 		User user = userService.findAll().get(0);
 		FinancialOperation finOperation = service.findAllForUser(user.getId()).get(0);
-		FinancialOperationDto dto = mapper.toFinancialOperationDto(finOperation);
-		FinancialOperation operation1 = service.update(dto);
-		FinancialOperationDto dto1 = mapper.toFinancialOperationDto(operation1);
-		assertNotNull(dto);
+
 		String s = controller.update_operation(finOperation.getId(),
-			finOperation.getCategory().toString(), finOperation.getDate().toString(),
+			finOperation.getCategory().getId(), parseDate(finOperation.getDate()),
 			finOperation.getType(), "2500.0",
 			finOperation.getCurrency(),
-			finOperation.getAccountNumber().toString());
+			String.valueOf(finOperation.getAccountNumber()));
+
+		FinancialOperationDto updated = mapper.toFinancialOperationDto(service.findById(finOperation.getId()));
+
 		assertNotNull(s);
-		assertEquals(dto1.toString(), s);
+		assertEquals("Updated financial operation: \n" + updated.toString(), s);
 	}
+
+	private List<FinancialOperationDto> toDtoList(List<FinancialOperation> operationList) {
+		return operationList.stream().map(mapper::toFinancialOperationDto)
+			.collect(Collectors.toList());
+	}
+
+	private String parseDate(Date date) {
+		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+		return format.format(date);
+	}
+
 }

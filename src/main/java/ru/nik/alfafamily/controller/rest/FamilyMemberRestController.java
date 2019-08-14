@@ -44,7 +44,7 @@ public class FamilyMemberRestController {
 
 	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Get all family members for user", response = List.class)
-	@GetMapping("/members")
+	@GetMapping
 	public List<FamilyMemberDto> getAll(@PathVariable @Nonnull final String userId) {
 		log.info("Get all family members for user: {}", userId);
 		List<FamilyMember> members = service.findAll(userId);
@@ -54,7 +54,7 @@ public class FamilyMemberRestController {
 
 	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Find family member by id", response = FamilyMemberDto.class)
-	@GetMapping("/members/member/{familyMemberId}")
+	@GetMapping("/member/{familyMemberId}")
 	public FamilyMemberDto findById(@PathVariable @Nonnull final String userId,
 		@PathVariable @Nonnull final String familyMemberId) {
 		log.info("Find family member by id: ", familyMemberId);
@@ -63,7 +63,7 @@ public class FamilyMemberRestController {
 
 	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Delete family member by id")
-	@DeleteMapping("/members/member/{familyMemberId}")
+	@DeleteMapping("/member/{familyMemberId}")
 	public void delete(@PathVariable @Nonnull final String userId,
 		@PathVariable @Nonnull final String familyMemberId) {
 		log.info("Delete family member by id: {}", familyMemberId);
@@ -72,7 +72,7 @@ public class FamilyMemberRestController {
 
 	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Update family member", response = FamilyMemberDto.class)
-	@PutMapping("/members/member")
+	@PutMapping("/member")
 	public FamilyMemberDto update(@PathVariable @Nonnull final String userId,
 		@RequestBody FamilyMemberDto dto) {
 		log.info("Update family member: {}", dto.toString());
@@ -80,35 +80,9 @@ public class FamilyMemberRestController {
 		return mapper.toFamilyMemberDto(member);
 	}
 
-//	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
-//	@ApiOperation(value = "Update categories for family member", response = FamilyMemberDto.class)
-//	@PutMapping("/members/member/categories")
-//	public FamilyMemberDto updateCategories(@PathVariable @Nonnull final String userId,
-//		@RequestBody FamilyMemberDto dto) {
-//		log.info("Update categories for family member: {}", dto.toString());
-//		List<CategoryDto> dtos = dto.getCategories();
-//		List<String> names = new ArrayList<>();
-//		dtos.forEach(categoryDto -> names.add(categoryDto.getName()));
-//		FamilyMember member = service.updateCategories(dto.getId(), names);
-//		return mapper.toFamilyMemberDto(member);
-//	}
-//
-//	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
-//	@ApiOperation(value = "Update family members properties", response = FamilyMemberDto.class)
-//	@PutMapping("/members/member/properties")
-//	public FamilyMemberDto updateProperties(@PathVariable @Nonnull final String userId,
-//		@RequestBody FamilyMemberDto dto) {
-//		log.info("Update family members properties");
-//		FamilyMemberPropertiesDto propertiesDto = dto.getProperties();
-//		if (propertiesDto != null) {
-//			return mapper.toFamilyMemberDto(service.updateProperties(dto.getId(), propertiesDto.getColor()));
-//		}
-//		return null;
-//	}
-
 	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Create family member", response = FamilyMemberDto.class)
-	@PostMapping("/members")
+	@PostMapping
 	public FamilyMemberDto create(@PathVariable @Nonnull final String userId,
 		@RequestBody FamilyMemberDto dto){
 		log.info("Create family member: {}", dto.toString());

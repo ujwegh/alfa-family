@@ -8,7 +8,6 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 public class RoleDto {
 
@@ -16,4 +15,11 @@ public class RoleDto {
 
 	private String name;
 
+	@Override
+	public String toString() {
+		return "RoleDto{" +
+			"id='" + id + '\'' +
+			", name='" + name + '\'' +
+			'}';
+	}
 }

@@ -54,7 +54,7 @@ public class FinancialOperationRestController {
 
 	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Delete operation with id")
-	@DeleteMapping("/operation/{operationId}")
+	@DeleteMapping("/{operationId}")
 	public void delete(@PathVariable @Nonnull final String userId, @PathVariable String operationId) {
 		log.info("Delete operation with id: {}", operationId);
 		service.delete(operationId);
@@ -62,7 +62,7 @@ public class FinancialOperationRestController {
 
 	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Create new financial operation", response = FinancialOperationDto.class)
-	@PostMapping("/operation")
+	@PostMapping
 	public FinancialOperationDto create(@PathVariable @Nonnull final String userId,
 		@RequestBody FinancialOperationDto operationDto) {
 		log.info("Create new financial operation: {}", operationDto.toString());
@@ -72,7 +72,7 @@ public class FinancialOperationRestController {
 
 	@PreAuthorize("@auth.mayGetAccess(principal, #userId)")
 	@ApiOperation(value = "Find financial operation by id", response = FinancialOperationDto.class)
-	@GetMapping("/operation/{operationId}")
+	@GetMapping("/{operationId}")
 	public FinancialOperationDto findById(@PathVariable @Nonnull final String userId,
 		@PathVariable String operationId) {
 		log.info("Find financial operation by id: {}", operationId);

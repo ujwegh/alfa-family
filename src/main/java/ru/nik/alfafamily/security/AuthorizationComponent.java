@@ -2,6 +2,7 @@ package ru.nik.alfafamily.security;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import javax.annotation.Nonnull;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -11,12 +12,8 @@ import ru.nik.alfafamily.service.UserService;
 @Component("auth")
 public class AuthorizationComponent implements IAuthorizationComponent {
 
-	private final UserService service;
-
 	@Autowired
-	public AuthorizationComponent(UserService service) {
-		this.service = service;
-	}
+	private UserService service;
 
 	@HystrixCommand(fallbackMethod = "error")
 	@Override

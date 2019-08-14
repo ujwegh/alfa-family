@@ -75,7 +75,7 @@ public class ShellFinancialOperationController {
 	public String all_for_user_between(@ShellOption String userId, @ShellOption String startDate,
 		@ShellOption String endDate) {
 
-		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 		Date start;
 		Date end;
 		try {
@@ -85,8 +85,7 @@ public class ShellFinancialOperationController {
 			return "Wrong startDate or endDate input format.";
 		}
 
-		List<FinancialOperation> operations = service
-			.findAllForUserBetweenDates(userId, start, end);
+		List<FinancialOperation> operations = service.findAllForUserBetweenDates(userId, start, end);
 		List<FinancialOperationDto> dtos = toDtoList(operations);
 
 		List<String> strings = dtos.stream().map(dto -> dto.toString() + "\n")
@@ -101,7 +100,7 @@ public class ShellFinancialOperationController {
 		@ShellOption String familyMemberId,
 		@ShellOption String startDate, @ShellOption String endDate) {
 
-		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 		Date start;
 		Date end;
 		try {
@@ -118,7 +117,7 @@ public class ShellFinancialOperationController {
 		List<String> strings = dtos.stream().map(dto -> dto.toString() + "\n")
 			.collect(Collectors.toList());
 
-		return "All operations for user: " + userId + ", between " + startDate + " end " + endDate
+		return "All operations for member: " + familyMemberId + ", between " + startDate + " end " + endDate
 			+ "\n" + strings;
 	}
 
@@ -128,7 +127,7 @@ public class ShellFinancialOperationController {
 		@ShellOption String type, @ShellOption String sum, @ShellOption String currency,
 		@ShellOption String accountNumber) {
 
-		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 		Date start;
 		try {
 			start = format.parse(date);
@@ -146,7 +145,6 @@ public class ShellFinancialOperationController {
 		dto.setDescription("");
 		dto.setComment("");
 
-		// TODO сделать ввод description и comment для dto
 		FinancialOperationDto operation = mapper.toFinancialOperationDto(service.create(dto));
 
 		return "Created new financial operation: \n" + operation.toString();
@@ -174,7 +172,7 @@ public class ShellFinancialOperationController {
 		@ShellOption String date, @ShellOption String type, @ShellOption String sum,
 		@ShellOption String currency, @ShellOption String accountNumber) {
 
-		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 		Date start;
 		try {
 			start = format.parse(date);
@@ -182,6 +180,7 @@ public class ShellFinancialOperationController {
 			return "Wrong startDate or endDate format.";
 		}
 		FinancialOperationDto dto = new FinancialOperationDto();
+		dto.setId(operationId);
 		dto.setDate(start);
 		dto.setType(type);
 		dto.setCategory(mapper.toCategoryDto(categoryService.findById(categoryId)));
@@ -192,8 +191,7 @@ public class ShellFinancialOperationController {
 		dto.setDescription("");
 		dto.setComment("");
 
-		// TODO сделать ввод description и comment для dto
-		FinancialOperationDto operation = mapper.toFinancialOperationDto(service.create(dto));
+		FinancialOperationDto operation = mapper.toFinancialOperationDto(service.update(dto));
 
 		return "Updated financial operation: \n" + operation.toString();
 

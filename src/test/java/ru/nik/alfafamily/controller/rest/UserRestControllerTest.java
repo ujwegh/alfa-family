@@ -158,16 +158,23 @@ class UserRestControllerTest {
 	void update() throws Exception {
 		User user = users.get(0);
 		user.setPassword("newPass");
+		UserDto userDto = toUserDto(user);
 
-		Mockito.when(service.update(toUserDto(user))).thenReturn(user);
-		Mockito.when(mapper.toUserDto(user)).thenReturn(toUserDto(user));
+		Mockito.when(service.update(userDto)).thenReturn(user);
+		Mockito.when(mapper.toUserDto(user)).thenReturn(userDto);
+		Mockito.when(mapper.fromUserDto(userDto)).thenReturn(user);
+
+		String jsonString = asJsonString(userDto);
+		System.out.println(jsonString);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/users")
-			.with(csrf())
-			.contentType(MediaType.APPLICATION_JSON)
-			.content(asJsonString(toUserDto(user)));
-		this.mvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
-		verify(this.service, Mockito.atLeastOnce()).update(toUserDto(user));
+			.contentType(MediaType.APPLICATION_JSON_VALUE)
+			.content(jsonString);
+
+		this.mvc.perform(requestBuilder).andExpect(status().isOk())
+			.andExpect(content().json(asJsonString(userDto))).andReturn();
+
+		verify(this.service, Mockito.atLeastOnce()).update(userDto);
 	}
 
 	private static String asJsonString(final Object obj) {
@@ -200,29 +207,10 @@ class UserRestControllerTest {
 		return dto;
 	}
 
-	private User fromUserDto(UserDto dto) {
-		User user = new User();
-		user.setId(dto.getId());
-		user.setFirstName(dto.getFirstName());
-		user.setLastName(dto.getLastName());
-		user.setEmail(dto.getEmail());
-		user.setPassword(dto.getPassword());
-		user.setEnabled(dto.isEnabled());
-		user.setRoles(dto.getRoles().stream().map(this::fromRoleDto).collect(Collectors.toList()));
-		return user;
-	}
-
 	private RoleDto toRoleDto(Role role) {
 		RoleDto dto = new RoleDto();
 		dto.setId(role.getId());
 		dto.setName(role.getName());
 		return dto;
-	}
-
-	private Role fromRoleDto(RoleDto dto) {
-		Role role = new Role();
-		role.setId(dto.getId());
-		role.setName(dto.getName());
-		return role;
 	}
 }

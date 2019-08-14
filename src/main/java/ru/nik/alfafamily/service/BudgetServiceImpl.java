@@ -53,7 +53,8 @@ public class BudgetServiceImpl implements BudgetService {
 
 	@Override
 	public Budget countForUserBetweenDates(String userId, Date start, Date end) {
-		userService.isUserExistsById(userId);		List<FinancialOperation> operations = service.findAllForUserBetweenDates(userId, start, end);
+		userService.isUserExistsById(userId);
+		List<FinancialOperation> operations = service.findAllForUserBetweenDates(userId, start, end);
 		Budget budget = Utilities.countBudget(operations);
 		budget.setUserId(userId);
 		return budget;

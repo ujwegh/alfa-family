@@ -1,0 +1,17 @@
+# Spring configs server properties
+# For local development comment uri and set properties in application.yml
+spring:
+  application:
+    name: bg
+  profiles:
+    active: >
+      family
+  cloud:
+    config:
+      uri: http://192.168.54.30:8888
+      fail-fast: true
+      label:
+      retry:
+        max-attempts: 1000000000
+        max-interval: 10000
+        initial-interval: 10000

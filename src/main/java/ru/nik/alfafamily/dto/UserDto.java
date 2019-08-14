@@ -9,7 +9,6 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
@@ -27,4 +26,16 @@ public class UserDto {
 
 	private boolean enabled = true;
 
+	@Override
+	public String toString() {
+		return "UserDto{" +
+			"id='" + id + '\'' +
+			", firstName='" + firstName + '\'' +
+			", lastName='" + lastName + '\'' +
+			", email='" + email + '\'' +
+			", password='" + password + '\'' +
+			", roles=" + (roles != null ? roles.toString() : "[]") +
+			", enabled=" + enabled +
+			'}';
+	}
 }

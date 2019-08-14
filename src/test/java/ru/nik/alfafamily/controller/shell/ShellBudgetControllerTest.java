@@ -153,7 +153,8 @@ class ShellBudgetControllerTest {
 
 		String s = controller.family_member_budget_between(user.getId(), familyMember.getId(),
 			parseDate(start), parseDate(end));
-		Budget budget = service.countForUserBetweenDates(user.getId(), start, end);
+		Budget budget = service.countForFamilyMemberBetweenDates(user.getId(),familyMember.getId(), start, end);
+		assertEquals(4, operationService.findAllForFamilyMemberBetweenDates(user.getId(),familyMember.getId(), start, end).size());
 		assertNotNull(s);
 		assertEquals(budget.toString(), s);
 	}
