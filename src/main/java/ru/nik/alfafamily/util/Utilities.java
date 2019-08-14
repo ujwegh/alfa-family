@@ -56,27 +56,11 @@ public class Utilities {
 	}
 
 	public File convertToFile(MultipartFile file) throws IOException {
-//		File convFile = null;
-//
-//		if (file != null) {
-//			convFile = new File(file.getOriginalFilename());
-////			convFile.createNewFile();
-//			FileOutputStream fos = new FileOutputStream(convFile);
-//			fos.write(file.getBytes());
-//			fos.close();
-//		}
-//		return convFile;
-
 		File tempFile = File.createTempFile("tmp", ".tmp");
 		try (FileOutputStream fos = new FileOutputStream(tempFile)) {
 			fos.write(file.getBytes());
 		}
 		return tempFile;
-//		File result = FileUtils.writeByteArrayToFile(new File(file.getName()), file.getBytes());
-
-//		File convFile = new File(System.getProperty("java.io.tmpdir")+"/"+file.getOriginalFilename());
-//		file.transferTo(convFile);
-//		return convFile;
 	}
 
 	public MultipartFile convertToMultipartFile(File file) throws IOException {
