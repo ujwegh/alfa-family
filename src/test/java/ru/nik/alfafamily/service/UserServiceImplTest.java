@@ -26,7 +26,6 @@ import ru.nik.alfafamily.domain.User;
 import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.dto.UserDto;
 import ru.nik.alfafamily.dto.UserRegistrationDto;
-import ru.nik.alfafamily.repository.FamilyMemberRepository;
 import ru.nik.alfafamily.repository.UserRepository;
 
 @ExtendWith(SpringExtension.class)
@@ -59,7 +58,7 @@ class UserServiceImplTest {
 			"admin@mail.com", "password");
 		Role role = new Role("USER");
 		template.save(role);
-		user.setRoles(Collections.singleton(role));
+		user.setRole(role);
 		template.save(user);
 
 		FamilyMember member1 = new FamilyMember("test-1-familyMember", user);
@@ -89,7 +88,6 @@ class UserServiceImplTest {
 		assertEquals("user@mail.ru", actual.getEmail());
 		assertEquals("usr1", actual.getFirstName());
 		assertEquals("user1", actual.getLastName());
-//		assertEquals(userRegistrationDto.getPassword(), user1.getPassword());
 	}
 
 	@Test

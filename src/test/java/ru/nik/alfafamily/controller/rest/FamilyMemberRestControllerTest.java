@@ -78,7 +78,7 @@ class FamilyMemberRestControllerTest {
 		user.setEmail("email");
 		user.setPassword("password");
 		user.setEnabled(true);
-		user.setRoles(Collections.singleton(new Role("ROLE_USER")));
+		user.setRole(new Role("ROLE_USER"));
 
 		this.member = new FamilyMember("Mamba", user);
 		this.member.setId("member111");

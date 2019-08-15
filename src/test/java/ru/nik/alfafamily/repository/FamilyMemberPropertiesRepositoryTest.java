@@ -40,17 +40,13 @@ class FamilyMemberPropertiesRepositoryTest {
 				"admin@mail.com", "password");
 		Role role = new Role("USER");
 		template.save(role);
-		user.setRoles(Collections.singleton(role));
+		user.setRole(role);
 		template.save(user);
 		FamilyMember member1 = new FamilyMember("test-1-familyMember", user);
 		template.save(member1);
 		FamilyMemberProperties properties = new FamilyMemberProperties(member1, "c04000");
-//		FamilyMember savedMember = template.save(member1);
-//		member1.setProperties(properties);
 		template.save(properties);
 
-//		savedMember.setProperties(savedProps);
-//		template.save(savedMember);
 	}
 
 	@AfterEach

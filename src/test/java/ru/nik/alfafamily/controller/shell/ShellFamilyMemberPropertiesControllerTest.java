@@ -16,7 +16,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import ru.nik.alfafamily.domain.FamilyMember;
 import ru.nik.alfafamily.domain.FamilyMemberProperties;
 import ru.nik.alfafamily.domain.User;
-import ru.nik.alfafamily.dto.FamilyMemberDto;
 import ru.nik.alfafamily.dto.FamilyMemberPropertiesDto;
 import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.dto.UserRegistrationDto;

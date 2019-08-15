@@ -36,7 +36,7 @@ class CategoryRepositoryTest {
 				"admin@mail.com", "password");
 		Role role = new Role("USER");
 		template.save(role);
-		user.setRoles(Collections.singleton(role));
+		user.setRole(role);
 		template.save(user);
 
 		FamilyMember member1 = new FamilyMember("test-1-familyMember", user);
@@ -100,7 +100,6 @@ class CategoryRepositoryTest {
 	void deleteByMember_IdAndName() {
 		FamilyMember member = memberRepository.findAll().get(0);
 		Category category1 = new Category("бензин", member);
-		Category category2 = new Category("продукты", member);
 		Long i = categoryRepository.deleteByFamilyMember_IdAndName(member.getId(), category1.getName());
 		assertEquals(1, i.longValue());
 		assertEquals(1, categoryRepository.findAll().size());

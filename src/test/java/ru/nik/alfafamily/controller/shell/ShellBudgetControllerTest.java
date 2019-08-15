@@ -2,7 +2,6 @@ package ru.nik.alfafamily.controller.shell;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -14,15 +13,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.shell.jline.InteractiveShellApplicationRunner;
 import org.springframework.shell.jline.ScriptShellApplicationRunner;
-import org.springframework.shell.standard.ShellOption;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.nik.alfafamily.domain.Budget;
 import ru.nik.alfafamily.domain.Category;
 import ru.nik.alfafamily.domain.FamilyMember;
 import ru.nik.alfafamily.domain.FinancialOperation;
 import ru.nik.alfafamily.domain.User;
-import ru.nik.alfafamily.dto.BudgetDto;
-import ru.nik.alfafamily.dto.FinancialOperationDto;
 import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.dto.UserRegistrationDto;
 import ru.nik.alfafamily.service.BudgetService;

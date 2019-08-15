@@ -3,9 +3,7 @@ package ru.nik.alfafamily.controller.shell;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +16,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import org.springframework.shell.jline.InteractiveShellApplicationRunner;
 import org.springframework.shell.jline.ScriptShellApplicationRunner;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.web.multipart.MultipartFile;
 import ru.nik.alfafamily.domain.Category;
 import ru.nik.alfafamily.domain.FamilyMember;
 import ru.nik.alfafamily.domain.FinancialOperation;
@@ -30,7 +27,6 @@ import ru.nik.alfafamily.service.CategoryService;
 import ru.nik.alfafamily.service.FamilyMemberService;
 import ru.nik.alfafamily.service.FinancialOperationService;
 import ru.nik.alfafamily.service.UserService;
-import ru.nik.alfafamily.util.Utilities;
 
 @SpringBootTest(properties = {
 	InteractiveShellApplicationRunner.SPRING_SHELL_INTERACTIVE_ENABLED + "=false",

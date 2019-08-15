@@ -133,7 +133,7 @@ public class Mapper {
 		dto.setFirstName(user.getFirstName());
 		dto.setLastName(user.getLastName());
 		dto.setPassword(user.getPassword());
-		dto.setRoles(user.getRoles().stream().map(this::toRoleDto).collect(Collectors.toList()));
+		dto.setRole(toRoleDto(user.getRole()));
 		dto.setEnabled(user.isEnabled());
 		return dto;
 	}
@@ -146,7 +146,7 @@ public class Mapper {
 		user.setEmail(dto.getEmail());
 		user.setPassword(dto.getPassword());
 		user.setEnabled(dto.isEnabled());
-		user.setRoles(dto.getRoles().stream().map(this::fromRoleDto).collect(Collectors.toList()));
+		user.setRole(fromRoleDto(dto.getRole()));
 		return user;
 	}
 
@@ -164,35 +164,35 @@ public class Mapper {
 		return role;
 	}
 
-	public List<RoleDto> toRoleDtoList(List<String> names) {
+//	public List<RoleDto> toRoleDtoList(List<String> names) {
+//
+//		List<Role> roles = repository.findAllByNameIn(names);
+//
+//		List<String> existedRoleNames = roles.stream().map(Role::getName)
+//			.collect(Collectors.toList());
+//
+//		names.forEach(name -> {
+//			if (!existedRoleNames.contains(name)){
+//				roles.add(new Role(name));
+//			}
+//		});
+//
+//		return roles.stream().map(this::toRoleDto).collect(Collectors.toList());
+//	}
 
-		List<Role> roles = repository.findAllByNameIn(names);
 
-		List<String> existedRoleNames = roles.stream().map(Role::getName)
-			.collect(Collectors.toList());
-
-		names.forEach(name -> {
-			if (!existedRoleNames.contains(name)){
-				roles.add(new Role(name));
-			}
-		});
-
-		return roles.stream().map(this::toRoleDto).collect(Collectors.toList());
-	}
-
-
-
-	private List<CategoryDto> toCategoryDtoList(List<Category> categories) {
-		if (categories == null) return Collections.emptyList();
-		return categories.stream().map(this::toCategoryDto)
-			.collect(Collectors.toList());
-	}
-
-	private List<Category> toCategoryList(List<CategoryDto> categories) {
-		if (categories == null) return Collections.emptyList();
-		return categories.stream().map(this::fromCategoryDto)
-			.collect(Collectors.toList());
-	}
+//
+//	private List<CategoryDto> toCategoryDtoList(List<Category> categories) {
+//		if (categories == null) return Collections.emptyList();
+//		return categories.stream().map(this::toCategoryDto)
+//			.collect(Collectors.toList());
+//	}
+//
+//	private List<Category> toCategoryList(List<CategoryDto> categories) {
+//		if (categories == null) return Collections.emptyList();
+//		return categories.stream().map(this::fromCategoryDto)
+//			.collect(Collectors.toList());
+//	}
 
 
 

@@ -1,18 +1,12 @@
 package ru.nik.alfafamily.domain;
 
-import java.util.Collection;
 import java.util.Date;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-
 
 @Data
 @NoArgsConstructor
@@ -32,10 +26,7 @@ public class User {
 	private String password;
 
 	@DBRef
-	private Collection<Role> roles;
-
-	@DBRef
-	private Collection<FamilyMember> members;
+	private Role role;
 
 	private boolean enabled = true;
 
@@ -48,19 +39,12 @@ public class User {
 		this.password = password;
 	}
 
-	public User(String firstName, String lastName, String email, String password,
-		Collection<Role> roles) {
+	public User(String firstName, String lastName, String email, String password, Role role) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
 		this.password = password;
-		this.roles = roles;
-	}
-
-	public String rolesToString() {
-		StringBuilder s = new StringBuilder();
-		roles.forEach(role -> s.append(role).append(","));
-		return s.substring(s.toString().length()-2);
+		this.role = role;
 	}
 
 	@Override
@@ -71,8 +55,7 @@ public class User {
 			", lastName='" + lastName + '\'' +
 			", email='" + email + '\'' +
 			", password='" + password + '\'' +
-			", roles=" + roles +
-			", members=" + members +
+			", role=" + role +
 			", enabled=" + enabled +
 			", lastLogin=" + lastLogin +
 			'}';

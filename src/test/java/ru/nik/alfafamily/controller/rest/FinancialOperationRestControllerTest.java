@@ -1,6 +1,5 @@
 package ru.nik.alfafamily.controller.rest;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -34,7 +33,6 @@ import ru.nik.alfafamily.domain.Role;
 import ru.nik.alfafamily.domain.User;
 import ru.nik.alfafamily.dto.CategoryDto;
 import ru.nik.alfafamily.dto.DateBetweenRequestDto;
-import ru.nik.alfafamily.dto.FamilyMemberDto;
 import ru.nik.alfafamily.dto.FinancialOperationDto;
 import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.security.AuthenticationSuccessHandlerImpl;
@@ -96,7 +94,7 @@ class FinancialOperationRestControllerTest {
 		user.setEmail("email");
 		user.setPassword("password");
 		user.setEnabled(true);
-		user.setRoles(Collections.singleton(new Role("ROLE_USER")));
+		user.setRole(new Role("ROLE_USER"));
 		this.user = user;
 		this.member = new FamilyMember("Rumba", user);
 		this.member.setId("member111");

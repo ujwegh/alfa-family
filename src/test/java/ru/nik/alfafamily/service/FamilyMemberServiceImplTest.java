@@ -2,7 +2,6 @@ package ru.nik.alfafamily.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.shell.jline.InteractiveShellApplicationRunner;
 import org.springframework.shell.jline.ScriptShellApplicationRunner;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.nik.alfafamily.domain.*;
@@ -22,7 +20,6 @@ import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.repository.FamilyMemberRepository;
 import ru.nik.alfafamily.repository.UserRepository;
 
-import java.util.Collections;
 import java.util.List;
 
 @ExtendWith(SpringExtension.class)
@@ -34,7 +31,6 @@ import java.util.List;
 @EnableAutoConfiguration
 @ContextConfiguration(classes = {CategoryServiceImpl.class, FamilyMemberServiceImpl.class,
 	UserServiceImpl.class, Mapper.class, FamilyMemberPropertiesServiceImpl.class})
-//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class FamilyMemberServiceImplTest {
 
 	@Autowired
@@ -42,9 +38,6 @@ class FamilyMemberServiceImplTest {
 
 	@Autowired
 	private FamilyMemberService familyMemberService;
-
-	@Autowired
-	private FamilyMemberPropertiesService propertiesService;
 
 	@Autowired
 	private FamilyMemberRepository memberRepository;
@@ -58,7 +51,7 @@ class FamilyMemberServiceImplTest {
 			"admin@mail.com", "password");
 		Role role = new Role("USER");
 		template.save(role);
-		user.setRoles(Collections.singleton(role));
+		user.setRole(role);
 		template.save(user);
 
 		FamilyMember member1 = new FamilyMember("test-1-familyMember", user);
@@ -66,8 +59,6 @@ class FamilyMemberServiceImplTest {
 		FamilyMemberProperties familyMemberProperties = new FamilyMemberProperties(member1,
 			"green");
 		template.save(familyMemberProperties);
-//		member1.setProperties(familyMemberProperties);
-//		template.save(member1);
 
 		Category category1 = new Category("бензин", member1);
 		Category category2 = new Category("продукты", member1);
@@ -131,33 +122,6 @@ class FamilyMemberServiceImplTest {
 		assertEquals(familyMember.getName(), familyMember1.getName());
 		assertEquals(familyMember1.getId(), familyMember.getId());
 	}
-
-//	@Test
-//	void updateCategories() {
-//		FamilyMember familyMember = memberRepository.findAll().get(0);
-//		List<String> categories = new ArrayList<>();
-//		categories.add("Налоги");
-//		categories.add("Развлечения");
-//		FamilyMember familyMember1 = familyMemberService
-//			.updateCategories(familyMember.getId(), categories);
-//		assertNotNull(familyMember1);
-//		assertNotNull(familyMember1.getId());
-//		assertNotNull(familyMember1.getUser());
-//		assertNotNull(familyMember1.getName());
-//		assertEquals(familyMember1.getCategories().size(), 2);
-//	}
-//
-//	@Test
-//	void updateProperties() {
-//		FamilyMember familyMember = memberRepository.findAll().get(0);
-//		assertNotNull(familyMember);
-//
-//		FamilyMember familyMember1 = familyMemberService
-//			.updateProperties(familyMember.getId(), "blue");
-//		assertNotNull(familyMember1);
-//		FamilyMemberProperties actual = propertiesService.findByFamilyMemberId(familyMember.getId());
-//		assertEquals("blue", actual.getColor());
-//	}
 
 	@Test
 	void isFamilyMemberExists() {

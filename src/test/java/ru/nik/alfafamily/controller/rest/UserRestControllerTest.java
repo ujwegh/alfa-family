@@ -7,9 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,9 +59,9 @@ class UserRestControllerTest {
 		first.setEmail("email");
 		first.setPassword("password");
 		first.setEnabled(true);
-		first.setRoles(Collections.singleton(new Role("ROLE_USER")));
+		first.setRole(new Role("ROLE_USER"));
 		User second = new User("Firstname", "Lasname", "Email2", "passwrd",
-			Collections.singletonList(new Role("ROLE_ADMIN")));
+			new Role("ROLE_ADMIN"));
 		second.setId("second222");
 
 		users.add(first);
@@ -138,7 +136,7 @@ class UserRestControllerTest {
 		registrationDto.setTerms(true);
 
 		User newUser = new User("qwe", "qwe", "qwe@aa.ru", "passqweword",
-			Collections.singletonList(new Role("ROLE_USER")));
+			new Role("ROLE_USER"));
 		newUser.setId("third333");
 
 		Mockito.when(service.save(registrationDto)).thenReturn(newUser);
@@ -203,7 +201,7 @@ class UserRestControllerTest {
 		dto.setFirstName(user.getFirstName());
 		dto.setLastName(user.getLastName());
 		dto.setPassword(user.getPassword());
-		dto.setRoles(user.getRoles().stream().map(this::toRoleDto).collect(Collectors.toList()));
+		dto.setRole(toRoleDto(user.getRole()));
 		dto.setEnabled(user.isEnabled());
 		return dto;
 	}

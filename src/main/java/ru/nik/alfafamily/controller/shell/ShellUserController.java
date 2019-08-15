@@ -11,6 +11,7 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import ru.nik.alfafamily.domain.User;
 import ru.nik.alfafamily.dto.Mapper;
+import ru.nik.alfafamily.dto.RoleDto;
 import ru.nik.alfafamily.dto.UserDto;
 import ru.nik.alfafamily.dto.UserRegistrationDto;
 import ru.nik.alfafamily.service.UserService;
@@ -48,19 +49,12 @@ public class ShellUserController {
 	@ShellMethod("Update existed user")
 	public String update_user(@ShellOption String firstName, @ShellOption String lastName,
 		@ShellOption String email, @ShellOption String password, @ShellOption String enabled,
-		@ShellOption String roles) {
+		@ShellOption String role) {
 		log.info("Updating user..");
 		User user = service.findByEmail(email);
-		List<String> roleList;
-		if (roles.contains(",")) {
-			roleList = Arrays.asList(roles.split(","));
-		} else {
-			roleList = Collections.singletonList(roles);
-		}
 
 		UserDto dto = new UserDto(user.getId(), firstName, lastName, email, password,
-			mapper.toRoleDtoList(roleList),
-			Boolean.valueOf(enabled));
+			new RoleDto(null ,role), Boolean.valueOf(enabled));
 		return mapper.toUserDto(service.update(dto)).toString();
 	}
 

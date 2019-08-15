@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -21,7 +20,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.shell.jline.InteractiveShellApplicationRunner;
 import org.springframework.shell.jline.ScriptShellApplicationRunner;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.nik.alfafamily.domain.Category;
@@ -29,11 +27,9 @@ import ru.nik.alfafamily.domain.FamilyMember;
 import ru.nik.alfafamily.domain.FinancialOperation;
 import ru.nik.alfafamily.domain.Role;
 import ru.nik.alfafamily.domain.User;
-import ru.nik.alfafamily.dto.FinancialOperationDto;
 import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.repository.CategoryRepository;
 import ru.nik.alfafamily.repository.FamilyMemberRepository;
-import ru.nik.alfafamily.repository.FinancialOperationRepository;
 import ru.nik.alfafamily.repository.UserRepository;
 import ru.nik.alfafamily.util.Utilities;
 
@@ -73,16 +69,14 @@ class FinancialOperationServiceImplTest {
 			"admin@mail.com", "password");
 		Role role = new Role("USER");
 		template.save(role);
-		user.setRoles(Collections.singleton(role));
+		user.setRole(role);
 		template.save(user);
 
 		FamilyMember member1 = new FamilyMember("test-1-familyMember", user);
 		List<FamilyMember> members = new ArrayList<>();
 		members.add(member1);
 		template.save(member1);
-		user.setMembers(members);
 		Category category1 = new Category("бензин", member1);
-		Category category2 = new Category("продукты", member1);
 		Category savedCategory1 = template.save(category1);
 
 		FinancialOperation op1 = new FinancialOperation(new Date(), "расход",

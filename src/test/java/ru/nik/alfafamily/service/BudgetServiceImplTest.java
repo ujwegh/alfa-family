@@ -2,9 +2,6 @@ package ru.nik.alfafamily.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -52,9 +49,6 @@ class BudgetServiceImplTest {
 	private MongoTemplate template;
 
 	@Autowired
-	private Mapper mapper;
-
-	@Autowired
 	private UserRepository userRepository;
 
 	@Autowired
@@ -65,21 +59,13 @@ class BudgetServiceImplTest {
 			"admin1@mail.com", "password");
 		Role role = new Role("USER");
 		template.save(role);
-		user.setRoles(Collections.singleton(role));
+		user.setRole(role);
 		template.save(user);
 
 		FamilyMember member1 = new FamilyMember("test-1-familyMember", user);
-		List<FamilyMember> members = new ArrayList<>();
-		members.add(member1);
 		template.save(member1);
-		user.setMembers(members);
 		Category category1 = new Category("бензин", member1);
-		Category category2 = new Category("продукты", member1);
 		Category savedCategory1 = template.save(category1);
-		Category savedCategory2 = template.save(category2);
-
-//		member1.setCategories(Arrays.asList(savedCategory1, savedCategory2));
-//		template.save(member1);
 
 		FinancialOperation op1 = new FinancialOperation(new Date(), "расход",
 			savedCategory1, 555.55, "RUB", 1234567890L,
@@ -98,8 +84,6 @@ class BudgetServiceImplTest {
 		template.save(op2);
 		template.save(op3);
 		template.save(op4);
-//		member1.setCategories(Arrays.asList(savedCategory1, savedCategory2));
-//		template.save(member1);
 	}
 
 	@AfterEach
@@ -108,7 +92,7 @@ class BudgetServiceImplTest {
 	}
 
 	@Test
-	void countForAllTimeForUser() {//Budget countForAllTimeForUser(String userId);
+	void countForAllTimeForUser() {
 		User user = userRepository.findAll().get(0);
 		assertNotNull(user);
 		List<FinancialOperation> operations = service.findAllForUser(user.getId());
@@ -124,7 +108,6 @@ class BudgetServiceImplTest {
 
 	@Test
 	void countForAllTimeForFamilyMember() {
-		// Budget countForAllTimeForFamilyMember(String userId, String memberId);
 		FamilyMember familyMember = memberRepository.findAll().get(0);
 		User user = familyMember.getUser();
 		assertNotNull(user);
@@ -147,7 +130,6 @@ class BudgetServiceImplTest {
 
 	@Test
 	void countForUserBetweenDates() {
-		// Budget countForUserBetweenDates(String userId, Date start, Date end);
 		User user = userRepository.findAll().get(0);
 		assertNotNull(user);
 		List<FinancialOperation> operations = service.findAllForUser(user.getId());
@@ -168,7 +150,6 @@ class BudgetServiceImplTest {
 
 	@Test
 	void countForFamilyMemberBetweenDates() {
-		// Budget countForFamilyMemberBetweenDates(String userId, String memberId, Date start, Date end);
 		FamilyMember familyMember = memberRepository.findAll().get(0);
 		User user = familyMember.getUser();
 		assertNotNull(user);

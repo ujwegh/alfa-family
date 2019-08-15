@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -93,7 +92,7 @@ class BudgetRestControllerTest {
 		user.setEmail("email");
 		user.setPassword("password");
 		user.setEnabled(true);
-		user.setRoles(Collections.singleton(new Role("ROLE_USER")));
+		user.setRole(new Role("ROLE_USER"));
 		this.user = user;
 		this.budget = new Budget();
 
@@ -188,16 +187,6 @@ class BudgetRestControllerTest {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	private static String listAsJsonString(final List<BudgetDto> obj) {
-		StringBuilder result = new StringBuilder("[");
-		for (BudgetDto o : obj) {
-			result.append(asJsonString(o)).append(",");
-		}
-		result = new StringBuilder(result.substring(0, result.length() - 1));
-		result.append("]");
-		return result.toString();
 	}
 
 	public FinancialOperationDto toFinancialOperationDto(FinancialOperation operation) {

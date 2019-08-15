@@ -3,7 +3,6 @@ package ru.nik.alfafamily.repository;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +38,7 @@ class FinancialOperationRepositoryTest {
                 "admin@mail.com", "password");
         Role role = new Role("USER");
         template.save(role);
-        user.setRoles(Collections.singleton(role));
+        user.setRole(role);
         template.save(user);
         FamilyMember member1 = new FamilyMember("test-1-familyMember", user);
         template.save(member1);
@@ -77,7 +76,7 @@ class FinancialOperationRepositoryTest {
     }
 
     @Test
-    void deleteAllByCategory_Member_Id() { //+
+    void deleteAllByCategory_Member_Id() {
         Category category = categoryRepository.findAll().get(0);
         int i = repository.deleteAllByCategoryIn(Collections.singletonList(category));
         assertEquals(1, i);

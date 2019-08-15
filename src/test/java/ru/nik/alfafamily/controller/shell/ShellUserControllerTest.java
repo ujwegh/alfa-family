@@ -15,7 +15,6 @@ import ru.nik.alfafamily.domain.User;
 import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.dto.UserDto;
 import ru.nik.alfafamily.dto.UserRegistrationDto;
-import ru.nik.alfafamily.service.FamilyMemberService;
 import ru.nik.alfafamily.service.UserService;
 
 import static org.junit.jupiter.api.Assertions.*;

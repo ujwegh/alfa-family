@@ -1,12 +1,9 @@
 package ru.nik.alfafamily.service;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -22,6 +19,7 @@ import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.dto.RoleDto;
 import ru.nik.alfafamily.dto.UserDto;
 import ru.nik.alfafamily.dto.UserRegistrationDto;
+import ru.nik.alfafamily.exceptions.RoleDoesntExistsException;
 import ru.nik.alfafamily.exceptions.UserDoesNotExistsException;
 import ru.nik.alfafamily.repository.RoleRepository;
 import ru.nik.alfafamily.repository.UserRepository;
@@ -31,17 +29,17 @@ public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
 
-	private final RoleRepository roleRepository;
+	private final RoleService roleService;
 
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	private final Mapper mapper;
 
 	@Autowired
-	public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
+	public UserServiceImpl(UserRepository userRepository, RoleService roleService,
 		@Lazy BCryptPasswordEncoder bCryptPasswordEncoder, Mapper mapper) {
 		this.userRepository = userRepository;
-		this.roleRepository = roleRepository;
+		this.roleService = roleService;
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 		this.mapper = mapper;
 	}
@@ -49,10 +47,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User save(UserRegistrationDto registration) {
 
-		Role role = roleRepository.findByName("ROLE_USER");
+		Role role = roleService.getByName("ROLE_USER");
 		if (role == null) {
 			role = new Role("ROLE_USER");
-			roleRepository.save(role);
+			roleService.create(role.getName());
 		}
 
 		User user = new User();
@@ -60,7 +58,7 @@ public class UserServiceImpl implements UserService {
 		user.setLastName(registration.getLastName());
 		user.setEmail(registration.getEmail());
 		user.setPassword(bCryptPasswordEncoder.encode(registration.getPassword()));
-		user.setRoles(Collections.singletonList(role));
+		user.setRole(role);
 		return userRepository.save(user);
 	}
 
@@ -69,7 +67,7 @@ public class UserServiceImpl implements UserService {
 		User user = userRepository.findById(userDto.getId()).orElse(null);
 		if (user == null) {
 			throw new UserDoesNotExistsException(
-				"User with id: " + userDto.getId() + " doesn't exists.");
+				"User with id: " + userDto.getId() + " doesn't exist.");
 		}
 		user.setFirstName(userDto.getFirstName());
 		user.setLastName(userDto.getLastName());
@@ -77,20 +75,14 @@ public class UserServiceImpl implements UserService {
 		user.setEmail(userDto.getEmail());
 		user.setEnabled(userDto.isEnabled());
 
-		List<Role> allRoles = (List<Role>) user.getRoles();
-
-		List<Role> toSaveRoles = allRoles.stream().filter(role -> role.getId() == null)
-			.collect(Collectors.toList());
-		List<Role> savedRoles = roleRepository.saveAll(toSaveRoles);
-		allRoles.forEach(role -> {
-			for (Role savedRole : savedRoles) {
-				if (role.getName().equals(savedRole.getName())) {
-					role = savedRole;
-				}
-			}
-		});
-
-		user.setRoles(allRoles);
+		String roleName = userDto.getRole().getName();
+		Role role;
+		if (roleService.isExistsByName(roleName)) {
+			role = roleService.getByName(roleName);
+		} else {
+			throw new RoleDoesntExistsException(roleName);
+		}
+		user.setRole(role);
 		return userRepository.save(user);
 	}
 
@@ -144,7 +136,7 @@ public class UserServiceImpl implements UserService {
 		}
 		return new org.springframework.security.core.userdetails.User(user.getEmail(),
 			user.getPassword(),
-			mapRolesToAuthorities(user.getRoles()));
+			mapRolesToAuthorities(Collections.singleton(user.getRole())));
 	}
 
 	public UserDetails getDefaultUser(String email) {
@@ -153,11 +145,11 @@ public class UserServiceImpl implements UserService {
 		user.setFirstName("user");
 		user.setLastName("");
 		user.setPassword(bCryptPasswordEncoder.encode("password"));
-		user.setRoles(Collections.singletonList(new Role("ROLE_DEFAULT")));
+		user.setRole(new Role("ROLE_DEFAULT"));
 
 		return new org.springframework.security.core.userdetails.User(user.getEmail(),
 			user.getPassword(),
-			mapRolesToAuthorities(user.getRoles()));
+			mapRolesToAuthorities(Collections.singleton(user.getRole())));
 	}
 
 	private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {

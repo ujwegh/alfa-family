@@ -2,7 +2,6 @@ package ru.nik.alfafamily.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +36,7 @@ class FamilyMemberRepositoryTest {
 				"admin@mail.com", "password");
 		Role role = new Role("USER");
 		template.save(role);
-		user.setRoles(Collections.singleton(role));
+		user.setRole(role);
 		template.save(user);
 
 		FamilyMember member1 = new FamilyMember("test-1-familyMember", user);
@@ -63,7 +62,6 @@ class FamilyMemberRepositoryTest {
 
 	@Test
 	void findByUser_IdAndId() {
-		User user = userRepository.findByEmail("admin@mail.com");
 		List<FamilyMember> members = repository.findAll();
 
 		FamilyMember member = repository.findById(members.get(0).getId()).orElse(null);
@@ -75,7 +73,6 @@ class FamilyMemberRepositoryTest {
 
 	@Test
 	void deleteByUser_IdAndId() {
-		User user = userRepository.findByEmail("admin@mail.com");
 		List<FamilyMember> members = repository.findAll();
 
 		repository.deleteById(members.get(0).getId());
@@ -87,7 +84,6 @@ class FamilyMemberRepositoryTest {
 
 	@Test
 	void existsById() {
-		User user = userRepository.findByEmail("admin@mail.com");
 		List<FamilyMember> members = repository.findAll();
 
 		assertTrue(repository.existsById(members.get(0).getId()));

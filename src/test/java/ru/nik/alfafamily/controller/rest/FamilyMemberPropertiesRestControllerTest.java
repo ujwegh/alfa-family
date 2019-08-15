@@ -1,14 +1,11 @@
 package ru.nik.alfafamily.controller.rest;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +20,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -62,8 +58,6 @@ class FamilyMemberPropertiesRestControllerTest {
 	@MockBean
 	private AuthenticationSuccessHandlerImpl successHandler;
 
-	private User user;
-
 	private List<FamilyMemberProperties> famMembProperties = new ArrayList<>();
 
 	private List<FamilyMemberPropertiesDto> famMembPropDtos = new ArrayList<>();
@@ -90,9 +84,8 @@ class FamilyMemberPropertiesRestControllerTest {
 		user.setEmail("email");
 		user.setPassword("password");
 		user.setEnabled(true);
-		user.setRoles(Collections.singleton(new Role("ROLE_USER")));
+		user.setRole(new Role("ROLE_USER"));
 
-		this.user = user;
 		this.member = new FamilyMember("Mamba", user);
 		this.member.setId("member111");
 
@@ -117,7 +110,7 @@ class FamilyMemberPropertiesRestControllerTest {
 		Mockito.when(mapper.toFamilyMemberPropertiesDto(familyMemberProperties))
 			.thenReturn(dto);
 
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/{userId}/properties", "first111")
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/rest/{userId}/properties", "first111")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(asJsonString(dto));
 		this.mvc.perform(requestBuilder).andExpect(status().isOk())
@@ -163,15 +156,6 @@ class FamilyMemberPropertiesRestControllerTest {
 		}
 	}
 
-	private static String listAsJsonString(final List<FamilyMemberPropertiesDto> obj) {
-		StringBuilder result = new StringBuilder("[");
-		for (FamilyMemberPropertiesDto o : obj) {
-			result.append(asJsonString(o)).append(",");
-		}
-		result = new StringBuilder(result.substring(0, result.length() - 1));
-		result.append("]");
-		return result.toString();
-	}
 
 	public FamilyMemberPropertiesDto toFamilyMemberPropertiesDto(
 		FamilyMemberProperties properties) {

@@ -2,7 +2,6 @@ package ru.nik.alfafamily.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -13,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ru.nik.alfafamily.domain.FamilyMember;
-import ru.nik.alfafamily.domain.Role;
 import ru.nik.alfafamily.domain.User;
 
 @ExtendWith(SpringExtension.class)

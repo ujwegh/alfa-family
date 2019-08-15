@@ -20,7 +20,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.nik.alfafamily.domain.*;
 import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.repository.FamilyMemberRepository;
-import ru.nik.alfafamily.repository.UserRepository;
 
 import java.util.Collections;
 
@@ -33,7 +32,6 @@ import java.util.Collections;
 @EnableAutoConfiguration
 @ContextConfiguration(classes = {FamilyMemberPropertiesServiceImpl.class, FamilyMemberServiceImpl.class,
 	UserServiceImpl.class, Mapper.class, CategoryServiceImpl.class})
-//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class FamilyMemberPropertiesServiceImplTest {
     @Autowired
     private FamilyMemberPropertiesService service;
@@ -53,7 +51,7 @@ class FamilyMemberPropertiesServiceImplTest {
                 "admin@mail.com", "password");
         Role role = new Role("USER");
         template.save(role);
-        user.setRoles(Collections.singleton(role));
+        user.setRole(role);
         template.save(user);
 
         FamilyMember member1 = new FamilyMember("test-1-familyMember", user);
@@ -64,8 +62,6 @@ class FamilyMemberPropertiesServiceImplTest {
 
         template.save(familyMemberProperties);
 
-//        member1.setProperties(familyMemberProperties);
-//        template.save(member1);
         Category category1 = new Category("бензин", member1);
         Category category2 = new Category("продукты", member1);
         template.save(category1);
@@ -80,9 +76,6 @@ class FamilyMemberPropertiesServiceImplTest {
     @Test
     void create() {
         FamilyMember familyMember = memberRepository.findAll().get(1);
-//        FamilyMemberProperties oldProperty = familyMember.getProperties();
-//        assertNull(oldProperty);
-
         FamilyMemberProperties expected = new FamilyMemberProperties(familyMember, "red");
 
         Map<String, String> map = new HashMap<>();
@@ -98,7 +91,6 @@ class FamilyMemberPropertiesServiceImplTest {
     @Test
     void update() {
         FamilyMember familyMember = memberRepository.findAll().get(0);
-//        FamilyMemberProperties oldProperty = familyMember.getProperties();
         FamilyMemberProperties expected = new FamilyMemberProperties(familyMember, "green");
 
         Map<String, String> map = new HashMap<>();
@@ -114,7 +106,6 @@ class FamilyMemberPropertiesServiceImplTest {
     @Test
     void delete() {
         FamilyMember member1 = memberRepository.findAll().get(0);
-//        FamilyMemberProperties familyMemberProperties = member1.getProperties();
         FamilyMemberProperties properties = service.findByFamilyMemberId(member1.getId());
         boolean a = familyMemberService.delete(properties.getId());
         assertTrue(a);

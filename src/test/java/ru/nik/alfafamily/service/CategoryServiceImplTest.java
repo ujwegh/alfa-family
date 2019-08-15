@@ -3,7 +3,6 @@ package ru.nik.alfafamily.service;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -60,7 +59,7 @@ class CategoryServiceImplTest {
 				"admin@mail.com", "password");
 		Role role = new Role("USER");
 		template.save(role);
-		user.setRoles(Collections.singleton(role));
+		user.setRole(role);
 		template.save(user);
 
 		FamilyMember member1 = new FamilyMember("test-1-familyMember", user);
@@ -122,7 +121,6 @@ class CategoryServiceImplTest {
 
 		Category category = categoryRepository.findAll().get(0);
 		List<Category> categories1 = service.findAll(category.getFamilyMember().getId());
-		List<Category> categories = new ArrayList<>();
 		for (Category c: categories1) {
 			assertEquals(category.getFamilyMember().getId(), c.getFamilyMember().getId());
 		}

@@ -1,6 +1,5 @@
 package ru.nik.alfafamily.controller.rest;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -55,8 +54,6 @@ class CategoryRestControllerTest {
 	@MockBean
 	private AuthenticationSuccessHandlerImpl successHandler;
 
-	private User user;
-
 	private FamilyMember member;
 
 	private Category category;
@@ -87,9 +84,8 @@ class CategoryRestControllerTest {
 		user.setEmail("email");
 		user.setPassword("password");
 		user.setEnabled(true);
-		user.setRoles(Collections.singleton(new Role("ROLE_USER")));
+		user.setRole(new Role("ROLE_USER"));
 
-		this.user = user;
 		this.member = new FamilyMember("Mamba", user);
 		this.member.setId("fam.memb.1");
 
@@ -222,14 +218,6 @@ class CategoryRestControllerTest {
 		dto.setId(category.getId());
 		dto.setFamilyMemberId(category.getFamilyMember().getId());
 		return dto;
-	}
-
-	private Category fromCategoryDto(CategoryDto dto) {
-		Category category = new Category();
-		category.setId(dto.getId());
-		//????? А МОЖНО ЛИ БЕЗ МЕМБЕРА?
-		category.setFamilyMember(familyMembers.get(0));
-		return category;
 	}
 
 	private static String asJsonString(final Object obj) {
