@@ -15,3 +15,32 @@ spring:
         max-attempts: 1000000000
         max-interval: 10000
         initial-interval: 10000
+
+
+#server:
+#  port: 8080
+#spring:
+#  data:
+#    mongodb:
+#      uri: mongodb://localhost/alfa-family
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: true
+#  main:
+#    allow-bean-definition-overriding: true
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: '*'
+#  endpoint:
+#    health:
+#      show-details: always
+#info:
+#  app:
+#    name: Library Application
+#    description: Spring boot library application
+#    version: 1.0.0
+#logging:
+#  file: alfa-family.log
