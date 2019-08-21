@@ -41,7 +41,7 @@ import ru.nik.alfafamily.util.Utilities;
 @EnableAutoConfiguration
 @ContextConfiguration(classes = {FinancialOperationServiceImpl.class,
 	UserServiceImpl.class, FamilyMemberServiceImpl.class, Mapper.class, CategoryServiceImpl.class,
-	FamilyMemberPropertiesServiceImpl.class})
+	FamilyMemberPropertiesServiceImpl.class, RoleServiceImpl.class})
 class FinancialOperationServiceImplTest {
 
 	@Autowired

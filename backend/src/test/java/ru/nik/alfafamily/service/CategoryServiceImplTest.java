@@ -35,7 +35,7 @@ import ru.nik.alfafamily.repository.UserRepository;
 @EnableMongoRepositories(basePackages = {"ru.nik.alfafamily.repository"})
 @EnableAutoConfiguration
 @ContextConfiguration(classes = {CategoryServiceImpl.class, FamilyMemberServiceImpl.class,
-	UserServiceImpl.class, Mapper.class, FamilyMemberPropertiesServiceImpl.class})
+	UserServiceImpl.class, Mapper.class, FamilyMemberPropertiesServiceImpl.class, RoleServiceImpl.class})
 class CategoryServiceImplTest {
 
 	@Autowired

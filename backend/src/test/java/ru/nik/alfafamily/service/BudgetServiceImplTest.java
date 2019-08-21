@@ -35,8 +35,10 @@ import ru.nik.alfafamily.util.Utilities;
 })
 @EnableMongoRepositories(basePackages = {"ru.nik.alfafamily.repository"})
 @EnableAutoConfiguration
-@ContextConfiguration(classes = {CategoryServiceImpl.class, BudgetServiceImpl.class, FamilyMemberServiceImpl.class,
-	UserServiceImpl.class, Mapper.class, FamilyMemberPropertiesServiceImpl.class, FinancialOperationServiceImpl.class})
+@ContextConfiguration(classes = {CategoryServiceImpl.class, BudgetServiceImpl.class,
+	FamilyMemberServiceImpl.class, UserServiceImpl.class, Mapper.class,
+	FamilyMemberPropertiesServiceImpl.class, FinancialOperationServiceImpl.class,
+	RoleServiceImpl.class})
 class BudgetServiceImplTest {
 
 	@Autowired
@@ -53,6 +55,7 @@ class BudgetServiceImplTest {
 
 	@Autowired
 	private FamilyMemberRepository memberRepository;
+
 	@BeforeEach
 	public void init() {
 		User user = new User("firstName", "secondName",
@@ -117,7 +120,8 @@ class BudgetServiceImplTest {
 		Date start = operations.get(0).getDate();
 		Date and = operations.get(operations.size() - 1).getDate();
 
-		List<FinancialOperation> operations1 = service.findAllForFamilyMemberBetweenDates(user.getId(),familyMember.getId(), start,and);
+		List<FinancialOperation> operations1 = service
+			.findAllForFamilyMemberBetweenDates(user.getId(), familyMember.getId(), start, and);
 		Budget budget1 = Utilities.countBudget(operations1);
 		Budget budget = budgetService.countForAllTimeForUser(user.getId());
 		assertNotNull(budget);
@@ -136,7 +140,8 @@ class BudgetServiceImplTest {
 		assertTrue(operations.size() > 0);
 		Date start = operations.get(0).getDate();
 		Date and = operations.get(operations.size() - 1).getDate();
-		List<FinancialOperation> operationsBetweenDates = service.findAllForUserBetweenDates(user.getId(), start, and);
+		List<FinancialOperation> operationsBetweenDates = service
+			.findAllForUserBetweenDates(user.getId(), start, and);
 		assertTrue(operationsBetweenDates.size() > 0);
 		Budget budget1 = Utilities.countBudget(operationsBetweenDates);
 		Budget budget = budgetService.countForAllTimeForUser(user.getId());
@@ -159,9 +164,11 @@ class BudgetServiceImplTest {
 		Date start = operations.get(0).getDate();
 		Date and = operations.get(operations.size() - 1).getDate();
 
-		List<FinancialOperation> operations1 = service.findAllForFamilyMemberBetweenDates(user.getId(),familyMember.getId(),start,and);
+		List<FinancialOperation> operations1 = service
+			.findAllForFamilyMemberBetweenDates(user.getId(), familyMember.getId(), start, and);
 		Budget budget1 = Utilities.countBudget(operations1);
-		Budget budget = budgetService.countForFamilyMemberBetweenDates(user.getId(),familyMember.getId(),start,and);
+		Budget budget = budgetService
+			.countForFamilyMemberBetweenDates(user.getId(), familyMember.getId(), start, and);
 		assertNotNull(budget);
 		assertEquals(budget.getIncome(), budget1.getIncome());
 		assertEquals(budget.getOutcome(), budget1.getOutcome());

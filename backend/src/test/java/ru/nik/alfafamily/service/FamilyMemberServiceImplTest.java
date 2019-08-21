@@ -30,7 +30,7 @@ import java.util.List;
 @EnableMongoRepositories(basePackages = {"ru.nik.alfafamily.repository"})
 @EnableAutoConfiguration
 @ContextConfiguration(classes = {CategoryServiceImpl.class, FamilyMemberServiceImpl.class,
-	UserServiceImpl.class, Mapper.class, FamilyMemberPropertiesServiceImpl.class})
+	UserServiceImpl.class, Mapper.class, FamilyMemberPropertiesServiceImpl.class, RoleServiceImpl.class})
 class FamilyMemberServiceImplTest {
 
 	@Autowired

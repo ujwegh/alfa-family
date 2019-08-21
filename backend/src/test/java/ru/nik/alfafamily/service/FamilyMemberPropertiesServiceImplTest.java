@@ -29,7 +29,7 @@ import ru.nik.alfafamily.repository.FamilyMemberRepository;
 @EnableMongoRepositories(basePackages = {"ru.nik.alfafamily.repository"})
 @EnableAutoConfiguration
 @ContextConfiguration(classes = {FamilyMemberPropertiesServiceImpl.class, FamilyMemberServiceImpl.class,
-	UserServiceImpl.class, Mapper.class, CategoryServiceImpl.class})
+	UserServiceImpl.class, Mapper.class, CategoryServiceImpl.class, RoleServiceImpl.class})
 class FamilyMemberPropertiesServiceImplTest {
     @Autowired
     private FamilyMemberPropertiesService service;

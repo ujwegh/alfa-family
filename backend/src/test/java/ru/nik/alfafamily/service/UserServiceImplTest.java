@@ -36,7 +36,7 @@ import ru.nik.alfafamily.repository.UserRepository;
 @EnableAutoConfiguration
 @ContextConfiguration(classes = {CategoryServiceImpl.class, FamilyMemberServiceImpl.class,
 	UserServiceImpl.class, Mapper.class, FamilyMemberPropertiesServiceImpl.class,
-	BCryptPasswordEncoder.class})
+	BCryptPasswordEncoder.class, RoleServiceImpl.class})
 class UserServiceImplTest {
 
 	@Autowired
