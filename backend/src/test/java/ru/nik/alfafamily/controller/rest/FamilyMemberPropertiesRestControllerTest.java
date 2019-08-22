@@ -31,7 +31,7 @@ import ru.nik.alfafamily.domain.User;
 import ru.nik.alfafamily.dto.FamilyMemberPropertiesDto;
 import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.security.AuthenticationSuccessHandlerImpl;
-import ru.nik.alfafamily.security.AuthorizationComponent;
+import ru.nik.alfafamily.security.AuthorizationServiceImpl;
 import ru.nik.alfafamily.service.FamilyMemberPropertiesService;
 import ru.nik.alfafamily.service.FamilyMemberService;
 import ru.nik.alfafamily.service.UserService;
@@ -70,8 +70,8 @@ class FamilyMemberPropertiesRestControllerTest {
 
 		@Bean("auth")
 		@Primary
-		public AuthorizationComponent getAuthorizationComponent() {
-			return Mockito.spy(AuthorizationComponent.class);
+		public AuthorizationServiceImpl getAuthorizationService() {
+			return Mockito.spy(AuthorizationServiceImpl.class);
 		}
 	}
 

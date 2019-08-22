@@ -36,7 +36,7 @@ import ru.nik.alfafamily.dto.CategoryDto;
 import ru.nik.alfafamily.dto.FinancialOperationDto;
 import ru.nik.alfafamily.dto.Mapper;
 import ru.nik.alfafamily.security.AuthenticationSuccessHandlerImpl;
-import ru.nik.alfafamily.security.AuthorizationComponent;
+import ru.nik.alfafamily.security.AuthorizationServiceImpl;
 import ru.nik.alfafamily.service.BudgetService;
 import ru.nik.alfafamily.service.UserService;
 
@@ -67,8 +67,8 @@ class BudgetRestControllerTest {
 
 		@Bean("auth")
 		@Primary
-		public AuthorizationComponent getAuthorizationComponent() {
-			return Mockito.spy(AuthorizationComponent.class);
+		public AuthorizationServiceImpl getAuthorizationService() {
+			return Mockito.spy(AuthorizationServiceImpl.class);
 		}
 	}
 

@@ -4,12 +4,12 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import javax.annotation.Nonnull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.nik.alfafamily.domain.User;
 import ru.nik.alfafamily.service.UserService;
 
-@Component("auth")
-public class AuthorizationComponent implements IAuthorizationComponent {
+@Service("auth")
+public class AuthorizationServiceImpl implements AuthorizationService {
 
 	@Autowired
 	private UserService service;
