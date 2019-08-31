@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import ru.nik.alfafamily.service.UserService;
 
@@ -21,13 +22,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	private final UserService userService;
 
-	private final AuthenticationSuccessHandlerImpl successHandler;
-
 	@Autowired
-	public SecurityConfiguration(UserService userService, AuthenticationSuccessHandlerImpl successHandler
-		) {
+	public SecurityConfiguration(UserService userService) {
 		this.userService = userService;
-		this.successHandler = successHandler;
 	}
 
 	@Override
@@ -57,6 +54,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.formLogin()
 				.loginPage("/login")
 				.permitAll()
+				.successHandler(myAuthenticationSuccessHandler())
 			.and()
 				.logout()
 				.invalidateHttpSession(true)
@@ -99,5 +97,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Bean
 	public PasswordEncoder encoder() {
 		return new BCryptPasswordEncoder(11);
+	}
+
+	@Bean
+	public AuthenticationSuccessHandler myAuthenticationSuccessHandler(){
+		return new AuthenticationSuccessHandlerImpl(userService);
 	}
 }

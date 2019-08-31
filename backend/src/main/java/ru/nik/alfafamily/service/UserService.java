@@ -25,4 +25,6 @@ public interface UserService extends UserDetailsService {
 	List<User> findAllByIdIn(List<String> ids);
 
 	void delete(String userId);
+
+	User updateLastLoginDate(String email);
 }

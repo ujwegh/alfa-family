@@ -3,10 +3,14 @@ package ru.nik.alfafamily.config.migration;
 import com.github.mongobee.changeset.ChangeLog;
 import com.github.mongobee.changeset.ChangeSet;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 import ru.nik.alfafamily.domain.Role;
 import ru.nik.alfafamily.domain.User;
 
+@Service
 @ChangeLog
 public class DatabaseChangelog {
 
@@ -24,7 +28,7 @@ public class DatabaseChangelog {
 	public void userInit(MongoTemplate mongoTemplate) {
 		User user = new User();
 		user.setEmail("admin@gmail.com");
-		user.setPassword("password");
+		user.setPassword("$2a$11$PSwvDE7NQDFblVA9yGOj3e2M2bFBDMZ55dfXA1QuxH8fe4RdT13ga");
 		user.setFirstName("admin");
 		user.setLastName("admin");
 		user.setEnabled(true);
